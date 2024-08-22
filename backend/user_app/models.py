@@ -1,8 +1,6 @@
-from django.contrib.auth.hashers import make_password
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, UserManager
 from django.conf import settings
 from django.db import models
-
-from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 
 
 class User(AbstractBaseUser, PermissionsMixin):
@@ -12,12 +10,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     username = models.CharField(max_length=255, unique=True, verbose_name="User name")
     is_teacher = models.BooleanField(default=False, verbose_name="Is teacher")
 
-    def set_password(self, raw_password):
-        self.password = make_password(raw_password)
-        self._password = raw_password
+    objects = UserManager()
 
     USERNAME_FIELD = "username"
-    REQUIRED_FIELDS = ["last_name", "first_name", "username"]
+    REQUIRED_FIELDS = ["last_name", "first_name"]
 
 
 class Teacher(models.Model):

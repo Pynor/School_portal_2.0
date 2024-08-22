@@ -1,14 +1,24 @@
 from rest_framework import serializers
 from django.conf import settings
 
-from .models import Teacher, Student, SchoolClass
+from .models import Teacher, Student, SchoolClass, User
 
 
 class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = settings.AUTH_USER_MODEL
-        fields = ['id', 'username', 'first_name', 'last_name', 'email', 'is_teacher']
+        fields = "__all__"
+        extra_kwargs = {
+            "password": {
+                "write_only": True,
+                "required": False
+            }
+        }
+
+    def create(self, validated_data):
+        user = User.objects.create_user(**validated_data)
+        return user
 
 
 class TeacherSerializer(serializers.ModelSerializer):
