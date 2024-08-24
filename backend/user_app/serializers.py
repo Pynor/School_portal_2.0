@@ -1,3 +1,4 @@
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from django.conf import settings
 
@@ -7,7 +8,7 @@ from .models import Teacher, Student, SchoolClass, User
 class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
-        model = settings.AUTH_USER_MODEL
+        model = User
         fields = "__all__"
         extra_kwargs = {
             "password": {

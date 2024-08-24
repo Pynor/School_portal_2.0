@@ -14,7 +14,7 @@ class UserRegisterAPIView(generics.CreateAPIView):
 class UserAPIView(APIView):
     def get(self, request):
         user = UserService(request=request)
-        response = user.get_user()
+        response = user.get()
         return response
 
 
