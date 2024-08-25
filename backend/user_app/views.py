@@ -6,8 +6,8 @@ from .models import *
 from .services import *
 
 
-class UserRegisterAPIView(generics.CreateAPIView):
-    serializer_class = UserSerializer
+class TeacherRegisterAPIView(generics.CreateAPIView):
+    serializer_class = TeacherSerializer
     permission_classes = [permissions.AllowAny]
 
 

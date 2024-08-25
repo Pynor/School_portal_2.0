@@ -27,7 +27,15 @@ class TeacherSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Teacher
-        fields = ['id', 'user', 'phone_number']
+        fields = "__all__"
+
+    def create(self, validated_data):
+        print(validated_data)
+        user = User.objects.create_user(**validated_data)
+        user.is_staff = True
+
+        teacher = Teacher.objects.create(user=user, phone_number=validated_data.get('phone_number'))
+        return teacher
 
 
 class StudentSerializer(serializers.ModelSerializer):

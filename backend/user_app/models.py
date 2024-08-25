@@ -6,10 +6,9 @@ from django.db import models
 class User(AbstractBaseUser, PermissionsMixin):
     last_name = models.CharField(max_length=40, verbose_name="Last name")
     first_name = models.CharField(max_length=40, verbose_name="First name")
-    email = models.EmailField(max_length=255, null=True, unique=True, verbose_name="Email")
+    email = models.EmailField(max_length=255, blank=True, verbose_name="Email")
     username = models.CharField(max_length=255, unique=True, verbose_name="User name")
     is_staff = models.BooleanField(default=False, verbose_name="Is staff")
-
 
     objects = UserManager()
 
