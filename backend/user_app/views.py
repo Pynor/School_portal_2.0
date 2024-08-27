@@ -11,6 +11,11 @@ class TeacherRegisterAPIView(generics.CreateAPIView):
     permission_classes = [permissions.AllowAny]
 
 
+class StudentRegisterAPIView(generics.CreateAPIView):
+    serializer_class = StudentSerializer
+    permission_classes = [permissions.AllowAny]
+
+
 class UserAPIView(APIView):
     def get(self, request):
         user = UserService(request=request)

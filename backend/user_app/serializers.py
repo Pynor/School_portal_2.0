@@ -1,6 +1,4 @@
-from django.contrib.auth import get_user_model
 from rest_framework import serializers
-from django.conf import settings
 
 from .models import Teacher, Student, SchoolClass, User
 
@@ -23,15 +21,15 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class TeacherSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
+    user = UserSerializer(write_only=True)
 
     class Meta:
         model = Teacher
         fields = "__all__"
 
     def create(self, validated_data):
-        print(validated_data)
-        user = User.objects.create_user(**validated_data)
+        user_data = validated_data.pop('user')
+        user = User.objects.create_user(**user_data)
         user.is_staff = True
 
         teacher = Teacher.objects.create(user=user, phone_number=validated_data.get('phone_number'))
