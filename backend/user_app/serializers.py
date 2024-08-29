@@ -44,6 +44,13 @@ class StudentSerializer(serializers.ModelSerializer):
         model = Student
         fields = ['id', 'user', 'school_class', 'authorized']
 
+    def create(self, validated_data):
+        user_data = validated_data.pop('user')
+        user = User.objects.create_user(**user_data)
+
+        student = Student.objects.create(user=user, school_class=validated_data.get('school_class'))
+        return student
+
 
 class SchoolClassSerializer(serializers.ModelSerializer):
 
