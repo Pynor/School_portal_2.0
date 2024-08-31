@@ -1,3 +1,4 @@
+from django.db import transaction
 from rest_framework import serializers
 
 from .models import Teacher, Student, SchoolClass, User
@@ -37,19 +38,51 @@ class TeacherSerializer(serializers.ModelSerializer):
 
 
 class StudentSerializer(serializers.ModelSerializer):
-    user = UserSerializer(read_only=True)
-    school_class = serializers.SlugRelatedField(slug_field='slug', read_only=True)
+    last_name = serializers.CharField(max_length=40, source='user.last_name')
+    first_name = serializers.CharField(max_length=40, source='user.first_name')
+    school_class = serializers.CharField(max_length=3)
 
     class Meta:
         model = Student
-        fields = ['id', 'user', 'school_class', 'authorized']
+        fields = ['id', 'school_class', 'authorized', 'last_name', 'first_name']
+
+
+class StudentListSerializer(serializers.ListSerializer):
+    child = StudentSerializer()
+
+    def _create_user(self, data):
+        first_name = data['user']['first_name']
+        last_name = data['user']['last_name']
+        username = f"{first_name}{last_name}{data['school_class']}"
+        password = f"{first_name[0]}{last_name[0]}"
+
+        return User.objects.create_user(
+            first_name=first_name,
+            last_name=last_name,
+            password=password,
+            username=username
+        )
+
+    def _get_school_class(self, school_class_title):
+        if school_class_title not in self.school_classes:
+            self.school_classes[school_class_title] = SchoolClass.objects.select_related().get(title=school_class_title)
+
+        return self.school_classes[school_class_title]
+
+    @transaction.atomic
+    def _create_students(self, validated_data):
+        students = []
+
+        for data in validated_data:
+            user = self._create_user(data)
+            school_class = self._get_school_class(data['school_class'])
+            student = Student(user=user, school_class=school_class)
+            students.append(student)
+        return Student.objects.bulk_create(students)
 
     def create(self, validated_data):
-        user_data = validated_data.pop('user')
-        user = User.objects.create_user(**user_data)
-
-        student = Student.objects.create(user=user, school_class=validated_data.get('school_class'))
-        return student
+        self.school_classes = {}
+        return self._create_students(validated_data)
 
 
 class SchoolClassSerializer(serializers.ModelSerializer):

@@ -12,7 +12,7 @@ class TeacherRegisterAPIView(generics.CreateAPIView):
 
 
 class StudentRegisterAPIView(generics.CreateAPIView):
-    serializer_class = StudentSerializer
+    serializer_class = StudentListSerializer
     permission_classes = [permissions.AllowAny]
 
 
