@@ -1,9 +1,9 @@
-from rest_framework.views import APIView
 from rest_framework import generics, permissions
+from rest_framework.views import APIView
 
 from .serializers import *
-from .models import *
 from .services import *
+from .models import *
 
 
 class TeacherRegisterAPIView(generics.CreateAPIView):
@@ -35,4 +35,3 @@ class UserLogoutAPIView(APIView):
         user = UserLogoutService(request=request)
         response = user.logout()
         return response
-
