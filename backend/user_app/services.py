@@ -11,7 +11,7 @@ ALGORITHM = "HS256"
 access_token_jwt_subject = "access"
 
 
-class UserService:
+class UserAPIService:
 
     def __init__(self, request):
         self.request = request
@@ -32,7 +32,7 @@ class UserService:
         return Response(serializer.data, status=200)
 
 
-class UserLogoutService(UserService):
+class UserLogoutAPIService(UserAPIService):
 
     def logout(self) -> Response:
         response = Response({"message": "success"}, status=200)
@@ -40,7 +40,7 @@ class UserLogoutService(UserService):
         return response
 
 
-class TeacherLoginService(UserService):
+class TeacherLoginAPIService(UserAPIService):
 
     def login(self) -> Response:
         email = self.request.data.get("email")
@@ -55,6 +55,7 @@ class TeacherLoginService(UserService):
 
         payload = {
             "id": user.id,
+            "is_staff": True,
             "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
             "iat": datetime.datetime.utcnow()
         }
@@ -66,3 +67,9 @@ class TeacherLoginService(UserService):
         login(self.request, user)
 
         return response
+
+
+class StudentLoginAPIService(UserAPIService):
+
+    def login(self):
+        pass

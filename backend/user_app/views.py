@@ -16,22 +16,29 @@ class StudentRegisterAPIView(generics.CreateAPIView):
     permission_classes = [permissions.AllowAny]
 
 
-class UserAPIView(APIView):
-    def get(self, request):
-        user = UserService(request=request)
-        response = user.get()
+class TeacherLoginAPIView(APIView):
+    def post(self, request):
+        user = TeacherLoginAPIService(request=request)
+        response = user.login()
         return response
 
 
-class UserLoginAPIView(APIView):
+class StudentLoginAPIView(APIView):
     def post(self, request):
-        user = UserLoginService(request=request)
+        user = StudentLoginAPIService(request=request)
         response = user.login()
+        return response
+
+
+class UserAPIView(APIView):
+    def get(self, request):
+        user = UserAPIService(request=request)
+        response = user.get()
         return response
 
 
 class UserLogoutAPIView(APIView):
     def post(self, request):
-        user = UserLogoutService(request=request)
+        user = UserLogoutAPIService(request=request)
         response = user.logout()
         return response
