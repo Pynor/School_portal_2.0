@@ -40,36 +40,80 @@ class UserLogoutAPIService(UserAPIService):
         return response
 
 
-class TeacherLoginAPIService(UserAPIService):
-
+class BaseLoginAPIService(UserAPIService):
     def login(self) -> Response:
-        email = self.request.data.get("email")
-        password = self.request.data.get("password")
-
-        user = User.objects.filter(email=email).first()
+        user_and_password = self.get_user_and_password()
+        user = user_and_password.get("user")
+        password = user_and_password.get("password")
 
         if not user:
             raise AuthenticationFailed("User is not found")
+
         if not user.check_password(password):
             raise AuthenticationFailed("Invalid password")
 
-        payload = {
-            "id": user.id,
-            "is_staff": True,
-            "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
-            "iat": datetime.datetime.utcnow()
-        }
+        payload = self.get_payload(user)
         token = jwt.encode(payload, "secret", algorithm=ALGORITHM)
 
         response = Response({"jwt_token": token}, status=200)
         response.set_cookie(key="jwt", value=token, httponly=True)
 
         login(self.request, user)
+        self.post_login(user)
 
         return response
 
-
-class StudentLoginAPIService(UserAPIService):
-
-    def login(self):
+    def get_user_and_password(self):
         pass
+
+    def get_payload(self, user):
+        raise NotImplementedError
+
+    def post_login(self, user):
+        pass
+
+
+class TeacherLoginAPIService(BaseLoginAPIService):
+
+    def get_user_and_password(self):
+        email = self.request.data.get("email")
+        password = self.request.data.get("password")
+
+        user = User.objects.filter(email=email).first()
+
+        return {"user": user, "password": password}
+
+    def get_payload(self, user):
+        return {
+            "id": user.id,
+            "is_staff": True,
+            "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
+            "iat": datetime.datetime.utcnow()
+        }
+
+
+class StudentLoginAPIService(BaseLoginAPIService):
+
+    def get_password_and_username(self):
+        school_class = self.request.data.get("school_class")
+        first_name = self.request.data.get("first_name")
+        last_name = self.request.data.get("last_name")
+        password = self.request.data.get("password")
+        username = f"{first_name}{last_name}{school_class}"
+
+        user = User.objects.filter(username=username).first()
+
+        return {"user": user, "password": password}
+
+    def get_payload(self, user):
+        return {
+            "id": user.id,
+            "is_staff": False,
+            "exp": datetime.datetime.utcnow() + datetime.timedelta(minutes=60),
+            "iat": datetime.datetime.utcnow()
+        }
+
+    def post_login(self, user):
+        student = Student.objects.get(user=user)
+        student.authorized = True
+        student.save()
