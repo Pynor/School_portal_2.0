@@ -94,14 +94,14 @@ class TeacherLoginAPIService(BaseLoginAPIService):
 
 class StudentLoginAPIService(BaseLoginAPIService):
 
-    def get_password_and_username(self):
+    def get_user_and_password(self):
         school_class = self.request.data.get("school_class")
         first_name = self.request.data.get("first_name")
         last_name = self.request.data.get("last_name")
         password = self.request.data.get("password")
         username = f"{first_name}{last_name}{school_class}"
 
-        user = User.objects.filter(username=username).first()
+        user = User.objects.get(username=username)
 
         return {"user": user, "password": password}
 
