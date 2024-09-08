@@ -7,8 +7,8 @@ from django.contrib.auth import login
 
 from .serializers import *
 
-ALGORITHM = "HS256"
 access_token_jwt_subject = "access"
+ALGORITHM = "HS256"
 
 
 class UserAPIService:
@@ -76,10 +76,10 @@ class BaseLoginAPIService(UserAPIService):
 class TeacherLoginAPIService(BaseLoginAPIService):
 
     def get_user_and_password(self):
-        email = self.request.data.get("email")
+        username = self.request.data.get("username")
         password = self.request.data.get("password")
 
-        user = User.objects.filter(email=email).first()
+        user = User.objects.filter(username=username).first()
 
         return {"user": user, "password": password}
 
