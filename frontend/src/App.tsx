@@ -1,26 +1,75 @@
-import React from 'react';
-import logo from './logo.svg';
+import React, { useEffect, useState } from 'react';
+import { BrowserRouter, Route } from 'react-router-dom';
+
+import RegisterStudent from './components/authorization/register/RegisterStudent';
+import RegisterTeacher from './components/authorization/register/RegisterTeacher';
+
+import LoginStudent from './components/authorization/login/LoginStudent';
+import LoginTeacher from './components/authorization/login/LoginTeacher';
+
+import { BASE_URL } from './constants';
+import { UserData } from './types'
+
 import './App.css';
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+
+const App = () => {
+
+    const [userData, setUserData] = useState<UserData>({
+        username: '',
+        birth_date: '',
+        bio: '',
+        email: '',
+        first_name: '',
+        last_name: '',
+        is_staff: false,
+        id: 0,
+    });
+
+    useEffect(() => {
+        const fetchUserData = async () => {
+            try {
+                const response = await fetch(`${BASE_URL}/api/v1/api-user-get/`, {
+                    method: 'GET',
+                    headers: { 'Content-Type': 'application/json' },
+                    credentials: 'include',
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                setUserData(data);
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+            }
+        };
+
+        fetchUserData();
+
+
+        return () => {};
+
+    }, []);
+
+    return (
+        <div className="App">
+            <BrowserRouter>
+                <div className="content">
+                    <main className="main-content">
+                        <div className="form-signin">
+                            <Route path="/login-student" component={() => <LoginStudent />} />
+                            <Route path="/login-teacher" component={() => <LoginTeacher />} />
+
+                            <Route path="/register-student" component={RegisterStudent} />
+                            <Route path="/register-teacher" component={RegisterTeacher} />
+                        </div>
+                    </main>
+                </div>
+            </BrowserRouter>
+        </div>
+    );
+};
 
 export default App;
