@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import RegisterStudent from './components/authorization/register/RegisterStudent';
 import RegisterTeacher from './components/authorization/register/RegisterTeacher';
@@ -59,11 +59,13 @@ const App = () => {
                 <div className="content">
                     <main className="main-content">
                         <div className="form-signin">
-                            <Route path="/login-student" component={() => <LoginStudent />} />
-                            <Route path="/login-teacher" component={() => <LoginTeacher />} />
+                            <Routes>
+                                <Route path="/login-student" element={() => <LoginStudent userData={userData}/>} />
+{/*                                 <Route path="/login-teacher" element={() => <LoginTeacher userData={userData}/>} /> */}
 
-                            <Route path="/register-student" component={RegisterStudent} />
-                            <Route path="/register-teacher" component={RegisterTeacher} />
+                                <Route path="/register-student" element={RegisterStudent} />
+                                <Route path="/register-teacher" element={RegisterTeacher} />
+                            </Routes>
                         </div>
                     </main>
                 </div>
