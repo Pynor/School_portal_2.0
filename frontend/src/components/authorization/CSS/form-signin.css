@@ -1,0 +1,36 @@
+.form-container {
+    max-width: 330px; 
+    margin: auto;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    background-color: #f3f3f2;
+}
+
+h1 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.error-message {
+    color: rgb(212, 20, 20);
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-control {
+    padding: 10px;
+    margin-bottom: 20px; 
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 16px;
+}
+
+.submit-button:hover {
+    background-color: #0a63c2;
+}
