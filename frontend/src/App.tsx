@@ -8,13 +8,11 @@ import LoginStudent from './components/authorization/login/LoginStudent';
 import LoginTeacher from './components/authorization/login/LoginTeacher';
 
 import { BASE_URL } from './constants';
-import { UserData } from './types'
+import { UserData } from './types';
 
 import './App.css';
 
-
 const App = () => {
-
     const [userData, setUserData] = useState<UserData>({
         username: '',
         birth_date: '',
@@ -47,10 +45,6 @@ const App = () => {
         };
 
         fetchUserData();
-
-
-        return () => {};
-
     }, []);
 
     return (
@@ -60,11 +54,7 @@ const App = () => {
                     <main className="main-content">
                         <div className="form-signin">
                             <Routes>
-                                <Route path="/login-student" element={() => <LoginStudent userData={userData}/>} />
-{/*                                 <Route path="/login-teacher" element={() => <LoginTeacher userData={userData}/>} /> */}
-
-                                <Route path="/register-student" element={RegisterStudent} />
-                                <Route path="/register-teacher" element={RegisterTeacher} />
+                                <Route path="/login-student" element={<LoginStudent userData={userData} />} />
                             </Routes>
                         </div>
                     </main>
