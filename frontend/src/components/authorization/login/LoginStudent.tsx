@@ -60,25 +60,21 @@ const LoginStudent = (props: { userData: UserData }) => {
                 <h1 className="h1">Регистрация</h1>
                 {error && <h3 className="error-message">{error}</h3>}
                 <div className="form-group">
-                    <label htmlFor="first_name">Имя</label>
                     <input type="text" className="form-control" id="first_name" placeholder="Введите имя" required
                         onChange={e => setFirstName(e.target.value)}
                     />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="last_name">Фамилия</label>
                     <input type="text" className="form-control" id="last_name" placeholder="Введите фамилию" required
                         onChange={e => setLastName(e.target.value)}
                     />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="school_class">Класс</label>
                     <input type="text" className="form-control" id="school_class" placeholder="Введите класс" required
                         onChange={e => setSchoolClass(e.target.value)}
                     />
                 </div>
                 <div className="form-group">
-                    <label htmlFor="password">Пароль</label>
                     <input type="password" className="form-control" id="password" placeholder="Введите пароль" required
                         onChange={e => setPassword(e.target.value)}
                     />

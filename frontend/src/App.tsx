@@ -55,6 +55,7 @@ const App = () => {
                         <div className="form-signin">
                             <Routes>
                                 <Route path="/login-student" element={<LoginStudent userData={userData} />} />
+                                <Route path="/login-teacher" element={<LoginTeacher userData={userData} />} />
                             </Routes>
                         </div>
                     </main>
