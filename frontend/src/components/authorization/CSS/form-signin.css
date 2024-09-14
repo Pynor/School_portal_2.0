@@ -1,15 +1,20 @@
 .form-container {
-    max-width: 330px; 
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    max-width: 400px;
     margin: auto;
-    padding: 20px;
+    padding: 30px;
     border-radius: 8px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    background-color: #f3f3f2;
+    background-color: #fff;
 }
 
 h1 {
     text-align: center;
     margin-bottom: 20px;
+    color: #333;
 }
 
 .error-message {
@@ -18,19 +23,39 @@ h1 {
     margin-bottom: 10px;
 }
 
-.form {
-    display: flex;
-    flex-direction: column;
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
 }
 
 .form-control {
+    display: flex;
     padding: 10px;
-    margin-bottom: 20px; 
     border: 1px solid #ccc;
-    border-radius: 4px;
+    border-radius: 8px;
     font-size: 16px;
+    width: 100%;
 }
 
-.submit-button:hover {
-    background-color: #0a63c2;
+.btn-primary {
+    background-color: #007bff;
+    border-color: 1px solid #ccc;
+    color: #fff;
+    border-radius: 8px;
+    padding: 10px 20px;
+    font-size: 18px;
+    transition: background-color 0.5s ease;
+}
+
+.btn-primary:hover {
+    background-color: #0154ac;
+}
+
+.btn-primary:focus, .btn-primary.focus {
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.5);
 }

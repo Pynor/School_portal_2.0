@@ -8,7 +8,7 @@ import getCookie from '../../../functions';
 import '../CSS/form-signin.css'
 
 
-const LoginStudent = (props: {userData: UserData} ) => {
+const LoginStudent = (props: { userData: UserData }) => {
 
     const csrftoken = getCookie('csrftoken');
     const [redirect, setRedirect] = useState(false);
@@ -57,23 +57,33 @@ const LoginStudent = (props: {userData: UserData} ) => {
     return (
         <div className="form-container">
             <form onSubmit={submit}>
-                <h1 className="h3 mb-3 fw-normal">Please sign in</h1>
-                {error && <p className="error-message">{error}</p>}
-                <input type="last_name" className="form-control" placeholder="Фамилия" required
-                    onChange={e => setLastName(e.target.value)}
-                />
-                <input type="first_name" className="form-control" placeholder="Имя" required
-                    onChange={e => setFirstName(e.target.value)}
-                />
-                <input type="school_class" className="form-control" placeholder="Класс" required
-                    onChange={e => setSchoolClass(e.target.value)}
-                />
-
-                <input type="password" className="form-control" placeholder="Пароль" required
-                    onChange={e => setPassword(e.target.value)}
-                />
-
-                <button className="w-100 btn btn-lg btn-primary" type="submit">Авторизоваться</button>
+                <h1 className="h1">Регистрация</h1>
+                {error && <h3 className="error-message">{error}</h3>}
+                <div className="form-group">
+                    <label htmlFor="first_name">Имя</label>
+                    <input type="text" className="form-control" id="first_name" placeholder="Введите имя" required
+                        onChange={e => setFirstName(e.target.value)}
+                    />
+                </div>
+                <div className="form-group">
+                    <label htmlFor="last_name">Фамилия</label>
+                    <input type="text" className="form-control" id="last_name" placeholder="Введите фамилию" required
+                        onChange={e => setLastName(e.target.value)}
+                    />
+                </div>
+                <div className="form-group">
+                    <label htmlFor="school_class">Класс</label>
+                    <input type="text" className="form-control" id="school_class" placeholder="Введите класс" required
+                        onChange={e => setSchoolClass(e.target.value)}
+                    />
+                </div>
+                <div className="form-group">
+                    <label htmlFor="password">Пароль</label>
+                    <input type="password" className="form-control" id="password" placeholder="Введите пароль" required
+                        onChange={e => setPassword(e.target.value)}
+                    />
+                </div>
+                <button className="btn-primary" type="submit">Авторизоваться</button>
             </form>
         </div>
     );

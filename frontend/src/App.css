@@ -1,38 +1,35 @@
-.App {
-  text-align: center;
+.main-content {
+  margin-left: 20px;
+}
+.form-signin {
+  max-width: 600px;
+  padding: 15px;
+  margin: auto;
+}
+.form-signin .checkbox {
+  font-weight: 400;
+}
+.form-signin .form-control {
+  position: center;
+  box-sizing: border-box;
+  height: auto;
+  padding: 10px;
+  font-size: 16px;
 }
 
-.App-logo {
-  height: 40vmin;
-  pointer-events: none;
+.form-signin .form-control:focus {
+  z-index: 2;
 }
-
-@media (prefers-reduced-motion: no-preference) {
-  .App-logo {
-    animation: App-logo-spin infinite 20s linear;
-  }
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.container {
+  width: 90%;
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  flex-direction: row;
+  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 30% 70%;
 }
 
-.App-link {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+.Sidebar {
+  padding-left: 20px;
+  width: 20%;
 }

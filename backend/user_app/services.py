@@ -47,10 +47,10 @@ class BaseLoginAPIService(UserAPIService):
         password = user_and_password.get("password")
 
         if not user:
-            raise AuthenticationFailed("User is not found")
+            raise AuthenticationFailed("Пользователь не найден.")
 
         if not user.check_password(password):
-            raise AuthenticationFailed("Invalid password")
+            raise AuthenticationFailed("Неверный пароль.")
 
         payload = self.get_payload(user)
         token = jwt.encode(payload, "secret", algorithm=ALGORITHM)
@@ -101,7 +101,7 @@ class StudentLoginAPIService(BaseLoginAPIService):
         password = self.request.data.get("password")
         username = f"{first_name}{last_name}{school_class}"
 
-        user = User.objects.get(username=username)
+        user = User.objects.filter(username=username).first()
 
         return {"user": user, "password": password}
 
