@@ -56,6 +56,9 @@ const App = () => {
                             <Routes>
                                 <Route path="/login-student" element={<LoginStudent userData={userData} />} />
                                 <Route path="/login-teacher" element={<LoginTeacher userData={userData} />} />
+
+                                <Route path="/register-student" element={<RegisterStudent userData={userData} />} />
+                                <Route path="/register-teacher" element={<RegisterTeacher userData={userData} />} />
                             </Routes>
                         </div>
                     </main>
