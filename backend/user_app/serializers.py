@@ -32,12 +32,16 @@ class TeacherSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user_data = validated_data.pop("user")
+        secret_key = TeacherSecretKey.objects.filter(key=validated_data.get("secret_key")).first()
 
-        if not TeacherSecretKey.objects.filter(key=validated_data.get("secret_key")).first():
+        if not secret_key:
             raise AuthenticationFailed("Неверный секретный ключ.")
 
         user = User.objects.create_user(**user_data, is_staff=True)
         teacher = Teacher.objects.create(user=user, phone_number=validated_data.get("phone_number"))
+        secret_key.logged = True
+        secret_key.seve()
+
         return teacher
 
 
