@@ -1,7 +1,8 @@
 from rest_framework import serializers
 from django.db import transaction
+from rest_framework.exceptions import AuthenticationFailed
 
-from .models import Teacher, Student, SchoolClass, User
+from .models import Teacher, TeacherSecretKey, Student, SchoolClass, User
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -23,6 +24,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 class TeacherSerializer(serializers.ModelSerializer):
     user = UserSerializer(write_only=True)
+    secret_key = serializers.CharField(max_length=40)
 
     class Meta:
         model = Teacher
@@ -30,8 +32,11 @@ class TeacherSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data):
         user_data = validated_data.pop("user")
-        user = User.objects.create_user(**user_data, is_staff=True)
 
+        if not TeacherSecretKey.objects.filter(key=validated_data.get("secret_key")).first():
+            raise AuthenticationFailed("Неверный секретный ключ.")
+
+        user = User.objects.create_user(**user_data, is_staff=True)
         teacher = Teacher.objects.create(user=user, phone_number=validated_data.get("phone_number"))
         return teacher
 

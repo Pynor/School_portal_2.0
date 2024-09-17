@@ -13,9 +13,11 @@ const RegisterTeacher = (props: { userData: UserData }) => {
     const [redirect, setRedirect] = useState(false);
     const [error, setError] = useState('');
     
-    const [email, setEmail] = useState('');
     const [username, setUserName] = useState('');
     const [password, setPassword] = useState('');
+    const [last_name, setLastName] = useState('');
+    const [first_name, setFirstName] = useState('');
+    const [secret_key, setSecretKey] = useState('');
 
     const submit = async (e: SyntheticEvent) => {
         e.preventDefault();
@@ -28,9 +30,13 @@ const RegisterTeacher = (props: { userData: UserData }) => {
             },
             credentials: 'include',
             body: JSON.stringify({
-                password,
-                username,
-                email
+                user: {
+                    password: password,
+                    username: username,
+                    last_name: last_name,
+                    first_name: first_name
+                  },
+                  secret_key: secret_key
             })
         });
 
@@ -57,8 +63,13 @@ const RegisterTeacher = (props: { userData: UserData }) => {
                 <h1 className="h1">Регистрация</h1>
                 {error && <h3 className="error-message">{error}</h3>}
                 <div className="form-group">
-                    <input type="text" className="form-control" id="email" placeholder="Введите Почту" required
-                        onChange={e => setEmail(e.target.value)}
+                    <input type="text" className="form-control" id="first_name" placeholder="Введите имя" required
+                        onChange={e => setFirstName(e.target.value)}
+                    />
+                </div>
+                <div className="form-group">
+                    <input type="text" className="form-control" id="last_name" placeholder="Введите фамилию" required
+                        onChange={e => setLastName(e.target.value)}
                     />
                 </div>
                 <div className="form-group">
@@ -69,6 +80,11 @@ const RegisterTeacher = (props: { userData: UserData }) => {
                 <div className="form-group">
                     <input type="password" className="form-control" id="password" placeholder="Введите пароль" required
                         onChange={e => setPassword(e.target.value)}
+                    />
+                </div>
+                <div className="form-group">
+                    <input type="password" className="form-control" id="secret_key" placeholder="Введите кодовое слово" required
+                        onChange={e => setSecretKey(e.target.value)}
                     />
                 </div>
                 <button className="btn-primary" type="submit">Зарегестрироваться</button>
