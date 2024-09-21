@@ -79,7 +79,7 @@ const LoginStudent = (props: { userData: UserData }) => {
                         onChange={e => setPassword(e.target.value)}
                     />
                 </div>
-                <button className="btn-primary" type="submit">Авторизоваться</button>
+                <button className="btn-primary" type="submit">Зарегистрироваться</button>
             </form>
         </div>
     );

@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
-import RegisterStudent from './components/authorization/register/RegisterStudent';
+import RegisterStudents from './components/authorization/register/RegisterStudent';
 import RegisterTeacher from './components/authorization/register/RegisterTeacher';
 
 import LoginStudent from './components/authorization/login/LoginStudent';
@@ -57,7 +57,7 @@ const App = () => {
                                 <Route path="/login-student" element={<LoginStudent userData={userData} />} />
                                 <Route path="/login-teacher" element={<LoginTeacher userData={userData} />} />
 
-                                <Route path="/register-student" element={<RegisterStudent userData={userData} />} />
+                                <Route path="/register-student" element={<RegisterStudents userData={userData} />} />
                                 <Route path="/register-teacher" element={<RegisterTeacher userData={userData} />} />
                             </Routes>
                         </div>
