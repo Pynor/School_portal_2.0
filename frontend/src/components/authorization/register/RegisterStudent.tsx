@@ -1,15 +1,15 @@
-import React, { SyntheticEvent, useState } from 'react';
+import React, { useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 
 import { BASE_URL } from '../../../constants';
-import { UserData, Student, Props } from '../../../types';
+import { UserData, Student } from '../../../types';
 import getCookie from '../../../functions';
 
 import '../CSS/form-signin.css'
 
 
 
-const RegisterStudents = ({ userData }: Props) => {
+const RegisterStudents = (props: { userData: UserData }) => {
 
   const navigate = useNavigate();
   const csrftoken = getCookie('csrftoken');
@@ -46,7 +46,7 @@ const RegisterStudents = ({ userData }: Props) => {
       updatedData[index][field] = value;
       return updatedData;
     });
-  
+
     setErrors((prevErrors) => {
       const updatedErrors = { ...prevErrors };
       delete updatedErrors[index];
@@ -54,48 +54,17 @@ const RegisterStudents = ({ userData }: Props) => {
     });
   };
 
-  const validateForm = (studentsData: Student[]): Record<number, string[]> => {
-    const formErrors: Record<number, string[]> = {};
-
-    studentsData.forEach((student, index) => {
-      const errors: string[] = [];
-
-      if (!student.first_name.trim()) {
-        errors.push('First name is required');
-      }
-
-      if (!student.last_name.trim()) {
-        errors.push('Last name is required');
-      }
-
-      if (!student.school_class.trim()) {
-        errors.push('School class is required');
-      }
-
-      if (errors.length > 0) {
-        formErrors[index] = errors;
-      }
-    });
-
-    return formErrors;
+  const handleNumStudentsChange = (value: number) => {
+    setNumStudents(value);
+    setStudentsData(Array.from({ length: value }, () => ({ last_name: '', first_name: '', school_class: '' })));
+    setErrors({});
   };
+
 
   const submitStudents = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    if (numStudents <= 0) {
-      return;
-    }
-
     setLoading(true);
     setErrors({});
-
-    const formErrors = validateForm(studentsData);
-
-    if (Object.keys(formErrors).length > 0) {
-      setLoading(false);
-      return;
-    }
 
     try {
       const response = await fetch(`${BASE_URL}/user_app/api/v1/api-student-register/`, {
@@ -110,97 +79,92 @@ const RegisterStudents = ({ userData }: Props) => {
 
       if (!response.ok) {
         const data = await response.json();
-        if (Array.isArray(data)) {
-          setErrors(data.reduce((acc, error, index) => ({ ...acc, [index]: error }), {}));
-        } else if (data && data.detail) {
-          setErrors({ 0: [data.detail] });
-        }
+        setErrors(data);
       } else {
         navigate('/');
       }
+      
     } catch (error) {
       console.error('Error registering students:', error);
+
     } finally {
       setLoading(false);
     }
   };
 
-  const handleNumStudentsChange = (value: number) => {
-    if (value < 0) {
-      return;
-    }
-
-    setNumStudents(value);
-    setStudentsData(Array.from({ length: value }, () => ({ last_name: '', first_name: '', school_class: '' })));
-    setErrors({});
-  };
-
   if (loading) {
-    return <div>Loading...</div>;
+    return <div className="form-container"><h2>Загрузка.</h2></div>;
   }
 
   return (
-    <div className="form-container">
-      <div className="form-group">
-        <input
-          type="number"
-          className="form-control"
-          id="num-students"
-          placeholder="Enter the number of students"
-          min="0"
-          value={numStudents}
-          onChange={(e) => handleNumStudentsChange(parseInt(e.target.value, 10))}
-        />
-        <div className="form-group">
-          <input
-            type="text"
-            className="form-control"
-            id="school-class"
-            placeholder="Enter the school class"
-            value={schoolClass}
-            onChange={(e) => handleSchoolClassChange(e.target.value)}
-          />
-        </div>
-        <button className="btn-primary" type="button" onClick={submitStudents} disabled={loading}>
-          Register Students
-        </button>
-      </div>
-      {numStudents >= 0 && (
-        <form onSubmit={submitStudents}>
-          {studentsData.map((student, index) => (
-            <div key={index} className="student-form">
-              <h2 className="h2">Студент {index + 1}</h2>
-              <div className="form-group">
-                <input
-                  type="text"
-                  className={`form-control ${errors[index]?.includes('First name is required') ? 'is-invalid' : ''}`}
-                  id={`first_name_${index}`}
-                  placeholder="Введите имя"
-                  required
-                  value={student.first_name}
-                  onChange={(e) => handleInputChange(index, 'first_name', e.target.value)}
-                />
-                {errors[index]?.includes('First name is required') && (
-                  <div className="invalid-feedback">First name is required</div>
-                )}
-              </div>
-              <div className="form-group">
-                <input
-                  type="text"
-                  className={`form-control ${errors[index]?.includes('Last name is required') ? 'is-invalid' : ''}`}
-                  id={`last_name_${index}`}
-                  placeholder="Введите фамилию"
-                  required
-                  value={student.last_name}
-                  onChange={(e) => handleInputChange(index, 'last_name', e.target.value)}
-                />
-                {errors[index]?.includes('Last name is required') && (
-                  <div className="invalid-feedback">Last name is required</div>
-                )}
-              </div>
+    <div>
+      {props.userData.is_staff ? (
+        <div className="form-container">
+          <div className="form-group">
+            <div className="form-container">
+              <input
+                min="0"
+                type="number"
+                id="num-students"
+                value={numStudents}
+                className="form-control"
+                onChange={(e) => handleNumStudentsChange(parseInt(e.target.value, 10))}
+              />
+
+              <input
+                type="text"
+                id="school-class"
+                value={schoolClass}
+                className="form-control"
+                placeholder="Класс учеников"
+                onChange={(e) => handleSchoolClassChange(e.target.value)}
+              />
+
+              <button className="btn-primary" type="button" onClick={submitStudents} disabled={loading}>
+                Зарегистрировать
+              </button>
             </div>
-          ))}
-        </form>
+          </div>
+
+
+          {numStudents >= 0 && (
+            <form onSubmit={submitStudents}>
+              {studentsData.map((student, index) => (
+                <div key={index} className="student-form">
+                  <h2 className="h2">Ученик: "{index + 1}"</h2>
+
+                  <div className="form-group">
+
+                    <input
+                      required
+                      type="text"
+                      placeholder="Имя"
+                      value={student.first_name}
+                      id={`first_name_${index}`}
+                      onChange={(e) => handleInputChange(index, 'first_name', e.target.value)}
+                      className={`form-control ${errors[index]?.includes('First name is required') ? 'is-invalid' : ''}`}
+                    />
+                    
+                    <input
+                      required
+                      type="text"
+                      value={student.last_name}
+                      id={`last_name_${index}`}
+                      placeholder="Фамилия"
+                      onChange={(e) => handleInputChange(index, 'last_name', e.target.value)}
+                      className={`form-control ${errors[index]?.includes('Last name is required') ? 'is-invalid' : ''}`}
+                    />
+
+                  </div>
+                </div>
+              ))}
+            </form>
+          )}
+        </div>
+      ) : (
+        <div className="form-container">
+            <h2 className="error-message">У вас нет на это прав.</h2>
+        </div>
       )}
     </div>
   );
