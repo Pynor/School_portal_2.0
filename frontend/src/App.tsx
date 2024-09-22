@@ -52,7 +52,7 @@ const App = () => {
             <BrowserRouter>
                 <div className="content">
                     <main className="main-content">
-                        <div className="form-signin">
+                        <div className="form-login-and-register">
                             <Routes>
                                 <Route path="/login-student" element={<LoginStudent userData={userData} />} />
                                 <Route path="/login-teacher" element={<LoginTeacher userData={userData} />} />

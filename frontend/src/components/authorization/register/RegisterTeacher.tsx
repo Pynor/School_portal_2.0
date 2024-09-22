@@ -63,27 +63,27 @@ const RegisterTeacher = (props: { userData: UserData }) => {
                 <h1 className="h1">Регистрация</h1>
                 {error && <h3 className="error-message">{error}</h3>}
                 <div className="form-group">
-                    <input type="text" className="form-control" id="first_name" placeholder="Введите имя" required
+                    <input type="text" className="form-control" id="first_name" placeholder="Имя" required
                         onChange={e => setFirstName(e.target.value)}
                     />
                 </div>
                 <div className="form-group">
-                    <input type="text" className="form-control" id="last_name" placeholder="Введите фамилию" required
+                    <input type="text" className="form-control" id="last_name" placeholder="Фамилия" required
                         onChange={e => setLastName(e.target.value)}
                     />
                 </div>
                 <div className="form-group">
-                    <input type="text" className="form-control" id="username" placeholder="Введите имя пользователья" required
+                    <input type="text" className="form-control" id="username" placeholder="Имя пользователья" required
                         onChange={e => setUserName(e.target.value)}
                     />
                 </div>
                 <div className="form-group">
-                    <input type="password" className="form-control" id="password" placeholder="Введите пароль" required
+                    <input type="password" className="form-control" id="password" placeholder="Пароль" required
                         onChange={e => setPassword(e.target.value)}
                     />
                 </div>
                 <div className="form-group">
-                    <input type="password" className="form-control" id="secret_key" placeholder="Введите кодовое слово" required
+                    <input type="password" className="form-control" id="secret_key" placeholder="Кодовое слово" required
                         onChange={e => setSecretKey(e.target.value)}
                     />
                 </div>
