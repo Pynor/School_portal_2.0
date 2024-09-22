@@ -1,7 +1,6 @@
 import datetime
 import jwt
 
-from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.response import Response
 from django.contrib.auth import login
 
