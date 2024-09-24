@@ -3,16 +3,22 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import RegisterStudents from './components/authorization/register/RegisterStudent';
 import RegisterTeacher from './components/authorization/register/RegisterTeacher';
+import RegisterHub from './components/authorization/register/RegisterHub';
 
 import LoginStudent from './components/authorization/login/LoginStudent';
 import LoginTeacher from './components/authorization/login/LoginTeacher';
+import LoginHub from './components/authorization/login/LoginHub';
+
+import Nav from './components/navigation/Nav';
 
 import { BASE_URL } from './constants';
 import { UserData } from './types';
 
 import './App.css';
 
+
 const App = () => {
+    const [name, setName] = useState('');
     const [userData, setUserData] = useState<UserData>({
         username: '',
         birth_date: '',
@@ -50,15 +56,18 @@ const App = () => {
     return (
         <div className="App">
             <BrowserRouter>
+                <Nav userData={userData} setName={setName}/>
                 <div className="content">
                     <main className="main-content">
                         <div className="form-login-and-register">
                             <Routes>
+                                <Route path="/login-hub" element={<LoginHub />} />
                                 <Route path="/login-student" element={<LoginStudent userData={userData} />} />
                                 <Route path="/login-teacher" element={<LoginTeacher userData={userData} />} />
 
-                                <Route path="/register-student" element={<RegisterStudents userData={userData} />} />
+                                <Route path="/register-hub" element={<RegisterHub />} />
                                 <Route path="/register-teacher" element={<RegisterTeacher userData={userData} />} />
+                                <Route path="/register-student" element={<RegisterStudents userData={userData} />} />
                             </Routes>
                         </div>
                     </main>
