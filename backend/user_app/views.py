@@ -11,8 +11,8 @@ class TeacherRegisterAPIView(generics.CreateAPIView):
     permission_classes = [permissions.AllowAny]
 
 
-class StudentRegisterAPIView(generics.CreateAPIView):
-    serializer_class = StudentListSerializer
+class StudentsRegisterListAPIView(generics.CreateAPIView):
+    serializer_class = StudentsRegisterListSerializer
     permission_classes = [permissions.AllowAny]
 
 

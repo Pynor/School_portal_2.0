@@ -40,7 +40,6 @@ class TeacherSerializer(serializers.ModelSerializer):
         user = User.objects.create_user(**user_data, is_staff=True)
         teacher = Teacher.objects.create(user=user, phone_number=validated_data.get("phone_number"))
         secret_key.logged = True
-        secret_key.seve()
 
         return teacher
 
@@ -55,7 +54,7 @@ class StudentSerializer(serializers.ModelSerializer):
         fields = ["id", "school_class", "authorized", "last_name", "first_name"]
 
 
-class StudentListSerializer(serializers.ListSerializer):
+class StudentsRegisterListSerializer(serializers.ListSerializer):
     child = StudentSerializer()
 
     def _create_user(self, data):
