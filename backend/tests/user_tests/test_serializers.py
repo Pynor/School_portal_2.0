@@ -1,87 +1,83 @@
-import json
-
-from django.urls import reverse
-from django.contrib.auth.models import User
-
-from rest_framework import status
 from rest_framework.test import APITestCase
 
-from user_app.models import Teacher, Student, SchoolClass
+from user_app.models import User, Teacher, Student, TeacherSecretKey, SchoolClass
+from user_app.serializers import UserSerializer, TeacherSerializer, StudentsRegisterListSerializer, SchoolClassSerializer
 
 
 class UserSerializerTestCase(APITestCase):
 
     def setUp(self):
         self.user_data = {
-            "username": "testuser",
-            "password": "testpassword",
-            "first_name": "Test",
-            "last_name": "User"
+            "username": "Test_username",
+            "password": "Test_password",
+            "last_name": "Test_last_name",
+            "first_name": "Test_first_name"
         }
 
     def test_create_user(self):
-        response = self.client.post(reverse("user-student-register"), self.user_data)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(User.objects.count(), 1)
+        serializer = UserSerializer(data=self.user_data)
+        self.assertTrue(serializer.is_valid())
+        user = serializer.save()
+
+        self.assertEqual(user.username, self.user_data["username"])
+        self.assertTrue(user.check_password(self.user_data["password"]))
 
 
 class TeacherSerializerTestCase(APITestCase):
 
     def setUp(self):
+        self.secret_key = TeacherSecretKey.objects.create(key="123")
         self.teacher_data = {
             "user": {
-                "username": "testteacher",
-                "password": "testpassword",
-                "first_name": "Test",
-                "last_name": "Teacher"
+                "first_name": "Test_first_name",
+                "last_name": "Test_last_name",
+                "username": "Test_username",
+                "password": "Test_password"
             },
+            "secret_key": "123",
             "phone_number": "1234567890"
         }
 
     def test_create_teacher(self):
-        response = self.client.post(reverse("user-teacher-register"), self.teacher_data)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(Teacher.objects.count(), 1)
+        serializer = TeacherSerializer(data=self.teacher_data)
+        self.assertTrue(serializer.is_valid())
+        user = serializer.save()
 
-
-class StudentSerializerTestCase(APITestCase):
-
-    def setUp(self):
-        self.student_data = {
-            "school_class": "9A",
-            "user": {
-                "first_name": "Student_first_name1",
-                "last_name": "Student_last_name1"
-            }
-        }
-
-    def test_create_student(self):
-        response = self.client.post(reverse("user-student-register"), self.student_data)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(Student.objects.count(), 1)
+        self.assertEqual(user.user.username, self.teacher_data["user"]["username"])
+        self.assertEqual(user.phone_number, self.teacher_data["phone_number"])
+        self.assertTrue(user.user.is_staff)
 
 
 class StudentListSerializerTestCase(APITestCase):
 
     def setUp(self):
+        self.school_class = SchoolClass.objects.create(title="9Г", slug="9Г")
         self.student_data = [
             {
-                "school_class": "9A",
-                "user": {
-                    "first_name": "Student_first_name1",
-                    "last_name": "Student_last_name1"
-                }
+                "first_name": "John",
+                "last_name": "Doe",
+                "school_class": "9Г"
             },
             {
-                "school_class": "9A",
-                "user": {
-                    "first_name": "Student_first_name2",
-                    "last_name": "Student_last_name2"
-                }
+                "first_name": "Jane",
+                "last_name": "Smith",
+                "school_class": "9Г"
+            },
+            {
+                "first_name": "Mike",
+                "last_name": "Johnson",
+                "school_class": "9Г"
             }
         ]
 
     def test_create_students(self):
-        response = self.client.post(reverse("user-student-register"), self.student_data)
-        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
-        self.assertEqual(Student.objects.count(), 2)
+        serializer = StudentsRegisterListSerializer(data=self.student_data)
+        self.assertTrue(serializer.is_valid())
+        students = serializer.save()
+
+        password = self.student_data[0]["first_name"][0] + self.student_data[0]["last_name"][0]
+
+        self.assertFalse(students[0].user.is_staff)
+        self.assertEqual(Student.objects.count(), 3)
+        self.assertTrue(students[0].user.check_password(password))
+        self.assertEqual(students[0].school_class.title, self.student_data[0]["school_class"])
