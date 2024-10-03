@@ -17,7 +17,7 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class Teacher(models.Model):
-    secret_key = models.CharField(max_length=40, verbose_name='Secret Key')
+    secret_key = models.CharField(max_length=40, verbose_name="Secret Key")
     user = models.OneToOneField(settings.AUTH_USER_MODEL, verbose_name="User", on_delete=models.CASCADE)
     phone_number = models.CharField(max_length=20, null=True, verbose_name="Phone number")
 
@@ -26,8 +26,8 @@ class Teacher(models.Model):
 
 
 class TeacherSecretKey(models.Model):
-    key = models.CharField(max_length=30, unique=True, verbose_name='Key')
-    logged = models.BooleanField(default=False, verbose_name='Logged')
+    key = models.CharField(max_length=30, unique=True, verbose_name="Key")
+    logged = models.BooleanField(default=False, verbose_name="Logged")
 
 
 class Student(models.Model):

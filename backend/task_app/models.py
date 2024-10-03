@@ -1,3 +1,17 @@
 from django.db import models
 
-# Create your models here.
+
+class Task(models.Model):
+    pass
+
+
+class ListTasks(models.Model):
+    pass
+
+
+class Answer(models.Model):
+    pass
+
+
+class ListAnswer(models.Model):
+    pass
