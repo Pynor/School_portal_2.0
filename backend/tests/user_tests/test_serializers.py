@@ -6,15 +6,15 @@ from user_app.serializers import UserSerializer, TeacherSerializer, StudentsRegi
 
 class UserSerializerTestCase(APITestCase):
 
-    def setUp(self):
-        self.user_data = {
+    def setUp(self) -> None:
+        self.user_data: dict = {
             "username": "Test_username",
             "password": "Test_password",
             "last_name": "Test_last_name",
             "first_name": "Test_first_name"
         }
 
-    def test_create_user(self):
+    def test_create_user(self) -> None:
         serializer = UserSerializer(data=self.user_data)
         self.assertTrue(serializer.is_valid())
         user = serializer.save()
@@ -25,9 +25,9 @@ class UserSerializerTestCase(APITestCase):
 
 class TeacherSerializerTestCase(APITestCase):
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.secret_key = TeacherSecretKey.objects.create(key="123")
-        self.teacher_data = {
+        self.teacher_data: dict[str, dict] = {
             "user": {
                 "first_name": "Test_first_name",
                 "last_name": "Test_last_name",
@@ -38,7 +38,7 @@ class TeacherSerializerTestCase(APITestCase):
             "phone_number": "1234567890"
         }
 
-    def test_create_teacher(self):
+    def test_create_teacher(self) -> None:
         serializer = TeacherSerializer(data=self.teacher_data)
         self.assertTrue(serializer.is_valid())
         user = serializer.save()
@@ -50,9 +50,9 @@ class TeacherSerializerTestCase(APITestCase):
 
 class StudentListSerializerTestCase(APITestCase):
 
-    def setUp(self):
+    def setUp(self) -> None:
         self.school_class = SchoolClass.objects.create(title="9Г", slug="9Г")
-        self.student_data = [
+        self.student_data: list[dict] = [
             {
                 "first_name": "John",
                 "last_name": "Doe",
@@ -70,7 +70,7 @@ class StudentListSerializerTestCase(APITestCase):
             }
         ]
 
-    def test_create_students(self):
+    def test_create_students(self) -> None:
         serializer = StudentsRegisterListSerializer(data=self.student_data)
         self.assertTrue(serializer.is_valid())
         students = serializer.save()

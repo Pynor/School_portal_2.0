@@ -17,28 +17,28 @@ class StudentsRegisterListAPIView(generics.CreateAPIView):
 
 
 class TeacherLoginAPIView(APIView):
-    def post(self, request):
+    def post(self, request) -> Response:
         user = TeacherLoginAPIService(request=request)
         response = user.login()
         return response
 
 
 class StudentLoginAPIView(APIView):
-    def post(self, request):
+    def post(self, request) -> Response:
         user = StudentLoginAPIService(request=request)
         response = user.login()
         return response
 
 
 class UserAPIView(APIView):
-    def get(self, request):
+    def get(self, request) -> Response:
         user = UserAPIService(request=request)
         response = user.get()
         return response
 
 
 class UserLogoutAPIView(APIView):
-    def post(self, request):
+    def post(self, request) -> Response:
         user = UserLogoutAPIService(request=request)
         response = user.logout()
         return response

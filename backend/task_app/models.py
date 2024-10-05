@@ -7,8 +7,8 @@ from user_app.models import Student, SchoolClass
 class Task(models.Model):
 
     CONDITION_CHOICES = (
-        ("None", "Без дополнительных задач"),
-        ("Photo", "Сфотографировать решение задачи")
+        ("None", "Without additional tasks"),
+        ("Photo", "Take a picture of the answer")
     )
 
     list_tasks = models.ForeignKey("ListTasks", verbose_name="List tasks", on_delete=models.CASCADE)
@@ -38,7 +38,7 @@ class Answer(models.Model):
     photo_to_the_answer = models.ImageField(upload_to="tasks_media/images/", verbose_name="Photo to the answer", null=True)
 
     def __str__(self):
-        return f"Ответ:{self.answer}"
+        return f"Answer:{self.answer}"
 
 
 class ListAnswer(models.Model):

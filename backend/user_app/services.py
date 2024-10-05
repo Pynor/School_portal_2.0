@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import datetime
 import jwt
 
@@ -12,7 +14,7 @@ ALGORITHM = "HS256"
 
 class UserAPIService:
 
-    def __init__(self, request):
+    def __init__(self, request) -> None:
         self.request = request
         self.response = Response()
 
@@ -74,7 +76,7 @@ class BaseLoginAPIService(UserAPIService):
 
 class TeacherLoginAPIService(BaseLoginAPIService):
 
-    def get_user_and_password(self):
+    def get_user_and_password(self) -> dict[str, str | None]:
         username = self.request.data.get("username")
         password = self.request.data.get("password")
 
@@ -82,7 +84,7 @@ class TeacherLoginAPIService(BaseLoginAPIService):
 
         return {"user": user, "password": password}
 
-    def get_payload(self, user):
+    def get_payload(self, user) -> dict[str, str | None]:
         return {
             "id": user.id,
             "is_staff": True,
@@ -93,7 +95,7 @@ class TeacherLoginAPIService(BaseLoginAPIService):
 
 class StudentLoginAPIService(BaseLoginAPIService):
 
-    def get_user_and_password(self):
+    def get_user_and_password(self) -> dict[str, str | None]:
         school_class = self.request.data.get("school_class")
         first_name = self.request.data.get("first_name")
         last_name = self.request.data.get("last_name")
@@ -104,7 +106,7 @@ class StudentLoginAPIService(BaseLoginAPIService):
 
         return {"user": user, "password": password}
 
-    def get_payload(self, user):
+    def get_payload(self, user) -> dict[str, str | None]:
         return {
             "id": user.id,
             "is_staff": False,
@@ -112,7 +114,7 @@ class StudentLoginAPIService(BaseLoginAPIService):
             "iat": datetime.datetime.utcnow()
         }
 
-    def post_login(self, user):
+    def post_login(self, user) -> None:
         student = Student.objects.get(user=user)
         student.authorized = True
         student.save()

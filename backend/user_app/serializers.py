@@ -17,7 +17,7 @@ class UserSerializer(serializers.ModelSerializer):
             }
         }
 
-    def create(self, validated_data):
+    def create(self, validated_data: dict[str, str]) -> User:
         user = User.objects.create_user(**validated_data)
         return user
 
@@ -30,7 +30,7 @@ class TeacherSerializer(serializers.ModelSerializer):
         model = Teacher
         fields = "__all__"
 
-    def create(self, validated_data):
+    def create(self, validated_data: dict[str]) -> Teacher:
         user_data = validated_data.pop("user")
         secret_key = TeacherSecretKey.objects.filter(key=validated_data.get("secret_key")).first()
 
@@ -57,7 +57,7 @@ class StudentSerializer(serializers.ModelSerializer):
 class StudentsRegisterListSerializer(serializers.ListSerializer):
     child = StudentSerializer()
 
-    def _create_user(self, data):
+    def _create_user(self, data: dict) -> User:
         first_name = data["user"]["first_name"]
         last_name = data["user"]["last_name"]
         username = f"{first_name}{last_name}{data['school_class']}"
@@ -70,14 +70,14 @@ class StudentsRegisterListSerializer(serializers.ListSerializer):
             username=username
         )
 
-    def _get_school_class(self, school_class_title):
+    def _get_school_class(self, school_class_title: str) -> dict[str]:
         if school_class_title not in self.school_classes:
             self.school_classes[school_class_title] = SchoolClass.objects.select_related().get(title=school_class_title)
 
         return self.school_classes[school_class_title]
 
     @transaction.atomic
-    def _create_students(self, validated_data):
+    def _create_students(self, validated_data: list[dict[str, str]]) -> Student:
         students = []
 
         for data in validated_data:
@@ -87,7 +87,7 @@ class StudentsRegisterListSerializer(serializers.ListSerializer):
             students.append(student)
         return Student.objects.bulk_create(students)
 
-    def create(self, validated_data):
+    def create(self, validated_data: list[dict[str, str]]) -> Student:
         self.school_classes = {}
         return self._create_students(validated_data)
 

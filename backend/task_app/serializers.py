@@ -14,3 +14,4 @@ class TaskSerializer(serializers.ModelSerializer):
 
 class TaskListSerializer(serializers.ListSerializer):
     child = TaskSerializer()
+

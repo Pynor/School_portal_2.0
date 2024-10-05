@@ -6,12 +6,12 @@ from user_app.models import User, Teacher, Student, TeacherSecretKey, SchoolClas
 
 
 class TeacherRegisterAPITest(APITestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.secret_key = TeacherSecretKey.objects.create(key="123")
 
-    def test_register(self):
+    def test_register(self) -> None:
         client = APIClient()
-        data = {
+        data: dict[str, dict] = {
             "user": {
                 "password": "123123",
                 "last_name": "last_name",
@@ -27,12 +27,12 @@ class TeacherRegisterAPITest(APITestCase):
 
 
 class StudentsRegisterListAPITest(APITestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.school_class = SchoolClass.objects.create(title="9Г", slug="9Г")
 
-    def test_register(self):
+    def test_register(self) -> None:
         client = APIClient()
-        data = [
+        data: list[dict] = [
             {
                 "first_name": "John",
                 "last_name": "Doe",
@@ -64,14 +64,14 @@ class StudentsRegisterListAPITest(APITestCase):
 
 
 class TeacherLoginAPITest(APITestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.secret_key = TeacherSecretKey.objects.create(key="123")
         self.user = User.objects.create_user(username="Teacher", password="password")
         self.teacher = Teacher.objects.create(user=self.user, secret_key=self.secret_key.key)
 
-    def test_login(self):
+    def test_login(self) -> None:
         client = APIClient()
-        data = {
+        data: dict = {
             "username": "Teacher",
             "password": "password",
         }
@@ -81,14 +81,14 @@ class TeacherLoginAPITest(APITestCase):
 
 
 class StudentLoginAPITest(APITestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.school_class = SchoolClass.objects.create(title="9Г", slug="9Г")
         self.user = User.objects.create_user(username="JohnDoe9Г", password="JD", first_name="John", last_name="Doe")
         self.student = Student.objects.create(school_class=self.school_class, user=self.user)
 
-    def test_login(self):
+    def test_login(self) -> None:
         client = APIClient()
-        data = {
+        data: dict = {
             "first_name": "John",
             "last_name": "Doe",
             "password": "JD",
@@ -102,25 +102,26 @@ class StudentLoginAPITest(APITestCase):
 
 
 class UserAPITest(APITestCase):
-    def setUp(self):
+    def setUp(self) -> None:
         self.client = APIClient()
 
         self.school_class = SchoolClass.objects.create(title="9Г", slug="9Г")
 
-        self.user_student = User.objects.create_user(username="IgorLox9Г", password="IL", first_name="Igor", last_name="Lox")
+        self.user_student = User.objects.create_user(username="IgorLox9Г", password="IL",
+                                                     first_name="Igor", last_name="Lox")
         self.user_teacher = User.objects.create_user(username="Teacher", password="password")
 
         self.student = Student.objects.create(user=self.user_student, school_class=self.school_class)
         self.teacher = Teacher.objects.create(user=self.user_teacher, secret_key="123")
 
-    def test_get_student(self):
-        self.student_jwt_token = self.client.post("/user_app/api/v1/api-student-login/", format="json",
-                                                  data={
-                                                      "first_name": "Igor",
-                                                      "last_name": "Lox",
-                                                      "password": "IL",
-                                                      "school_class": "9Г"
-                                                  }).data["jwt_token"]
+    def test_get_student(self) -> None:
+        self.student_jwt_token: str = self.client.post("/user_app/api/v1/api-student-login/", format="json",
+                                                       data={
+                                                            "first_name": "Igor",
+                                                            "last_name": "Lox",
+                                                            "password": "IL",
+                                                            "school_class": "9Г"
+                                                       }).data["jwt_token"]
 
         self.client.credentials(HTTP_AUTHORIZATION="jwt_token " + self.student_jwt_token)
         response = self.client.get("/user_app/api/v1/api-user-get/")
@@ -128,10 +129,10 @@ class UserAPITest(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(response.data["username"], "IgorLox9Г")
 
-    def test_get_teacher(self):
-        self.teacher_jwt_token = self.client.post("/user_app/api/v1/api-teacher-login/",
-                                                  {"username": "Teacher", "password": "password"},
-                                                  format="json").data["jwt_token"]
+    def test_get_teacher(self) -> None:
+        self.teacher_jwt_token: str = self.client.post("/user_app/api/v1/api-teacher-login/",
+                                                       {"username": "Teacher", "password": "password"},
+                                                       format="json").data["jwt_token"]
 
         self.client.credentials(HTTP_AUTHORIZATION="jwt_token " + self.teacher_jwt_token)
         response = self.client.get("/user_app/api/v1/api-user-get/")
