@@ -11,14 +11,16 @@ class Task(models.Model):
         ("Photo", "Take a picture of the answer")
     )
 
+    answer_to_the_task = models.CharField(verbose_name="Answer to task")
     sequence_number = models.IntegerField(verbose_name="Sequence number")
-    answer_to_the_task = models.CharField(verbose_name="Answer to task", max_length=100)
     title = models.CharField(verbose_name="Title to task", max_length=30, unique=True)
     description = models.TextField(verbose_name="Description", max_length=300, null=True)
     time_to_task = models.DurationField(verbose_name="Time to task", blank=True, null=True)
-    list_tasks = models.ForeignKey("ListTasks", verbose_name="List tasks", on_delete=models.CASCADE)
-    additional_condition = models.CharField(verbose_name="Additional condition", choices=CONDITION_CHOICES,
-                                            max_length=255, null=True)
+
+    list_tasks = models.ForeignKey("ListTasks", verbose_name="List tasks", related_name='tasks',
+                                   on_delete=models.CASCADE)
+    additional_condition = models.CharField(verbose_name="Additional condition", max_length=255, null=True,
+                                            choices=CONDITION_CHOICES)
 
     docx = models.FileField(upload_to="tasks_media/docx/",
                             validators=[FileExtensionValidator(allowed_extensions=["docx"])],
@@ -41,7 +43,7 @@ class ListTasks(models.Model):
 
 
 class Answer(models.Model):
-    answer = models.CharField(verbose_name="Answer", max_length=100, null=True)
+    answer = models.CharField(verbose_name="Answer", null=True)
     task = models.ForeignKey("Task", verbose_name="Task", on_delete=models.CASCADE)
     list_answer = models.ForeignKey("ListAnswer", verbose_name="List answer", on_delete=models.CASCADE)
     photo_to_the_answer = models.ImageField(upload_to="tasks_media/images/", verbose_name="Photo to answer", null=True)
