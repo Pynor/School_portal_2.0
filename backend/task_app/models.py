@@ -17,7 +17,7 @@ class Task(models.Model):
     description = models.TextField(verbose_name="Description", max_length=300, null=True)
     time_to_task = models.DurationField(verbose_name="Time to task", blank=True, null=True)
 
-    list_tasks = models.ForeignKey("ListTasks", verbose_name="List tasks", related_name='tasks',
+    list_tasks = models.ForeignKey("ListTasks", verbose_name="List tasks", related_name="tasks",
                                    on_delete=models.CASCADE)
     additional_condition = models.CharField(verbose_name="Additional condition", max_length=255, null=True,
                                             choices=CONDITION_CHOICES)

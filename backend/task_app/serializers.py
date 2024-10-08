@@ -7,8 +7,8 @@ from user_app.models import SchoolClass
 class TaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
-        fields = ('sequence_number', 'answer_to_the_task', 'title',
-                  'description', 'additional_condition', "time_to_task")
+        fields = ("sequence_number", "answer_to_the_task", "title",
+                  "description", "additional_condition", "time_to_task")
 
 
 class TaskListSerializer(serializers.ModelSerializer):
@@ -17,16 +17,16 @@ class TaskListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = ListTasks
-        fields = ('id', 'title', 'count_task', 'tasks', 'task_for')
-        read_only_fields = ('count_task',)
+        fields = ("id", "title", "count_task", "tasks", "task_for")
+        read_only_fields = ("count_task",)
 
-    def create(self, validated_data):
-        tasks_data = validated_data.pop('tasks')
-        task_for_title = validated_data.pop('task_for')
+    def create(self, validated_data: dict[str]) -> ListTasks:
+        tasks_data = validated_data.pop("tasks")
+        task_for_title = validated_data.pop("task_for")
         task_for = SchoolClass.objects.get(title=task_for_title)
 
         list_tasks = ListTasks.objects.create(count_task=len(tasks_data),
-                                              title=validated_data.pop('title'),
+                                              title=validated_data.pop("title"),
                                               task_for=task_for)
 
         for task_data in tasks_data:
