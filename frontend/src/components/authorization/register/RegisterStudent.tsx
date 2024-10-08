@@ -61,7 +61,7 @@ const RegisterStudents = (props: { userData: UserData }) => {
   };
 
 
-  const submitStudents = async (e: React.FormEvent) => {
+  const registerStudents = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setErrors({});
@@ -93,7 +93,7 @@ const RegisterStudents = (props: { userData: UserData }) => {
   };
 
   if (loading) {
-    return <div className="form-container"><h2>Загрузка.</h2></div>;
+    return <div className="form-container"><h2>Загрузка...</h2></div>;
   }
 
   return (
@@ -120,7 +120,7 @@ const RegisterStudents = (props: { userData: UserData }) => {
                 onChange={(e) => handleSchoolClassChange(e.target.value)}
               />
 
-              <button className="btn-primary" type="button" onClick={submitStudents} disabled={loading}>
+              <button className="btn-primary" type="button" onClick={registerStudents} disabled={loading}>
                 Зарегистрировать
               </button>
             </div>
@@ -128,7 +128,7 @@ const RegisterStudents = (props: { userData: UserData }) => {
 
 
           {numStudents >= 0 && (
-            <form onSubmit={submitStudents}>
+            <form onSubmit={registerStudents}>
               {studentsData.map((student, index) => (
                 <div key={index} className="student-form">
                   <h2 className="h2">Ученик: "{index + 1}"</h2>

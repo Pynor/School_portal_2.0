@@ -17,7 +17,7 @@ const LoginTeacher = (props: { userData: UserData }) => {
     const [password, setPassword] = useState('');
     const [secret_key, setSecretKey] = useState('');
 
-    const submit = async (e: SyntheticEvent) => {
+    const login = async (e: SyntheticEvent) => {
         e.preventDefault();
 
         const postResponse = await fetch(`${BASE_URL}/user_app/api/v1/api-teacher-login/`, {
@@ -53,7 +53,7 @@ const LoginTeacher = (props: { userData: UserData }) => {
 
     return (
         <div className="form-container">
-            <form onSubmit={submit}>
+            <form onSubmit={login}>
                 <h1 className="h1">Регистрация</h1>
                 {error && <h3 className="error-message">{error}</h3>}
                 <div className="form-group">

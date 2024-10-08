@@ -27,7 +27,7 @@ const Nav = (props: {userData: UserData, setName: (name: string) => void }) => {
     }
 
     const menu = props.userData.username === "" ? (
-        <ul className="navbar-nav">
+        <ul className="navbar-nav"> 
           <li className="nav-item">
             <Link to="/login-hub" className="nav-link btn btn-primary">Вход</Link>
           </li>

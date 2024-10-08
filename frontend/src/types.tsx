@@ -7,7 +7,8 @@ export type UserData = {
     last_name: string;
     birth_date: string;
     is_staff: boolean;
-  }
+};
+
 export  type Student = {
     last_name: string;
     first_name: string;
@@ -19,4 +20,20 @@ export type Props = {
         id: number;
         username: string;
     };
+};
+
+export interface Task {
+    sequence_number: number;
+    answer_to_the_task: string;
+    title: string;
+    description: string;
+    additional_condition?: string;
+    time_to_task?: string;
+};
+  
+export interface TaskList {
+    title: string;
+    count_task: number;
+    task_for: string;
+    tasks: Task[];
 };
