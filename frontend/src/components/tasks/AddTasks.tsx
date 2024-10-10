@@ -1,37 +1,140 @@
-import React from 'react';
-import {Link} from "react-router-dom";
+import React, { useEffect, useState } from 'react';
 
 import { BASE_URL } from '../../constants';
-import { UserData, Student } from '../../types';
+import { UserData, Task, TaskList } from '../../types';
 import getCookie from '../../functions';
 
+import './CSS/add-task.css';
 
-import './CSS/add-task.css'
 
+const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
+  const csrftoken = getCookie('csrftoken');
 
-const AddTasks = (props: { userData: UserData }) => {
+  const emptyTask: Omit<Task, 'sequence_number'> = {
+    answer_to_the_task: '',
+    title: '',
+    description: '',
+    additional_condition: '',
+    time_to_task: '',
+  };
 
-    const csrftoken = getCookie('csrftoken');
+  const initialFormData: TaskList = {
+    title: '',
+    count_task: 1,
+    task_for: '',
+    tasks: [{ sequence_number: 1, ...emptyTask }],
+  };
 
-    const addTasks = async () => {
-        await fetch(`${BASE_URL}/task_app/api/v1/api-task-list-create/`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrftoken
-            },
-            credentials: 'include',
-        });
-    }
+  const [formData, setFormData] = useState<TaskList>(initialFormData);
 
-    
-      return (
-        <nav className="">
-          <div className="">
-            
-          </div>
-        </nav>
+  useEffect(() => {
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      tasks: Array.from({ length: prevFormData.count_task }, (_, i) => ({
+        sequence_number: i + 1,
+        ...emptyTask,
+      })),
+    }));
+  }, [formData.count_task]);
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      [name]: name === 'count_task' ? parseInt(value, 10) : value,
+    }));
+  };
+
+  const handleTaskChange = (index: number, e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData((prevFormData) => {
+      const updatedTasks = prevFormData.tasks.map((task, i) =>
+        i === index ? { ...task, [name]: value } : task
       );
-};
+      return { ...prevFormData, tasks: updatedTasks };
+    });
+  };
+
+  const addTask = () => {
+    setFormData((prevFormData) => {
+      const newTask = { sequence_number: prevFormData.count_task + 1, ...emptyTask };
+      return {
+        ...prevFormData,
+        count_task: prevFormData.count_task + 1,
+        tasks: [...prevFormData.tasks, newTask],
+      };
+    });
+  };
+
+  const addTasks = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    await fetch(`${BASE_URL}/task_app/api/v1/api-task-list-create/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrftoken,
+      },
+      credentials: 'include',
+      body: JSON.stringify(formData),
+    });
+
+    setFormData(initialFormData);
+  };
+
+  return (
+    <nav className="form-container">
+      {userData.is_staff ? (
+        <form onSubmit={addTasks} >
+          <div className="form-group">
+            <div className="form-container">
+              <div className="form-group">
+                <input className="form-control" type="text" name="title" placeholder="Название теста" value={formData.title} onChange={handleChange} required />
+              </div>
+              <div className="form-group">
+                <input className="form-control" type="text" name="task_for" placeholder="Задача для" value={formData.task_for} onChange={handleChange} required />
+              </div>
+              <div className="form-group">
+                <input className="form-control" type="number" name="count_task" placeholder="Кол-во задач" value={formData.count_task} onChange={handleChange} min={1} required />
+              </div>
+              <button className="btn-primary" type="button" onClick={addTask}>
+                Добавить задачу
+              </button>
+            </div>
+          </div>
+
+          {formData.tasks.map((task, index) => (
+            <div key={index} className="form-group">
+              <div className="form-container">
+                <div className="form-group">
+                  <input className="form-control" type="text" name="title" placeholder="Название задачи" value={task.title} onChange={(e) => handleTaskChange(index, e)} required />
+                </div>
+
+                <div className="form-group">
+                  <textarea className="form-control" name="description" value={task.description} placeholder="Описание задачи" onChange={(e) => handleTaskChange(index, e)} required />
+                </div>
+
+                <div className="form-group">
+                  <input className="form-control" type="text" name="additional_condition" placeholder="Доп. условия" value={task.additional_condition} onChange={(e) => handleTaskChange(index, e)} />
+                </div>
+
+                <div className="form-group">
+                  <input className="form-control" type="text" name="answer_to_the_task" placeholder="Ответ на задачу" value={task.answer_to_the_task} onChange={(e) => handleTaskChange(index, e)} />
+                </div>
+
+                <div className="form-group">
+                  <input className="form-control" type="text" name="time_to_task" placeholder="Время на выполнение" value={task.time_to_task} onChange={(e) => handleTaskChange(index, e)} />
+                </div>
+              </div>
+            </div>
+          ))}
+
+          <button className="btn-primary" type="submit">
+            Создать тест
+          </button>
+        </form>) : (<h2 className="error-message">У вас нет на это прав.</h2>)}
+    </nav>
+  )
+}
 
 export default AddTasks;

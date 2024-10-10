@@ -22,14 +22,14 @@ export type Props = {
     };
 };
 
-export interface Task {
+export type Task = {
     sequence_number: number;
     answer_to_the_task: string;
     title: string;
     description: string;
     additional_condition?: string;
     time_to_task?: string;
-};
+  };
   
 export interface TaskList {
     title: string;
