@@ -5,10 +5,13 @@ import { UserData, Task, TaskList } from '../../types';
 import getCookie from '../../functions';
 
 import './CSS/add-task.css';
+import { Navigate } from 'react-router-dom';
 
 
 const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
   const csrftoken = getCookie('csrftoken');
+
+  const [message, setMessage] = useState<React.ReactNode>(null);
 
   const emptyTask: Omit<Task, 'sequence_number'> = {
     answer_to_the_task: '',
@@ -69,7 +72,7 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
   const addTasks = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    await fetch(`${BASE_URL}/task_app/api/v1/api-task-list-create/`, {
+    const postResponse = await fetch(`${BASE_URL}/task_app/api/v1/api-task-list-create/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -79,11 +82,22 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
       body: JSON.stringify(formData),
     });
 
+    if (postResponse.ok) {
+      setMessage(
+        <h3 className="success-message">Задача создана.</h3>
+      );
+    } else {
+      setMessage(
+        <h3 className="error-message">Произошла ошибка при создании задачи.</h3>
+      );
+    }
+
     setFormData(initialFormData);
   };
 
   return (
     <nav className="form-container">
+      {message && message}
       {userData.is_staff ? (
         <form onSubmit={addTasks} >
           <div className="form-group">
@@ -97,6 +111,7 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
               <div className="form-group">
                 <input className="form-control" type="number" name="count_task" placeholder="Кол-во задач" value={formData.count_task} onChange={handleChange} min={1} required />
               </div>
+
               <button className="btn-primary" type="button" onClick={addTask}>
                 Добавить задачу
               </button>
@@ -122,8 +137,9 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
                   <input className="form-control" type="text" name="answer_to_the_task" placeholder="Ответ на задачу" value={task.answer_to_the_task} onChange={(e) => handleTaskChange(index, e)} />
                 </div>
 
-                <div className="form-group">
-                  <input className="form-control" type="text" name="time_to_task" placeholder="Время на выполнение" value={task.time_to_task} onChange={(e) => handleTaskChange(index, e)} />
+                <div className='form-group-time'>
+                  <div className='form-time-div'>Время на выполнение:</div>
+                  <input className="form-control" type="time" name="time_to_task" value={task.time_to_task} onChange={(e) => handleTaskChange(index, e)} style={{ width: '31%' }} />
                 </div>
               </div>
             </div>
@@ -132,6 +148,7 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
           <button className="btn-primary" type="submit">
             Создать тест
           </button>
+
         </form>) : (<h2 className="error-message">У вас нет на это прав.</h2>)}
     </nav>
   )

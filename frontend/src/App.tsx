@@ -9,6 +9,8 @@ import LoginStudent from './components/authorization/login/LoginStudent';
 import LoginTeacher from './components/authorization/login/LoginTeacher';
 import LoginHub from './components/authorization/login/LoginHub';
 
+import Profile from './components/profile/Profile'
+
 import AddTasks from './components/tasks/AddTasks'
 
 import Nav from './components/navigation/Nav';
@@ -70,6 +72,11 @@ const App = () => {
                                 <Route path="/register-hub" element={<RegisterHub />} />
                                 <Route path="/register-teacher" element={<RegisterTeacher userData={userData} />} />
                                 <Route path="/register-student" element={<RegisterStudents userData={userData} />} />
+                            </Routes>
+                        </div>
+                        <div className="profile">
+                            <Routes>
+                                <Route path="/profile" element={<Profile/>} />
                             </Routes>
                         </div>
                         <div className="form-tasks-and-answers">

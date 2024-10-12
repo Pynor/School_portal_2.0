@@ -38,7 +38,6 @@ const LoginStudent = (props: { userData: UserData }) => {
         });
 
         if (postResponse.ok) {
-            const data = await postResponse.json();
             setRedirect(true);
 
             setTimeout(() => {

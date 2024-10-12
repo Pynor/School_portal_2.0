@@ -65,32 +65,26 @@ const RegisterStudents = (props: { userData: UserData }) => {
     e.preventDefault();
     setLoading(true);
     setErrors({});
-  
-    try {
-      const response = await fetch(`${BASE_URL}/user_app/api/v1/api-student-register/`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'X-CSRFToken': csrftoken,
-        },
-        credentials: 'include',
-        body: JSON.stringify(studentsData),
-      });
-  
-      const data = await response.json();
-  
-      if (!response.ok) {
-        setErrors(data);
-      } else {
-        navigate('/');
-      }
-  
-    } catch (error) {
-      console.error('Error registering students:', error);
 
-    } finally {
-      setLoading(false);
+    const response = await fetch(`${BASE_URL}/user_app/api/v1/api-student-register/`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'X-CSRFToken': csrftoken,
+      },
+      credentials: 'include',
+      body: JSON.stringify(studentsData),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      setErrors(data);
+    } else {
+      navigate('/');
     }
+    setLoading(false);
+
   };
 
   if (loading) {
