@@ -1,11 +1,10 @@
 import React, { useEffect, useState } from 'react';
 
-import { BASE_URL } from '../../constants';
+import { BASE_URL, CLASSES } from '../../constants';
 import { UserData, Task, TaskList } from '../../types';
 import getCookie from '../../functions';
 
 import './CSS/add-task.css';
-import { Navigate } from 'react-router-dom';
 
 
 const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
@@ -40,7 +39,7 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
     }));
   }, [formData.count_task]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prevFormData) => ({
       ...prevFormData,
@@ -106,10 +105,17 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
                 <input className="form-control" type="text" name="title" placeholder="Название теста" value={formData.title} onChange={handleChange} required />
               </div>
               <div className="form-group">
-                <input className="form-control" type="text" name="task_for" placeholder="Задача для" value={formData.task_for} onChange={handleChange} required />
+                <input className="form-control" type="number" name="count_task" placeholder="Кол-во задач" value={formData.count_task} onChange={handleChange} min={1} required />
               </div>
               <div className="form-group">
-                <input className="form-control" type="number" name="count_task" placeholder="Кол-во задач" value={formData.count_task} onChange={handleChange} min={1} required />
+                <select className="form-control" id="task_for" name="task_for" value={formData.task_for} onChange={handleChange} required>
+                  <option value="">Выберите класс</option>
+                  {CLASSES.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
               </div>
 
               <button className="btn-primary" type="button" onClick={addTask}>
@@ -130,11 +136,14 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
                 </div>
 
                 <div className="form-group">
-                  <input className="form-control" type="text" name="additional_condition" placeholder="Доп. условия" value={task.additional_condition} onChange={(e) => handleTaskChange(index, e)} />
+                  <input className="form-control" type="text" name="answer_to_the_task" placeholder="Ответ на задачу" value={task.answer_to_the_task} onChange={(e) => handleTaskChange(index, e)} />
                 </div>
 
                 <div className="form-group">
-                  <input className="form-control" type="text" name="answer_to_the_task" placeholder="Ответ на задачу" value={task.answer_to_the_task} onChange={(e) => handleTaskChange(index, e)} />
+                  <select className="form-control" id="task_for" name="task_for" value={formData.task_for} onChange={handleChange} required>
+                    <option value="None">Без доп. условий</option>
+                    <option value="Photo">Сделать фото решения</option>
+                  </select>
                 </div>
 
                 <div className='form-group-time'>

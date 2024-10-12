@@ -57,7 +57,7 @@ const LoginTeacher = (props: { userData: UserData }) => {
     return (
         <div className="form-container">
             <form onSubmit={login}>
-                <h1 className="h1">Регистрация</h1>
+                <h1 className="h1">Авторизация</h1>
                 {error && <h3 className="error-message">{error}</h3>}
                 <div className="form-group">
                     <input type="text" className="form-control" id="username" placeholder="Имя пользователя" required

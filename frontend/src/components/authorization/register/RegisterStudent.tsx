@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { BASE_URL } from '../../../constants';
+import { BASE_URL, CLASSES } from '../../../constants';
 import { UserData, Student } from '../../../types';
 import getCookie from '../../../functions';
 
@@ -97,23 +97,28 @@ const RegisterStudents = (props: { userData: UserData }) => {
         <div className="form-container">
           <div className="form-group">
             <div className="form-container">
-              <input
-                min="0"
-                type="number"
-                id="num-students"
-                value={numStudents}
-                className="form-control"
-                onChange={(e) => handleNumStudentsChange(parseInt(e.target.value, 10))}
-              />
 
-              <input
-                type="text"
-                id="school-class"
-                value={schoolClass}
-                className="form-control"
-                placeholder="Класс учеников"
-                onChange={(e) => handleSchoolClassChange(e.target.value)}
-              />
+              <div className="form-group">
+                <input
+                  min="0"
+                  type="number"
+                  id="num-students"
+                  value={numStudents}
+                  className="form-control"
+                  onChange={(e) => handleNumStudentsChange(parseInt(e.target.value, 10))}
+                />
+              </div>
+
+              <div className="form-group">
+                <select className="form-control" id="task_for" name="task_for" onChange={e => handleSchoolClassChange(e.target.value)} required>
+                  <option value="">Выберите класс</option>
+                  {CLASSES.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              </div>
 
               <button className="btn-primary" type="button" onClick={registerStudents} disabled={loading}>
                 Зарегистрировать
@@ -125,31 +130,34 @@ const RegisterStudents = (props: { userData: UserData }) => {
           {numStudents >= 0 && (
             <form onSubmit={registerStudents}>
               {studentsData.map((student, index) => (
-                <div key={index} className="student-form">
-                  <h2 className="h2">Ученик: "{index + 1}"</h2>
+                <div className="form-container">
+                  <div key={index} className="student-form">
+                    <h2 className="h2">Ученик: "{index + 1}"</h2>
 
-                  <div className="form-group">
+                    <div className="form-group">
+                      <input
+                        required
+                        type="text"
+                        placeholder="Имя"
+                        value={student.first_name}
+                        id={`first_name_${index}`}
+                        onChange={(e) => handleInputChange(index, 'first_name', e.target.value)}
+                        className={`form-control ${errors[index]?.includes('First name is required') ? 'is-invalid' : ''}`}
+                      />
+                    </div>
 
-                    <input
-                      required
-                      type="text"
-                      placeholder="Имя"
-                      value={student.first_name}
-                      id={`first_name_${index}`}
-                      onChange={(e) => handleInputChange(index, 'first_name', e.target.value)}
-                      className={`form-control ${errors[index]?.includes('First name is required') ? 'is-invalid' : ''}`}
-                    />
-
-                    <input
-                      required
-                      type="text"
-                      value={student.last_name}
-                      id={`last_name_${index}`}
-                      placeholder="Фамилия"
-                      onChange={(e) => handleInputChange(index, 'last_name', e.target.value)}
-                      className={`form-control ${errors[index]?.includes('Last name is required') ? 'is-invalid' : ''}`}
-                    />
-
+                    <div className="form-group">
+                      <input
+                        required
+                        type="text"
+                        value={student.last_name}
+                        id={`last_name_${index}`}
+                        placeholder="Фамилия"
+                        onChange={(e) => handleInputChange(index, 'last_name', e.target.value)}
+                        className={`form-control ${errors[index]?.includes('Last name is required') ? 'is-invalid' : ''}`}
+                      />
+                    </div>
+                    
                   </div>
                 </div>
               ))}

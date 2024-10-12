@@ -1,7 +1,7 @@
 import React, { SyntheticEvent, useState } from 'react';
 import { Navigate } from "react-router-dom";
 
-import { BASE_URL } from '../../../constants';
+import { BASE_URL, CLASSES } from '../../../constants';
 import { UserData } from '../../../types';
 import getCookie from '../../../functions';
 
@@ -61,7 +61,7 @@ const LoginStudent = (props: { userData: UserData }) => {
     return (
         <div className="form-container">
             <form onSubmit={login}>
-                <h1 className="h1">Регистрация</h1>
+                <h1 className="h1">Авторизация</h1>
                 {error && <h3 className="error-message">{error}</h3>}
                 <div className="form-group">
                     <input type="text" className="form-control" id="first_name" placeholder="Имя" required
@@ -74,9 +74,14 @@ const LoginStudent = (props: { userData: UserData }) => {
                     />
                 </div>
                 <div className="form-group">
-                    <input type="text" className="form-control" id="school_class" placeholder="Класс" required
-                        onChange={e => setSchoolClass(e.target.value)}
-                    />
+                    <select className="form-control" id="school_class" name="school_class" onChange={e => setSchoolClass(e.target.value)} required>
+                        <option value="">Выберите свой класс</option>
+                        {CLASSES.map((option) => (
+                            <option key={option} value={option}>
+                                {option}
+                            </option>
+                        ))}
+                    </select>
                 </div>
                 <div className="form-group">
                     <input type="password" className="form-control" id="password" placeholder="Пароль" required

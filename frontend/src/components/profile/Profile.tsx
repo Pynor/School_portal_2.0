@@ -6,7 +6,9 @@ const Profile = () => {
     return (
         <div className="form-container">
             <Link to="/add-tasks" className="btn-primary">Создать тест</Link>
+            <Link to="/register-student" className="btn-primary">Зарегистрировать учеников</Link>
         </div>
+        
     );
 };
 
