@@ -5,7 +5,7 @@ import { BASE_URL } from '../../../constants';
 import { UserData } from '../../../types';
 import getCookie from '../../../functions';
 
-import '../CSS/form-signin.css'
+import '../CSS/form-signing.css'
 
 
 const LoginStudent = (props: { userData: UserData }) => {
@@ -40,6 +40,11 @@ const LoginStudent = (props: { userData: UserData }) => {
         if (postResponse.ok) {
             const data = await postResponse.json();
             setRedirect(true);
+
+            setTimeout(() => {
+                window.location.reload();
+            }, 500);
+
         } else {
             const data = await postResponse.json();
             if (data && data.username) {

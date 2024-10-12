@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import React from 'react';
 
-import '../CSS/form-signin.css'
+import '../CSS/form-signing.css'
 
 
 const RegisterHub = () => {

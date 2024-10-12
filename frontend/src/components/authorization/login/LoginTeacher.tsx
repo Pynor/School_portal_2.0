@@ -5,7 +5,7 @@ import { BASE_URL } from '../../../constants';
 import { UserData } from '../../../types';
 import getCookie from '../../../functions';
 
-import '../CSS/form-signin.css'
+import '../CSS/form-signing.css'
 
 
 const LoginTeacher = (props: { userData: UserData }) => {
@@ -15,7 +15,6 @@ const LoginTeacher = (props: { userData: UserData }) => {
 
     const [username, setUername] = useState('');
     const [password, setPassword] = useState('');
-    const [secret_key, setSecretKey] = useState('');
 
     const login = async (e: SyntheticEvent) => {
         e.preventDefault();
@@ -28,7 +27,6 @@ const LoginTeacher = (props: { userData: UserData }) => {
             },
             credentials: 'include',
             body: JSON.stringify({
-                secret_key,
                 password,
                 username
             })
@@ -37,6 +35,11 @@ const LoginTeacher = (props: { userData: UserData }) => {
         if (postResponse.ok) {
             const data = await postResponse.json();
             setRedirect(true);
+
+            setTimeout(() => {
+                window.location.reload();
+            }, 500);
+
         } else {
             const data = await postResponse.json();
             if (data && data.username) {
@@ -56,11 +59,6 @@ const LoginTeacher = (props: { userData: UserData }) => {
             <form onSubmit={login}>
                 <h1 className="h1">Регистрация</h1>
                 {error && <h3 className="error-message">{error}</h3>}
-                <div className="form-group">
-                    <input type="password" className="form-control" id="secret_key" placeholder="Кодовое слово" required
-                        onChange={e => setSecretKey(e.target.value)}
-                    />
-                </div>
                 <div className="form-group">
                     <input type="text" className="form-control" id="username" placeholder="Имя пользователя" required
                         onChange={e => setUername(e.target.value)}

@@ -5,7 +5,7 @@ import { BASE_URL } from '../../../constants';
 import { UserData, Student } from '../../../types';
 import getCookie from '../../../functions';
 
-import '../CSS/form-signin.css'
+import '../CSS/form-signing.css'
 
 
 
@@ -65,7 +65,7 @@ const RegisterStudents = (props: { userData: UserData }) => {
     e.preventDefault();
     setLoading(true);
     setErrors({});
-
+  
     try {
       const response = await fetch(`${BASE_URL}/user_app/api/v1/api-student-register/`, {
         method: 'POST',
@@ -76,14 +76,15 @@ const RegisterStudents = (props: { userData: UserData }) => {
         credentials: 'include',
         body: JSON.stringify(studentsData),
       });
-
+  
+      const data = await response.json();
+  
       if (!response.ok) {
-        const data = await response.json();
         setErrors(data);
       } else {
         navigate('/');
       }
-      
+  
     } catch (error) {
       console.error('Error registering students:', error);
 
@@ -144,7 +145,7 @@ const RegisterStudents = (props: { userData: UserData }) => {
                       onChange={(e) => handleInputChange(index, 'first_name', e.target.value)}
                       className={`form-control ${errors[index]?.includes('First name is required') ? 'is-invalid' : ''}`}
                     />
-                    
+
                     <input
                       required
                       type="text"
@@ -163,7 +164,7 @@ const RegisterStudents = (props: { userData: UserData }) => {
         </div>
       ) : (
         <div className="form-container">
-            <h2 className="error-message">У вас нет на это прав.</h2>
+          <h2 className="error-message">У вас нет на это прав.</h2>
         </div>
       )}
     </div>

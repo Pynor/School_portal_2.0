@@ -5,7 +5,7 @@ import { BASE_URL } from '../../../constants';
 import { UserData } from '../../../types';
 import getCookie from '../../../functions';
 
-import '../CSS/form-signin.css'
+import '../CSS/form-signing.css'
 
 const RegisterTeacher = (props: { userData: UserData }) => {
 

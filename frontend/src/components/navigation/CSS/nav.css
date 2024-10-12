@@ -37,4 +37,15 @@
   margin-left: 1rem;
 }
 
+.error-message {
+  color: rgb(212, 20, 20);
+  text-align: center;
+  margin-bottom: 10px;
+}
+
+.success-message {
+  color: rgb(15, 199, 128);
+  text-align: center;
+  margin-bottom: 10px;
+}
 
