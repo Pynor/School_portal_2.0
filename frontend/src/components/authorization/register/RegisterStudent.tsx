@@ -97,8 +97,9 @@ const RegisterStudents = (props: { userData: UserData }) => {
         <div className="form-container">
           <div className="form-group">
             <div className="form-container">
-
-              <div className="form-group">
+              <h2>Регистрация учеников</h2>
+              <div className="form-group d-flex align-items-center">
+                <div className='form-div'>Кол-во учеников:</div>
                 <input
                   min="0"
                   type="number"
@@ -157,7 +158,7 @@ const RegisterStudents = (props: { userData: UserData }) => {
                         className={`form-control ${errors[index]?.includes('Last name is required') ? 'is-invalid' : ''}`}
                       />
                     </div>
-                    
+
                   </div>
                 </div>
               ))}

@@ -16,7 +16,7 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
     answer_to_the_task: '',
     title: '',
     description: '',
-    additional_condition: '',
+    additional_condition: 'None',
     time_to_task: '',
   };
 
@@ -47,12 +47,11 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
     }));
   };
 
-  const handleTaskChange = (index: number, e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleTaskChange = (index: number, e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prevFormData) => {
-      const updatedTasks = prevFormData.tasks.map((task, i) =>
-        i === index ? { ...task, [name]: value } : task
-      );
+      const updatedTasks = [...prevFormData.tasks];
+      updatedTasks[index] = { ...updatedTasks[index], [name]: value };
       return { ...prevFormData, tasks: updatedTasks };
     });
   };
@@ -140,7 +139,7 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
                 </div>
 
                 <div className="form-group">
-                  <select className="form-control" id="task_for" name="task_for" value={formData.task_for} onChange={handleChange} required>
+                  <select className="form-control" id="additional_condition" name="additional_condition" value={task.additional_condition} onChange={(e) => handleTaskChange(index, e)} required>
                     <option value="None">Без доп. условий</option>
                     <option value="Photo">Сделать фото решения</option>
                   </select>
