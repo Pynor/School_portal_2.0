@@ -1,7 +1,19 @@
 from rest_framework import serializers
 
-from .models import Task, ListTasks
+from .models import Answer, ListAnswer, Task, ListTasks
 from user_app.models import SchoolClass
+
+
+class AnswerSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Answer
+
+
+class AnswerListSerializer(serializers.ModelSerializer):
+    tasks = AnswerSerializer(many=True)
+
+    class Meta:
+        model = ListTasks
 
 
 class TaskSerializer(serializers.ModelSerializer):
