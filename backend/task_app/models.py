@@ -17,8 +17,8 @@ class Task(models.Model):
     description = models.TextField(verbose_name="Description", max_length=300, null=True)
     time_to_task = models.DurationField(verbose_name="Time to task", blank=True, null=True)
 
-    list_tasks = models.ForeignKey("ListTasks", verbose_name="List tasks", related_name="tasks",
-                                   on_delete=models.CASCADE)
+    task_list = models.ForeignKey("TaskList", verbose_name="List tasks", related_name="tasks",
+                                  on_delete=models.CASCADE)
     additional_condition = models.CharField(verbose_name="Additional condition", max_length=255, null=True,
                                             choices=CONDITION_CHOICES)
 
@@ -33,7 +33,7 @@ class Task(models.Model):
         return f"Task({self.sequence_number}): {self.title}"
 
 
-class ListTasks(models.Model):
+class TaskList(models.Model):
     count_task = models.IntegerField(verbose_name="Count task")
     title = models.CharField(max_length=255, unique=True, verbose_name="Title list tasks")
     task_for = models.ForeignKey(to=SchoolClass, verbose_name="Task for", on_delete=models.CASCADE)
@@ -45,14 +45,14 @@ class ListTasks(models.Model):
 class Answer(models.Model):
     answer = models.CharField(verbose_name="Answer", null=True)
     task = models.ForeignKey("Task", verbose_name="Task", on_delete=models.CASCADE)
-    list_answer = models.ForeignKey("ListAnswer", verbose_name="List answer", on_delete=models.CASCADE)
+    answer_list = models.ForeignKey("AnswerList", verbose_name="List answers", on_delete=models.CASCADE)
     photo_to_the_answer = models.ImageField(upload_to="tasks_media/images/", verbose_name="Photo to answer", null=True)
 
     def __str__(self):
         return f"Answer:{self.answer} to Task:{self.task.title}"
 
 
-class ListAnswer(models.Model):
+class AnswerList(models.Model):
     student = models.ForeignKey(to=Student, verbose_name="Student", on_delete=models.CASCADE)
 
     def __str__(self):
