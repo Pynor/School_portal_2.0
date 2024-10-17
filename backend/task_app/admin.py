@@ -4,5 +4,5 @@ from django.contrib import admin
 
 admin.site.register(Task)
 admin.site.register(Answer)
-admin.site.register(ListTasks)
-admin.site.register(ListAnswer)
+admin.site.register(TaskList)
+admin.site.register(AnswerList)

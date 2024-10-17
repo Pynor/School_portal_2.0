@@ -1,21 +1,23 @@
 from rest_framework import serializers
 
-from .services import TaskListService
-from .models import Answer, Task, ListTasks
-
-from user_app.models import SchoolClass
+from .services import AnswerListService, TaskListService
+from .models import Answer, AnswerList, Task, TaskList
 
 
 class AnswerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Answer
+        fields = ("answer", "task", "answer_list", "photo_to_the_answer")
 
 
 class AnswerListSerializer(serializers.ModelSerializer):
     tasks = AnswerSerializer(many=True)
 
     class Meta:
-        model = ListTasks
+        model = AnswerList
+
+    def create(self, validated_data: dict[str]) -> AnswerList:
+        return AnswerListService.create_answer_list(validated_data)
 
 
 class TaskSerializer(serializers.ModelSerializer):
@@ -30,9 +32,9 @@ class TaskListSerializer(serializers.ModelSerializer):
     task_for = serializers.CharField()
 
     class Meta:
-        model = ListTasks
+        model = TaskList
         fields = ("id", "title", "count_task", "tasks", "task_for")
         read_only_fields = ("count_task",)
 
-    def create(self, validated_data: dict[str]) -> ListTasks:
+    def create(self, validated_data: dict[str]) -> TaskList:
         return TaskListService.create_task_list(validated_data)
