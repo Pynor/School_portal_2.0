@@ -7,14 +7,18 @@ from .models import Answer, AnswerList, Task, TaskList
 class AnswerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Answer
-        fields = ("answer", "task", "answer_list", "photo_to_the_answer")
+        fields = ("answer", "task", "photo_to_the_answer")
+        extra_kwargs = {
+            "photo_to_the_answer": {"allow_null": True}
+        }
 
 
 class AnswerListSerializer(serializers.ModelSerializer):
-    tasks = AnswerSerializer(many=True)
+    answers = AnswerSerializer(many=True, write_only=True)
 
     class Meta:
         model = AnswerList
+        fields = "__all__"
 
     def create(self, validated_data: dict[str]) -> AnswerList:
         return AnswerListService.create_answer_list(validated_data)

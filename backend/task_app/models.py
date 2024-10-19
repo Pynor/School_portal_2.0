@@ -1,7 +1,7 @@
 from django.core.validators import FileExtensionValidator
 from django.db import models
 
-from user_app.models import Student, SchoolClass
+from user_app.models import User, SchoolClass
 
 
 class Task(models.Model):
@@ -53,7 +53,7 @@ class Answer(models.Model):
 
 
 class AnswerList(models.Model):
-    student = models.ForeignKey(to=Student, verbose_name="Student", on_delete=models.CASCADE)
+    user = models.ForeignKey(to=User, verbose_name="Student", on_delete=models.CASCADE)
 
     def __str__(self):
-        return f"List of student's answer: {self.student}"
+        return f"List of student's answer: {self.user.first_name} {self.user.last_name}"
