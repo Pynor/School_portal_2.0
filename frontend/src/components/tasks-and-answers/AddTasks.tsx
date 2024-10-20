@@ -8,9 +8,10 @@ import './CSS/add-task.css';
 
 
 const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
+  
+  const [message, setMessage] = useState<React.ReactNode>(null);
   const csrftoken = getCookie('csrftoken');
 
-  const [message, setMessage] = useState<React.ReactNode>(null);
 
   const emptyTask: Omit<Task, 'sequence_number'> = {
     answer_to_the_task: '',
