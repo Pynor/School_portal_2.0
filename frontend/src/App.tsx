@@ -9,11 +9,13 @@ import LoginStudent from './components/authorization/login/LoginStudent';
 import LoginTeacher from './components/authorization/login/LoginTeacher';
 import LoginHub from './components/authorization/login/LoginHub';
 
-import Profile from './components/profile/Profile'
+import AddAnswers from './components/tasks-and-answers/AddAnswers';
+import AddTasks from './components/tasks-and-answers/AddTasks';
 
-import AddTasks from './components/tasks/AddTasks'
+import Profile from './components/profile/Profile';
 
 import Nav from './components/navigation/Nav';
+
 
 import { BASE_URL } from './constants';
 import { UserData } from './types';
@@ -22,7 +24,7 @@ import './App.css';
 
 
 const App = () => {
-    const [name, setName] = useState('');
+    const [, setName] = useState('');
     const [userData, setUserData] = useState<UserData>({
         username: '',
         birth_date: '',
@@ -63,6 +65,7 @@ const App = () => {
                 <Nav userData={userData} setName={setName}/>
                 <div className="content">
                     <main className="main-content">
+
                         <div className="form-login-and-register">
                             <Routes>
                                 <Route path="/login-hub" element={<LoginHub />} />
@@ -74,14 +77,17 @@ const App = () => {
                                 <Route path="/register-student" element={<RegisterStudents userData={userData} />} />
                             </Routes>
                         </div>
+
                         <div className="profile">
                             <Routes>
-                                <Route path="/profile" element={<Profile/>} />
+                                <Route path="/profile" element={<Profile userData={userData} />} />
                             </Routes>
                         </div>
+
                         <div className="form-tasks-and-answers">
                             <Routes>
                                 <Route path="/add-tasks" element={<AddTasks userData={userData}/>} />
+                                <Route path="/add-answers" element={<AddAnswers userData={userData}/>} />
                             </Routes>
                         </div>
                     </main>
