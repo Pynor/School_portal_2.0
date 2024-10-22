@@ -2,7 +2,7 @@ from user_app.models import SchoolClass, Student, User
 from .models import Task, TaskList, Answer, AnswerList
 
 
-class TaskListService:
+class TaskListAPIService:
     @staticmethod
     def create_task_list(validated_data: dict) -> TaskList:
         task_for = SchoolClass.objects.get(title=validated_data.pop("task_for"))
@@ -17,8 +17,22 @@ class TaskListService:
 
         return task_list
 
+    @staticmethod
+    def get_task_list(validated_data: dict) -> TaskList:
+        task_for = SchoolClass.objects.get(title=validated_data.pop("task_for"))
+        task_list = TaskList.objects.filter(task_for=task_for).select_related("tasks").all()
+        for task_list_instance in task_list:
+            print(f"Task list: {task_list_instance.title}")
+            for task in task_list_instance.tasks.all():
+                print(f"- Task: {task.title}")
+                print(f"  - Answer: {task.answer_to_the_task}")
+                # Access other task fields as needed
+            print("---")
 
-class AnswerListService:
+        return task_list
+
+
+class AnswerListAPIService:
     @staticmethod
     def create_answer_list(validated_data: dict) -> AnswerList:
         answer_list = AnswerList.objects.create(user=validated_data.pop("user"))

@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .services import AnswerListService, TaskListService
+from .services import AnswerListAPIService, TaskListAPIService
 from .models import Answer, AnswerList, Task, TaskList
 
 
@@ -21,7 +21,7 @@ class AnswerListSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
     def create(self, validated_data: dict[str]) -> AnswerList:
-        return AnswerListService.create_answer_list(validated_data)
+        return AnswerListAPIService.create_answer_list(validated_data)
 
 
 class TaskSerializer(serializers.ModelSerializer):
@@ -41,4 +41,4 @@ class TaskListSerializer(serializers.ModelSerializer):
         read_only_fields = ("count_task",)
 
     def create(self, validated_data: dict[str]) -> TaskList:
-        return TaskListService.create_task_list(validated_data)
+        return TaskListAPIService.create_task_list(validated_data)

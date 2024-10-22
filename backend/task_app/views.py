@@ -15,3 +15,7 @@ class TaskListCreateAPIView(generics.CreateAPIView):
     serializer_class = TaskListSerializer
     permission_classes = [permissions.AllowAny]
 
+
+class TaskListAPIView(APIView):
+    def get(self, request, *args, **kwargs):
+        return TaskListAPIService.get_task_list(validated_data=request.data)

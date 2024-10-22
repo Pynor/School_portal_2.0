@@ -62,7 +62,7 @@ const App = () => {
     return (
         <div className="App">
             <BrowserRouter>
-                <Nav userData={userData} setName={setName}/>
+                <Nav userData={userData} setName={setName} />
                 <div className="content">
                     <main className="main-content">
 
@@ -86,8 +86,8 @@ const App = () => {
 
                         <div className="form-tasks-and-answers">
                             <Routes>
-                                <Route path="/add-tasks" element={<AddTasks userData={userData}/>} />
-                                <Route path="/add-answers" element={<AddAnswers userData={userData}/>} />
+                                <Route path="/add-tasks" element={<AddTasks userData={userData} />} />
+                                <Route path="/add-answers" element={<AddAnswers userData={userData} />} />
                             </Routes>
                         </div>
                     </main>
