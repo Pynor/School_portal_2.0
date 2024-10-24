@@ -83,11 +83,11 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
 
     if (postResponse.ok) {
       setMessage(
-        <h3 className="success-message">Задача создана.</h3>
+        <h2 className="success-message">Задача создана.</h2>
       );
     } else {
       setMessage(
-        <h3 className="error-message">Произошла ошибка при создании задачи.</h3>
+        <h2 className="error-message">Произошла ошибка при создании задачи.</h2>
       );
     }
 

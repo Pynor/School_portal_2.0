@@ -14,10 +14,10 @@ const RegisterStudents = (props: { userData: UserData }) => {
   const navigate = useNavigate();
   const csrftoken = getCookie('csrftoken');
 
+  const [loading, setLoading] = useState(false);
   const [numStudents, setNumStudents] = useState(0);
   const [schoolClass, setSchoolClass] = useState('');
-  const [errors, setErrors] = useState<Record<number, string[]>>({});
-  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState<React.ReactNode>(null);
 
   const [studentsData, setStudentsData] = useState<Student[]>(
     Array.from({ length: numStudents }, () => ({
@@ -36,8 +36,6 @@ const RegisterStudents = (props: { userData: UserData }) => {
         school_class: value,
       }))
     );
-
-    setErrors({});
   };
 
   const handleInputChange = (index: number, field: keyof Student, value: string) => {
@@ -46,27 +44,17 @@ const RegisterStudents = (props: { userData: UserData }) => {
       updatedData[index][field] = value;
       return updatedData;
     });
-
-    setErrors((prevErrors) => {
-      const updatedErrors = { ...prevErrors };
-      delete updatedErrors[index];
-      return updatedErrors;
-    });
   };
 
   const handleNumStudentsChange = (value: number) => {
     setNumStudents(value);
     setStudentsData(Array.from({ length: value }, () => ({ last_name: '', first_name: '', school_class: '' })));
-    setErrors({});
   };
 
 
   const registerStudents = async (e: React.FormEvent) => {
     e.preventDefault();
-    setLoading(true);
-    setErrors({});
-
-    const response = await fetch(`${BASE_URL}/user_app/api/v1/api-student-register/`, {
+    const postResponse = await fetch(`${BASE_URL}/user_app/api/v1/api-student-register/`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -76,15 +64,14 @@ const RegisterStudents = (props: { userData: UserData }) => {
       body: JSON.stringify(studentsData),
     });
 
-    const data = await response.json();
+    const data = await postResponse.json();
 
-    if (!response.ok) {
-      setErrors(data);
+    if (!postResponse.ok) {
+      setMessage(<h3 className="error-message">{data.any}</h3>);
     } else {
       navigate('/');
+      setLoading(true);
     }
-    setLoading(false);
-
   };
 
   if (loading) {
@@ -95,6 +82,7 @@ const RegisterStudents = (props: { userData: UserData }) => {
     <div>
       {props.userData.is_staff ? (
         <div className="form-container">
+          {message && message}
           <div className="form-group">
             <div className="form-container">
               <h2>Регистрация учеников</h2>
@@ -111,7 +99,7 @@ const RegisterStudents = (props: { userData: UserData }) => {
               </div>
 
               <div className="form-group">
-                <select className="form-control" id="task_for" name="task_for" onChange={e => handleSchoolClassChange(e.target.value)} required>
+                <select className="form-control" id="school_class" name="school_class" onChange={e => handleSchoolClassChange(e.target.value)} required>
                   <option value="">Выберите класс</option>
                   {CLASSES.map((option) => (
                     <option key={option} value={option}>
@@ -140,10 +128,10 @@ const RegisterStudents = (props: { userData: UserData }) => {
                         required
                         type="text"
                         placeholder="Имя"
+                        className="form-control"
                         value={student.first_name}
                         id={`first_name_${index}`}
                         onChange={(e) => handleInputChange(index, 'first_name', e.target.value)}
-                        className={`form-control ${errors[index]?.includes('First name is required') ? 'is-invalid' : ''}`}
                       />
                     </div>
 
@@ -151,11 +139,11 @@ const RegisterStudents = (props: { userData: UserData }) => {
                       <input
                         required
                         type="text"
+                        placeholder="Фамилия"
+                        className="form-control"
                         value={student.last_name}
                         id={`last_name_${index}`}
-                        placeholder="Фамилия"
                         onChange={(e) => handleInputChange(index, 'last_name', e.target.value)}
-                        className={`form-control ${errors[index]?.includes('Last name is required') ? 'is-invalid' : ''}`}
                       />
                     </div>
 

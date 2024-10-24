@@ -1,4 +1,5 @@
 export type UserData = {
+    student?: Student;
     id: number;
     bio: string;
     username: string;
@@ -36,4 +37,15 @@ export interface TaskList {
     count_task: number;
     task_for: string;
     tasks: Task[];
+};
+
+export type Answer = {
+    task: number | string;
+    answer: string;
+    photo_to_the_answer: string | null;
+  };
+  
+export type FormAnswerData = {
+    user: number;
+    answers: Answer[];
 };

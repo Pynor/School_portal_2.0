@@ -25,7 +25,13 @@ import './App.css';
 
 const App = () => {
     const [, setName] = useState('');
+    const [tasksListData, setTasksListData] = useState('');
     const [userData, setUserData] = useState<UserData>({
+        student: {
+            school_class: '',
+            first_name: '',
+            last_name: ''
+        },
         username: '',
         birth_date: '',
         bio: '',
@@ -37,27 +43,43 @@ const App = () => {
     });
 
     useEffect(() => {
-        const fetchUserData = async () => {
+        const fetchData = async () => {
             try {
-                const response = await fetch(`${BASE_URL}/user_app/api/v1/api-user-get/`, {
+                const userGetResponse = await fetch(`${BASE_URL}/user_app/api/v1/api-user-get/`, {
                     method: 'GET',
                     headers: { 'Content-Type': 'application/json' },
                     credentials: 'include',
                 });
 
-                if (!response.ok) {
-                    throw new Error(`HTTP error! status: ${response.status}`);
+                if (!userGetResponse.ok) {
+                    throw new Error(`HTTP error! status: ${userGetResponse.status}`);
                 }
 
-                const data = await response.json();
-                setUserData(data);
+                const userData = await userGetResponse.json();
+                setUserData(userData);
+
+                if (!userData.is_staff && userData.student) {
+                    const tasksGetResponse = await fetch(`${BASE_URL}/task_app/api/v1/api-task-list-get/${userData.student?.school_class}`, {
+                        method: 'GET',
+                        headers: { 'Content-Type': 'application/json' },
+                        credentials: 'include',
+                    });
+
+                    if (!tasksGetResponse.ok) {
+                        throw new Error(`HTTP error! status: ${tasksGetResponse.status}`);
+                    }
+
+                    const tasksListData = await tasksGetResponse.json();
+                    setTasksListData(tasksListData);
+                }
             } catch (error) {
-                console.error('Error fetching user data:', error);
+                console.error('Error fetching data:', error);
             }
         };
 
-        fetchUserData();
+        fetchData();
     }, []);
+
 
     return (
         <div className="App">
