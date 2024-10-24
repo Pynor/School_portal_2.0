@@ -40,8 +40,8 @@ class Student(models.Model):
 
 
 class SchoolClass(models.Model):
-    title = models.CharField(max_length=2, verbose_name="Class")
+    title = models.CharField(max_length=3, verbose_name="Class")
     slug = models.SlugField(unique=True, verbose_name="Slug")
 
     def __str__(self):
-        return f"{self.title} class."
+        return self.title

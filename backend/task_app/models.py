@@ -35,7 +35,7 @@ class Task(models.Model):
 
 class TaskList(models.Model):
     count_task = models.IntegerField(verbose_name="Count task")
-    title = models.CharField(max_length=255, unique=True, verbose_name="Title list tasks")
+    title = models.CharField(max_length=255, unique=True, verbose_name="Title task list")
     task_for = models.ForeignKey(to=SchoolClass, verbose_name="Task for", on_delete=models.CASCADE)
 
     def __str__(self):
