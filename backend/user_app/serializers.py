@@ -5,7 +5,18 @@ from rest_framework.exceptions import AuthenticationFailed
 from .models import Teacher, TeacherSecretKey, Student, SchoolClass, User
 
 
+class StudentSerializer(serializers.ModelSerializer):
+    last_name = serializers.CharField(max_length=40, source="user.last_name")
+    first_name = serializers.CharField(max_length=40, source="user.first_name")
+    school_class = serializers.CharField(max_length=3)
+
+    class Meta:
+        model = Student
+        fields = ["id", "school_class", "authorized", "last_name", "first_name"]
+
+
 class UserSerializer(serializers.ModelSerializer):
+    student = StudentSerializer(required=False)
 
     class Meta:
         model = User
@@ -42,16 +53,6 @@ class TeacherSerializer(serializers.ModelSerializer):
         secret_key.logged = True
 
         return teacher
-
-
-class StudentSerializer(serializers.ModelSerializer):
-    last_name = serializers.CharField(max_length=40, source="user.last_name")
-    first_name = serializers.CharField(max_length=40, source="user.first_name")
-    school_class = serializers.CharField(max_length=3)
-
-    class Meta:
-        model = Student
-        fields = ["id", "school_class", "authorized", "last_name", "first_name"]
 
 
 class StudentsRegisterListSerializer(serializers.ListSerializer):

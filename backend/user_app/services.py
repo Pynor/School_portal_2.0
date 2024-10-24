@@ -29,6 +29,13 @@ class UserAPIService:
             raise AuthenticationFailed("Unauthenticated")
 
         user = User.objects.filter(id=payload["id"]).first()
+        student = Student.objects.filter(user=user).first()
+
+        if not user.is_staff:
+            user_serializer = UserSerializer(user)
+            student_serializer = StudentSerializer(student)
+            return Response({**user_serializer.data, "student": student_serializer.data}, status=200)
+
         serializer = UserSerializer(user)
         return Response(serializer.data, status=200)
 
