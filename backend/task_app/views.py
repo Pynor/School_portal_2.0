@@ -1,4 +1,5 @@
 from rest_framework import generics, permissions
+from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from .serializers import *
@@ -18,4 +19,4 @@ class TaskListCreateAPIView(generics.CreateAPIView):
 
 class TaskListAPIView(APIView):
     def get(self, request, *args, **kwargs):
-        return TaskListAPIService.get_task_list(validated_data=request.data)
+        return Response(TaskListSerializer.get_task_list(kwargs=kwargs))

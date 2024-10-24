@@ -40,5 +40,12 @@ class TaskListSerializer(serializers.ModelSerializer):
         fields = ("id", "title", "count_task", "tasks", "task_for")
         read_only_fields = ("count_task",)
 
+    @staticmethod
+    def get_task_list(kwargs) -> dict:
+        task_list = TaskListAPIService.get_task_list(kwargs=kwargs)
+        task_list_serializer = TaskListSerializer(task_list)
+
+        return {"task_list": task_list_serializer.data}
+
     def create(self, validated_data: dict[str]) -> TaskList:
         return TaskListAPIService.create_task_list(validated_data)

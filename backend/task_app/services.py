@@ -18,16 +18,9 @@ class TaskListAPIService:
         return task_list
 
     @staticmethod
-    def get_task_list(validated_data: dict) -> TaskList:
-        task_for = SchoolClass.objects.get(title=validated_data.pop("task_for"))
-        task_list = TaskList.objects.filter(task_for=task_for).select_related("tasks").all()
-        for task_list_instance in task_list:
-            print(f"Task list: {task_list_instance.title}")
-            for task in task_list_instance.tasks.all():
-                print(f"- Task: {task.title}")
-                print(f"  - Answer: {task.answer_to_the_task}")
-                # Access other task fields as needed
-            print("---")
+    def get_task_list(kwargs) -> TaskList:
+        task_for = SchoolClass.objects.get(title=kwargs["school_class"])
+        task_list = TaskList.objects.filter(task_for=task_for).first()
 
         return task_list
 
