@@ -74,6 +74,7 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
     const postResponse = await fetch(`${BASE_URL}/task_app/api/v1/api-task-list-create/`, {
       method: 'POST',
       headers: {
+        'Access-Control-Request-Headers': 'Content-Type',
         'Content-Type': 'application/json',
         'X-CSRFToken': csrftoken,
       },

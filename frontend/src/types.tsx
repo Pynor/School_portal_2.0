@@ -1,51 +1,88 @@
+import { useMemo } from "react";
+
 export type UserData = {
+    first_name: string;
+    birth_date: string;
+    last_name: string;
+    is_staff: boolean;
     student?: Student;
-    id: number;
-    bio: string;
     username: string;
     email: string;
-    first_name: string;
-    last_name: string;
-    birth_date: string;
-    is_staff: boolean;
+    bio: string;
+    id: number;
 };
 
-export  type Student = {
-    last_name: string;
-    first_name: string;
+export type Student = {
     school_class: string;
+    first_name: string;
+    last_name: string;
 };
 
 export type Props = {
     userData: {
-        id: number;
         username: string;
+        id: number;
     };
 };
 
-export type Task = {
-    sequence_number: number;
-    answer_to_the_task: string;
-    title: string;
-    description: string;
-    additional_condition?: string;
-    time_to_task?: string;
-  };
-  
-export interface TaskList {
-    title: string;
+export type TaskList = {
     count_task: number;
     task_for: string;
+    title: string;
     tasks: Task[];
 };
 
+export type Task = {
+    additional_condition?: string;
+    answer_to_the_task: string;
+    sequence_number: number;
+    time_to_task?: string;
+    description: string;
+    title: string;
+};
+
+export type FormAnswerData = {
+    answers: Answer[];
+    user: number;
+};
+
 export type Answer = {
+    photo_to_the_answer: string | null;
     task: number | string;
     answer: string;
-    photo_to_the_answer: string | null;
+};
+
+const useDefaultState = () => {
+    const defaultTasksListData: TaskList = useMemo(
+      () => ({
+        count_task: 0,
+        task_for: "",
+        title: "",
+        tasks: [],
+      }),
+      []
+    );
+  
+    const defaultUserData: UserData = useMemo(
+      () => ({
+        student: {
+          school_class: "",
+          first_name: "",
+          last_name: "",
+        },
+        is_staff: false,
+        first_name: "",
+        birth_date: "",
+        last_name: "",
+        username: "",
+        email: "",
+        bio: "",
+        id: 0,
+      }),
+      []
+    );
+  
+    return { defaultTasksListData, defaultUserData };
   };
   
-export type FormAnswerData = {
-    user: number;
-    answers: Answer[];
-};
+export default useDefaultState;

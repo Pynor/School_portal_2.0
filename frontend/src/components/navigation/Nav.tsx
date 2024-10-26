@@ -10,10 +10,11 @@ import './CSS/nav.css'
 
 
 const Nav = (props: { userData: UserData, setName: (name: string) => void }) => {
-  const csrftoken = getCookie('csrftoken');
-
   const [message, setMessage] = useState<React.ReactNode>(null);
   const [showMessage, setShowMessage] = useState(false);
+  
+  const csrftoken = getCookie('csrftoken');
+
 
   const logout = async () => {
     try {

@@ -11,13 +11,14 @@ import '../CSS/form-signing.css'
 
 const RegisterStudents = (props: { userData: UserData }) => {
 
-  const navigate = useNavigate();
-  const csrftoken = getCookie('csrftoken');
-
-  const [loading, setLoading] = useState(false);
-  const [numStudents, setNumStudents] = useState(0);
-  const [schoolClass, setSchoolClass] = useState('');
   const [message, setMessage] = useState<React.ReactNode>(null);
+  const [schoolClass, setSchoolClass] = useState('');
+  const [numStudents, setNumStudents] = useState(0);
+  const [loading, setLoading] = useState(false);
+
+  const csrftoken = getCookie('csrftoken');
+  const navigate = useNavigate();
+
 
   const [studentsData, setStudentsData] = useState<Student[]>(
     Array.from({ length: numStudents }, () => ({
@@ -54,9 +55,11 @@ const RegisterStudents = (props: { userData: UserData }) => {
 
   const registerStudents = async (e: React.FormEvent) => {
     e.preventDefault();
+    
     const postResponse = await fetch(`${BASE_URL}/user_app/api/v1/api-student-register/`, {
       method: 'POST',
       headers: {
+        'Access-Control-Request-Headers': 'Content-Type',
         'Content-Type': 'application/json',
         'X-CSRFToken': csrftoken,
       },

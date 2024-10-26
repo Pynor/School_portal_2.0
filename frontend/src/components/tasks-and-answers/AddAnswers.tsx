@@ -1,14 +1,15 @@
 import React, { useState } from "react";
 
-import { UserData, FormAnswerData } from "../../types";
+import { UserData, FormAnswerData, TaskList } from "../../types";
 import { BASE_URL } from "../../constants";
 import getCookie from "../../functions";
 
 
-const AddAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
+const AddAnswers: React.FC<{ userData: UserData, tasksListData: TaskList }> = ({ userData }) => {
   const csrftoken = getCookie("csrftoken");
 
   const [message, setMessage] = useState<React.ReactNode>(null);
+  
   const [formData, setFormData] = useState<FormAnswerData>({ 
     user: userData.id, answers: [{ task: "", answer: "", photo_to_the_answer: null }]
   });

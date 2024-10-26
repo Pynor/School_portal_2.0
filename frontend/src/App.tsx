@@ -18,37 +18,33 @@ import Nav from './components/navigation/Nav';
 
 
 import { BASE_URL } from './constants';
-import { UserData } from './types';
+import useDefaultState from './types';
 
 import './App.css';
 
 
 const App = () => {
+    const { defaultTasksListData, defaultUserData } = useDefaultState();
+
+    const [tasksListData, setTasksListData] = useState(defaultTasksListData);
+    const [userData, setUserData] = useState(defaultUserData);
+
     const [, setName] = useState('');
-    const [tasksListData, setTasksListData] = useState('');
-    const [userData, setUserData] = useState<UserData>({
-        student: {
-            school_class: '',
-            first_name: '',
-            last_name: ''
-        },
-        username: '',
-        birth_date: '',
-        bio: '',
-        email: '',
-        first_name: '',
-        last_name: '',
-        is_staff: false,
-        id: 0,
-    });
 
     useEffect(() => {
+        const controller = new AbortController();
+        const signal = controller.signal;
+
         const fetchData = async () => {
             try {
                 const userGetResponse = await fetch(`${BASE_URL}/user_app/api/v1/api-user-get/`, {
-                    method: 'GET',
-                    headers: { 'Content-Type': 'application/json' },
+                    headers: {
+                        'Access-Control-Request-Headers': 'Content-Type',
+                        'Content-Type': 'application/json',
+                    },
                     credentials: 'include',
+                    method: 'GET',
+                    signal,
                 });
 
                 if (!userGetResponse.ok) {
@@ -58,11 +54,15 @@ const App = () => {
                 const userData = await userGetResponse.json();
                 setUserData(userData);
 
-                if (!userData.is_staff && userData.student) {
-                    const tasksGetResponse = await fetch(`${BASE_URL}/task_app/api/v1/api-task-list-get/${userData.student?.school_class}`, {
-                        method: 'GET',
-                        headers: { 'Content-Type': 'application/json' },
+                if (!userData.is_staff || userData.student) {
+                    const tasksGetResponse = await fetch(`${BASE_URL}/task_app/api/v1/api-task-list-get/${userData.student.school_class}`, {
+                        headers: {
+                            'Access-Control-Request-Headers': 'Content-Type',
+                            'Content-Type': 'application/json',
+                        },
                         credentials: 'include',
+                        method: 'GET',
+                        signal,
                     });
 
                     if (!tasksGetResponse.ok) {
@@ -72,13 +72,16 @@ const App = () => {
                     const tasksListData = await tasksGetResponse.json();
                     setTasksListData(tasksListData);
                 }
-            } catch (error) {
-                console.error('Error fetching data:', error);
-            }
+            } catch { }
         };
 
         fetchData();
+
+        return () => {
+            controller.abort();
+        };
     }, []);
+
 
 
     return (
@@ -87,29 +90,28 @@ const App = () => {
                 <Nav userData={userData} setName={setName} />
                 <div className="content">
                     <main className="main-content">
+                        <div className="form-tasks-and-answers">
+                            <Routes>
+                                <Route path="/add-answers" element={<AddAnswers userData={userData} tasksListData={tasksListData} />} />
+                                <Route path="/add-tasks" element={<AddTasks userData={userData} />} />
+                            </Routes>
+                        </div>
 
                         <div className="form-login-and-register">
                             <Routes>
-                                <Route path="/login-hub" element={<LoginHub />} />
+                                <Route path="/register-student" element={<RegisterStudents userData={userData} />} />
+                                <Route path="/register-teacher" element={<RegisterTeacher userData={userData} />} />
+                                <Route path="/register-hub" element={<RegisterHub />} />
+
                                 <Route path="/login-student" element={<LoginStudent userData={userData} />} />
                                 <Route path="/login-teacher" element={<LoginTeacher userData={userData} />} />
-
-                                <Route path="/register-hub" element={<RegisterHub />} />
-                                <Route path="/register-teacher" element={<RegisterTeacher userData={userData} />} />
-                                <Route path="/register-student" element={<RegisterStudents userData={userData} />} />
+                                <Route path="/login-hub" element={<LoginHub />} />
                             </Routes>
                         </div>
 
                         <div className="profile">
                             <Routes>
                                 <Route path="/profile" element={<Profile userData={userData} />} />
-                            </Routes>
-                        </div>
-
-                        <div className="form-tasks-and-answers">
-                            <Routes>
-                                <Route path="/add-tasks" element={<AddTasks userData={userData} />} />
-                                <Route path="/add-answers" element={<AddAnswers userData={userData} />} />
                             </Routes>
                         </div>
                     </main>
