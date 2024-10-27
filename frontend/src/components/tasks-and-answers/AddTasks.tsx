@@ -14,11 +14,12 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
 
 
   const emptyTask: Omit<Task, 'sequence_number'> = {
-    answer_to_the_task: '',
-    title: '',
-    description: '',
     additional_condition: 'None',
+    answer_to_the_task: '',
     time_to_task: '',
+    description: '',
+    title: '',
+    id: 0
   };
 
   const initialFormData: TaskList = {

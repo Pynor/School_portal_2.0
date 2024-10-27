@@ -92,7 +92,7 @@ const App = () => {
                     <main className="main-content">
                         <div className="form-tasks-and-answers">
                             <Routes>
-                                <Route path="/add-answers" element={<AddAnswers userData={userData} tasksListData={tasksListData} />} />
+                                <Route path="/add-answers" element={<AddAnswers tasksListData={tasksListData} userData={userData} />} />
                                 <Route path="/add-tasks" element={<AddTasks userData={userData} />} />
                             </Routes>
                         </div>
