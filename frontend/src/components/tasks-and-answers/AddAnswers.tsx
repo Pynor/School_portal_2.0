@@ -4,7 +4,7 @@ import { BASE_URL } from '../../constants';
 import getCookie from '../../functions';
 import { Answer, UserData, TaskListForAnswers, AnswerList } from "../../types";
 
-
+import './CSS/add-answer.css';
 
 
 const AddAnswers: React.FC<{ tasksListData: TaskListForAnswers, userData: UserData }> = ({ tasksListData, userData }) => {
@@ -33,7 +33,7 @@ const AddAnswers: React.FC<{ tasksListData: TaskListForAnswers, userData: UserDa
       }))
     );
   };
-  
+
   const handlePhotoChange = (taskId: number, e: React.ChangeEvent<HTMLInputElement>) => {
     setAnswers(
       answers.map((answerObj) => ({
@@ -46,28 +46,41 @@ const AddAnswers: React.FC<{ tasksListData: TaskListForAnswers, userData: UserDa
   };
 
   const formDataToSend = new FormData();
-answers.forEach((answerObj) => {
-  formDataToSend.append('user', answerObj.user.toString());
 
-  answerObj.answers.forEach((answer) => {
-    formDataToSend.append(`answers[${answer.task}][answer]`, answer.answer);
-    if (answer.photo_to_the_answer) {
-      formDataToSend.append(
-        `answers[${answer.task}].photo_to_the_answer`,
-        answer.photo_to_the_answer
-      );
-    }
+  answers.forEach((answerObj) => {
+    formDataToSend.append('user', answerObj.user.toString());
+
+    answerObj.answers.forEach((answer) => {
+      formDataToSend.append(`answers[${answer.task}][answer]`, answer.answer);
+      if (answer.photo_to_the_answer) {
+        formDataToSend.append(
+          `answers[${answer.task}].photo_to_the_answer`,
+          answer.photo_to_the_answer
+        );
+      }
+    });
   });
-});
+  const prepareData = () => {
+    return {
+      user: answers[0].user,
+      answers: answers[0].answers.map((answer) => ({
+        task: answer.task,
+        answer: answer.answer,
+        photo_to_the_answer: answer.photo_to_the_answer ? answer.photo_to_the_answer.name : null,
+      })),
+    };
+  };
 
   const postResponse = async () => {
+    const data = prepareData();
     const response = await fetch(`${BASE_URL}/task_app/api/v1/api-answer-list-create/`, {
       method: 'POST',
       headers: {
         'X-CSRFToken': csrftoken,
+        'Content-Type': 'application/json',
       },
       credentials: 'include',
-      body: formDataToSend,
+      body: JSON.stringify(data),
     });
 
     if (response.ok) {
@@ -87,29 +100,27 @@ answers.forEach((answerObj) => {
       <form onSubmit={handleSubmit}>
         {message && <p>{message}</p>}
         {tasksListData.task_list.tasks.map((task, index) => (
-          <div key={task.id} className="form-group">
+          <div key={task.id}>
             <div className="form-container">
               <h2>{`Задача ${task.sequence_number} (${task.title}):`}</h2>
               <h3>{task.description}</h3>
-              <input
-                type="text"
-                placeholder="Ответ:"
-                className="form-control"
-                key={`answer-${task.id}`}
-                name={`answer-${task.id}`}
-                onChange={(e) => handleAnswerChange(task.id, e)}
-                value={answers[0].answers.find((answer) => answer.task === task.id)?.answer || ''}
-              />
-
-              {task.additional_condition === 'Photo' && (
                 <input
-                  type="file"
+                  type="text"
+                  placeholder="Ответ:"
                   className="form-control"
-                  key={`photo-${task.id}`}
-                  name={`photo-${task.id}`}
-                  accept="image/png, image/jpeg"
-                  onChange={(e) => handlePhotoChange(task.id, e)}
+                  key={`answer-${task.id}`}
+                  name={`answer-${task.id}`}
+                  onChange={(e) => handleAnswerChange(task.id, e)}
                 />
+              {task.additional_condition === 'Photo' && (
+                  <input
+                    type="file"
+                    className="form-control"
+                    key={`photo-${task.id}`}
+                    name={`photo-${task.id}`}
+                    accept="image/png, image/jpeg"
+                    onChange={(e) => handlePhotoChange(task.id, e)}
+                  />
               )}
             </div>
           </div>

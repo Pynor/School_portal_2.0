@@ -9,7 +9,8 @@ class AnswerSerializer(serializers.ModelSerializer):
         model = Answer
         fields = ("answer", "task", "photo_to_the_answer")
         extra_kwargs = {
-            "photo_to_the_answer": {"allow_null": True}
+            "photo_to_the_answer": {"allow_null": True},
+            "answer": {"default": ""}
         }
 
 
@@ -28,7 +29,7 @@ class TaskSerializer(serializers.ModelSerializer):
     class Meta:
         model = Task
         fields = ("sequence_number", "answer_to_the_task", "title",
-                  "description", "additional_condition", "time_to_task")
+                  "description", "additional_condition", "time_to_task", "id")
 
 
 class TaskListSerializer(serializers.ModelSerializer):

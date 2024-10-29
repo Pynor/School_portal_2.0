@@ -1,0 +1,11 @@
+.form-container {
+    max-width: 80%;
+    margin-bottom: 20px;
+}
+
+.form-container h2,
+.form-container h3 {
+  width: 100%;
+  white-space: pre-wrap; 
+  overflow-wrap: break-word; 
+}

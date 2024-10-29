@@ -43,7 +43,7 @@ class TaskList(models.Model):
 
 
 class Answer(models.Model):
-    answer = models.CharField(verbose_name="Answer", null=True)
+    answer = models.CharField(verbose_name="Answer", null=True, blank=True)
     task = models.ForeignKey("Task", verbose_name="Task", on_delete=models.CASCADE)
     answer_list = models.ForeignKey("AnswerList", verbose_name="List answers", on_delete=models.CASCADE)
     photo_to_the_answer = models.ImageField(upload_to="tasks_media/images/", verbose_name="Photo to answer", null=True)

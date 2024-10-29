@@ -111,7 +111,7 @@ const App = () => {
 
                         <div className="profile">
                             <Routes>
-                                <Route path="/profile" element={<Profile userData={userData} />} />
+                                <Route path="/profile" element={<Profile tasksListData={tasksListData} userData={userData} />} />
                             </Routes>
                         </div>
                     </main>
