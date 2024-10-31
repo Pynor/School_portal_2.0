@@ -49,7 +49,7 @@ class Answer(models.Model):
     photo_to_the_answer = models.ImageField(upload_to="tasks_media/images/", verbose_name="Photo to answer", null=True)
 
     def __str__(self):
-        return f"Answer:{self.answer} to Task:{self.task.title}"
+        return f"Answer: ({self.answer}) to Task: ({self.task.title})"
 
 
 class AnswerList(models.Model):

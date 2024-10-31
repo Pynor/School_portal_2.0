@@ -35,3 +35,10 @@ class AnswerListAPIService:
             Answer.objects.create(answer_list=answer_list, **answer_data)
 
         return answer_list
+
+    @staticmethod
+    def get_answer_list(kwargs) -> AnswerList:
+        task_for = SchoolClass.objects.get(title=kwargs["school_class"])
+        task_list = TaskList.objects.filter(task_for=task_for).first()
+
+        return task_list
