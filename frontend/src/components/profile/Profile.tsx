@@ -1,7 +1,9 @@
 import { Link } from 'react-router-dom';
-import './CSS/profile.css';
 
 import { UserData, TaskListForAnswers } from '../../types';
+import { getCookie } from '../../functions';
+
+import './CSS/profile.css';
 
 
 const Profile = (props: { userData: UserData, tasksListData: TaskListForAnswers }) => {
@@ -14,7 +16,7 @@ const Profile = (props: { userData: UserData, tasksListData: TaskListForAnswers 
                 </div>
             ) : (
                 <div className="form-container">
-                    {props.tasksListData && props.tasksListData.task_list.title !== "" ? (
+                    {props.tasksListData && props.tasksListData.task_list.title !== "" && getCookie("completedTask") !== "true" ? (
                         <Link to="/add-answers" className="btn-primary">Задание</Link>
                     ) : (
                         <h2 className="success-message">Задач для вас пока нет.</h2>
