@@ -3,7 +3,7 @@ import { Navigate } from "react-router-dom";
 
 import { BASE_URL } from '../../../constants';
 import { UserData } from '../../../types';
-import getCookie from '../../../functions';
+import { getCookie } from '../../../functions';
 
 import '../CSS/form-signing.css'
 
@@ -33,7 +33,6 @@ const LoginTeacher = (props: { userData: UserData }) => {
         });
 
         if (postResponse.ok) {
-            const data = await postResponse.json();
             setRedirect(true);
 
             setTimeout(() => {

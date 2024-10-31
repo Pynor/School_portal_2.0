@@ -1,8 +1,9 @@
-import React, { useState, useEffect } from "react";
+import { Navigate } from "react-router-dom";
+import React, { useState } from "react";
 
+import { UserData, TaskListForAnswers, AnswerList } from "../../types";
 import { BASE_URL } from '../../constants';
-import getCookie from '../../functions';
-import { Answer, UserData, TaskListForAnswers, AnswerList } from "../../types";
+import { getCookie, setCookie } from '../../functions';
 
 import './CSS/add-answer.css';
 
@@ -21,6 +22,7 @@ const AddAnswers: React.FC<{ tasksListData: TaskListForAnswers, userData: UserDa
     },
   ]);
 
+  const [redirect, setRedirect] = useState(false);
   const csrftoken = getCookie('csrftoken');
 
   const handleAnswerChange = (taskId: number, e: React.ChangeEvent<HTMLInputElement>) => {
@@ -85,10 +87,18 @@ const AddAnswers: React.FC<{ tasksListData: TaskListForAnswers, userData: UserDa
 
     if (response.ok) {
       setMessage(<h2 className="success-message">Ответ получен.</h2>);
+      setCookie("completedTask", "true")
+      setTimeout(() => { setRedirect(true) }, 1000);
+
+
     } else {
       setMessage(<h2 className="error-message">Произошла ошибка при получении ответа.</h2>);
     }
   };
+
+  if (redirect) {
+    return <Navigate to="/profile" />;
+}
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();

@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 
 import { BASE_URL, CLASSES } from '../../../constants';
 import { UserData, Student } from '../../../types';
-import getCookie from '../../../functions';
+import { getCookie } from '../../../functions';
 
 import '../CSS/form-signing.css'
 

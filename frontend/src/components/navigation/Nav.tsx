@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 
 import { BASE_URL } from '../../constants';
 import { UserData } from '../../types';
-import getCookie from '../../functions';
+import { getCookie } from '../../functions';
 
 
 import './CSS/nav.css'

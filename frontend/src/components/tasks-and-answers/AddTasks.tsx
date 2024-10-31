@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import { BASE_URL, CLASSES } from '../../constants';
 import { UserData, Task, TaskList } from '../../types';
-import getCookie from '../../functions';
+import { getCookie } from '../../functions';
 
 import './CSS/add-task.css';
 
