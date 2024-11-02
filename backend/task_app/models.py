@@ -13,47 +13,60 @@ class Task(models.Model):
 
     answer_to_the_task = models.CharField(verbose_name="Answer to task")
     sequence_number = models.IntegerField(verbose_name="Sequence number")
-    title = models.CharField(verbose_name="Title to task", max_length=30, unique=True)
-    description = models.TextField(verbose_name="Description", max_length=300, null=True)
-    time_to_task = models.DurationField(verbose_name="Time to task", blank=True, null=True)
+    title = models.CharField(max_length=30, unique=True, verbose_name="Title to task")
+    description = models.TextField(max_length=300, null=True, verbose_name="Description")
+    time_to_task = models.DurationField(blank=True, null=True, verbose_name="Time to task")
 
-    task_list = models.ForeignKey("TaskList", verbose_name="List tasks", related_name="tasks",
+    task_list = models.ForeignKey("TaskList", related_name="tasks", verbose_name="List tasks",
                                   on_delete=models.CASCADE)
-    additional_condition = models.CharField(verbose_name="Additional condition", max_length=255, null=True,
+    additional_condition = models.CharField(max_length=255, null=True, verbose_name="Additional condition",
                                             choices=CONDITION_CHOICES)
 
-    docx = models.FileField(upload_to="tasks_media/docx/",
-                            validators=[FileExtensionValidator(allowed_extensions=["docx"])],
-                            verbose_name="DOCX file", null=True)
-    video = models.FileField(upload_to="tasks_media/video/",
-                             validators=[FileExtensionValidator(allowed_extensions=["mp4", "MPG", "mkv", "mov"])],
-                             verbose_name="Video file", null=True)
+    docx_file = models.FileField(upload_to="tasks_media/docx/",
+                                 validators=[FileExtensionValidator(allowed_extensions=["docx"])],
+                                 null=True, blank=True, verbose_name="DOCX file")
+    video_file = models.FileField(upload_to="tasks_media/video/",
+                                  validators=[FileExtensionValidator(allowed_extensions=["mp4", "MPG", "mkv", "mov"])],
+                                  null=True, blank=True, verbose_name="Video file")
 
     def __str__(self):
         return f"Task({self.sequence_number}): {self.title}"
 
 
 class TaskList(models.Model):
+
+    STATUS_CHOICES = (
+        ("Created", "Created"),
+        ("Archived", "Archived"),
+        ("Completed", "Completed"),
+        ("In Progress", "In Progress"),
+    )
+
     count_task = models.IntegerField(verbose_name="Count task")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Updated at")
+    created_at = models.DateTimeField(auto_now_add=True, verbose_name="Created at")
     title = models.CharField(max_length=255, unique=True, verbose_name="Title task list")
-    task_for = models.ForeignKey(to=SchoolClass, verbose_name="Task for", on_delete=models.CASCADE)
+    task_for = models.ForeignKey(to=SchoolClass, on_delete=models.CASCADE, verbose_name="Task for")
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="Created", verbose_name="Task status")
 
     def __str__(self):
         return f"Task list for: {self.task_for.title}"
 
 
 class Answer(models.Model):
-    answer = models.CharField(verbose_name="Answer", null=True, blank=True)
-    task = models.ForeignKey("Task", verbose_name="Task", on_delete=models.CASCADE)
-    answer_list = models.ForeignKey("AnswerList", verbose_name="List answers", on_delete=models.CASCADE)
-    photo_to_the_answer = models.ImageField(upload_to="tasks_media/images/", verbose_name="Photo to answer", null=True)
+    answer = models.CharField(null=True, blank=True, verbose_name="Answer")
+    task = models.ForeignKey("Task", on_delete=models.CASCADE, verbose_name="Task")
+    answer_list = models.ForeignKey("AnswerList", on_delete=models.CASCADE, verbose_name="List answers")
+    photo_to_the_answer = models.ImageField(upload_to="tasks_media/images/", null=True, verbose_name="Photo to answer")
 
     def __str__(self):
         return f"Answer: ({self.answer}) to Task: ({self.task.title})"
 
 
 class AnswerList(models.Model):
-    user = models.ForeignKey(to=User, verbose_name="Student", on_delete=models.CASCADE)
+    reviewed = models.BooleanField(default=False, verbose_name="Answer reviewed")
+    user = models.ForeignKey(to=User, on_delete=models.CASCADE, verbose_name="Student")
+    execution_time = models.DateTimeField(default=None, null=True, verbose_name="Execution time")
 
     def __str__(self):
         return f"List of student's answer: {self.user.first_name} {self.user.last_name}"
