@@ -99,12 +99,12 @@ const App = () => {
 
                         <div className="form-login-and-register">
                             <Routes>
-                                <Route path="/register-student" element={<RegisterStudents userData={userData} />} />
-                                <Route path="/register-teacher" element={<RegisterTeacher userData={userData} />} />
+                                <Route path="/register-students" element={<RegisterStudents userData={userData} />} />
+                                <Route path="/register-teacher" element={<RegisterTeacher />} />
                                 <Route path="/register-hub" element={<RegisterHub />} />
 
-                                <Route path="/login-student" element={<LoginStudent userData={userData} />} />
-                                <Route path="/login-teacher" element={<LoginTeacher userData={userData} />} />
+                                <Route path="/login-student" element={<LoginStudent />} />
+                                <Route path="/login-teacher" element={<LoginTeacher />} />
                                 <Route path="/login-hub" element={<LoginHub />} />
                             </Routes>
                         </div>

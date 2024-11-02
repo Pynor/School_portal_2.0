@@ -8,7 +8,7 @@ import './CSS/add-task.css';
 
 
 const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
-  
+
   const [message, setMessage] = useState<React.ReactNode>(null);
   const csrftoken = getCookie('csrftoken');
 
@@ -103,13 +103,17 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
         <form onSubmit={addTasks} >
           <div className="form-group">
             <div className="form-container">
-              <div className="form-group">
-                <input className="form-control" type="text" name="title" placeholder="Название теста" value={formData.title} onChange={handleChange} required />
-              </div>
-              <div className="form-group">
-                <input className="form-control" type="number" name="count_task" placeholder="Кол-во задач" value={formData.count_task} onChange={handleChange} min={1} required />
-              </div>
-              <div className="form-group">
+              <div className="form-group d-flex align-items-center">
+
+                <div className="form-group">
+                  <input className="form-control" type="text" name="title" placeholder="Название теста" value={formData.title} onChange={handleChange} required />
+                </div>
+
+                <div className="form-group">
+                  <input className="form-control" type="number" name="count_task" placeholder="Кол-во задач" value={formData.count_task} onChange={handleChange} min={1} required />
+                </div>
+
+
                 <select className="form-control" id="task_for" name="task_for" value={formData.task_for} onChange={handleChange} required>
                   <option value="">Выберите класс</option>
                   {CLASSES.map((option) => (
@@ -118,6 +122,7 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
                     </option>
                   ))}
                 </select>
+
               </div>
 
               <button className="btn-primary" type="button" onClick={addTask}>

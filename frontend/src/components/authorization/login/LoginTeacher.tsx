@@ -1,20 +1,20 @@
 import React, { SyntheticEvent, useState } from 'react';
 import { Navigate } from "react-router-dom";
 
-import { BASE_URL } from '../../../constants';
-import { UserData } from '../../../types';
 import { getCookie } from '../../../functions';
+import { BASE_URL } from '../../../constants';
 
 import '../CSS/form-signing.css'
 
 
-const LoginTeacher = (props: { userData: UserData }) => {
-    const csrftoken = getCookie('csrftoken');
-    const [redirect, setRedirect] = useState(false);
-    const [error, setError] = useState('');
+const LoginTeacher = () => {
 
-    const [username, setUername] = useState('');
+    const [redirect, setRedirect] = useState(false);
+    const csrftoken = getCookie('csrftoken');
+
     const [password, setPassword] = useState('');
+    const [username, setUername] = useState('');
+    const [error, setError] = useState('');
 
     const login = async (e: SyntheticEvent) => {
         e.preventDefault();

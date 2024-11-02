@@ -2,21 +2,20 @@ import React, { SyntheticEvent, useState } from 'react';
 import { Navigate } from "react-router-dom";
 
 import { BASE_URL, CLASSES } from '../../../constants';
-import { UserData } from '../../../types';
 import { getCookie } from '../../../functions';
 
 import '../CSS/form-signing.css'
 
 
-const LoginStudent = (props: { userData: UserData }) => {
+const LoginStudent = () => {
 
-    const csrftoken = getCookie('csrftoken');
     const [redirect, setRedirect] = useState(false);
+    const csrftoken = getCookie('csrftoken');
     const [error, setError] = useState('');
 
-    const [last_name, setLastName] = useState('');
-    const [first_name, setFirstName] = useState('');
     const [school_class, setSchoolClass] = useState('');
+    const [first_name, setFirstName] = useState('');
+    const [last_name, setLastName] = useState('');
     const [password, setPassword] = useState('');
 
     const login = async (e: SyntheticEvent) => {
@@ -88,7 +87,7 @@ const LoginStudent = (props: { userData: UserData }) => {
                         onChange={e => setPassword(e.target.value)}
                     />
                 </div>
-                <button className="btn-primary" type="submit">Зарегистрироваться</button>
+                <button className="btn-primary" type="submit">Авторизоваться</button>
             </form>
         </div>
     );

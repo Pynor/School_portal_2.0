@@ -11,7 +11,7 @@ const Profile = (props: { userData: UserData, tasksListData: TaskListForAnswers 
         <div>
             {props.userData.is_staff ? (
                 <div className="form-container">
-                    <Link to="/register-student" className="btn-primary">Зарегистрировать учеников</Link>
+                    <Link to="/register-students" className="btn-primary">Зарегистрировать учеников</Link>
                     <Link to="/add-tasks" className="btn-primary">Создать тест</Link>
                 </div>
             ) : (

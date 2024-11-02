@@ -12,7 +12,7 @@ const RegisterHub = () => {
                     <Link to="/register-teacher" className="hub-link">Зарегистрироваться учителю</Link>
                 </li>
                 <li className="nav-item active">
-                    <Link to="/register-student" className="hub-link">Зарегистрировать учеников</Link>
+                    <Link to="/register-students" className="hub-link">Зарегистрировать учеников</Link>
                 </li>
             </ul>
         </div>
