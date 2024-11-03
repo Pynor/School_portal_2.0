@@ -20,9 +20,9 @@ class TaskListAPIService:
         return task_list
 
     @staticmethod
-    def get_task_list(kwargs) -> TaskList:
+    def get_task_list(kwargs) -> list[TaskList]:
         task_for_id = SchoolClass.objects.filter(title=kwargs["school_class"]).values_list("id", flat=True).first()
-        task_list = TaskList.objects.filter(task_for=task_for_id).first()
+        task_list = TaskList.objects.filter(task_for=task_for_id)
 
         return task_list
 

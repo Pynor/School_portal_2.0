@@ -49,10 +49,10 @@ class TaskListSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_task_list(kwargs) -> dict:
-        task_list = TaskListAPIService.get_task_list(kwargs=kwargs)
-        task_list_serializer = TaskListSerializer(task_list)
+        task_lists = TaskListAPIService.get_task_list(kwargs=kwargs)
+        task_list_serializers = [TaskListSerializer(task_list).data for task_list in task_lists]
 
-        return {"task_list": task_list_serializer.data}
+        return {"task_list": task_list_serializers}
 
     def create(self, validated_data: dict[str]) -> TaskList:
         return TaskListAPIService.create_task_list(validated_data)
