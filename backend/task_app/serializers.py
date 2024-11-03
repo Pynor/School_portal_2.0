@@ -2,6 +2,8 @@ from rest_framework import serializers
 
 from .services import AnswerListAPIService, TaskListAPIService
 from .models import Answer, AnswerList, Task, TaskList
+from user_app.serializers import StudentSerializer
+from user_app.models import SchoolClass, Student
 
 
 class AnswerSerializer(serializers.ModelSerializer):
@@ -23,6 +25,10 @@ class AnswerListSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data: dict[str]) -> AnswerList:
         return AnswerListAPIService.create_answer_list(validated_data)
+
+    @staticmethod
+    def get_answer_list(kwargs):
+        return AnswerListAPIService.get_answer_list(kwargs, StudentSerializer, AnswerSerializer)
 
 
 class TaskSerializer(serializers.ModelSerializer):

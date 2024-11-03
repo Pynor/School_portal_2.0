@@ -17,6 +17,11 @@ class TaskListCreateAPIView(generics.CreateAPIView):
     permission_classes = [permissions.AllowAny]
 
 
+class AnswerListAPIView(APIView):
+    def get(self, request, *args, **kwargs):
+        return Response(AnswerListSerializer.get_answer_list(kwargs=kwargs))
+
+
 class TaskListAPIView(APIView):
     def get(self, request, *args, **kwargs):
         return Response(TaskListSerializer.get_task_list(kwargs=kwargs))

@@ -1,5 +1,7 @@
+from django.db.models import Prefetch
 from user_app.models import SchoolClass, Student, User
 from .models import Task, TaskList, Answer, AnswerList
+from user_app.serializers import StudentSerializer
 
 
 class TaskListAPIService:
@@ -19,8 +21,8 @@ class TaskListAPIService:
 
     @staticmethod
     def get_task_list(kwargs) -> TaskList:
-        task_for = SchoolClass.objects.get(title=kwargs["school_class"])
-        task_list = TaskList.objects.filter(task_for=task_for).first()
+        task_for_id = SchoolClass.objects.filter(title=kwargs["school_class"]).values_list("id", flat=True).first()
+        task_list = TaskList.objects.filter(task_for=task_for_id).first()
 
         return task_list
 
@@ -37,8 +39,19 @@ class AnswerListAPIService:
         return answer_list
 
     @staticmethod
-    def get_answer_list(kwargs) -> AnswerList:
-        task_for = SchoolClass.objects.get(title=kwargs["school_class"])
-        task_list = TaskList.objects.filter(task_for=task_for).first()
+    def get_answer_list(kwargs: dict, student_serializer: StudentSerializer, answer_serializer) -> list[dict]:
+        school_class = SchoolClass.objects.get(title=kwargs["school_class"])
+        students = Student.objects.filter(school_class=school_class).select_related("user")
 
-        return task_list
+        answers_and_students = []
+
+        for student in students:
+            answers = Answer.objects.filter(answer_list__user=student.user).select_related("task")
+            serialized_answers = answer_serializer(answers, many=True).data
+
+            answers_and_students.append({
+                "student": student_serializer(student).data,
+                "answers": serialized_answers
+            })
+
+        return answers_and_students
