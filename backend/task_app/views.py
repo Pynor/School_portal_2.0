@@ -17,9 +17,9 @@ class TaskListCreateAPIView(generics.CreateAPIView):
     permission_classes = [permissions.AllowAny]
 
 
-class AnswerListAPIView(APIView):
+class StudentAndAnswerListAPIView(APIView):
     def get(self, request, *args, **kwargs):
-        return Response(AnswerListSerializer.get_answer_list(kwargs=kwargs))
+        return Response(AnswerListSerializer.get_student_and_answer_list(kwargs=kwargs))
 
 
 class TaskListAPIView(APIView):

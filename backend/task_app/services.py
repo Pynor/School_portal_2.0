@@ -30,7 +30,8 @@ class TaskListAPIService:
 class AnswerListAPIService:
     @staticmethod
     def create_answer_list(validated_data: dict) -> AnswerList:
-        answer_list = AnswerList.objects.create(user=validated_data.pop("user"))
+        answer_list = AnswerList.objects.create(task_list=validated_data.pop("task_list"),
+                                                user=validated_data.pop("user"))
         answers_data = validated_data.pop("answers")
 
         for answer_data in answers_data:
@@ -39,7 +40,7 @@ class AnswerListAPIService:
         return answer_list
 
     @staticmethod
-    def get_answer_list(kwargs: dict, student_serializer: StudentSerializer, answer_serializer) -> list[dict]:
+    def get_student_and_answer_list(kwargs: dict, student_serializer: StudentSerializer, answer_serializer) -> list[dict]:
         school_class = SchoolClass.objects.get(title=kwargs["school_class"])
         students = Student.objects.filter(school_class=school_class).select_related("user")
 
