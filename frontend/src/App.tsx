@@ -12,7 +12,8 @@ import LoginHub from './components/authorization/login/LoginHub';
 import AddAnswers from './components/tasks-and-answers/AddAnswers';
 import AddTasks from './components/tasks-and-answers/AddTasks';
 
-import Profile from './components/profile/Profile';
+import ProfileTeacher from './components/profile/ProfileTeacher';
+import ProfileStudent from './components/profile/ProfileStudent';
 
 import Nav from './components/navigation/Nav';
 
@@ -92,7 +93,7 @@ const App = () => {
                     <main className="main-content">
                         <div className="form-tasks-and-answers">
                             <Routes>
-                                <Route path="/add-answers" element={<AddAnswers tasksListData={tasksListData} userData={userData} />} />
+                                <Route path="/add-answers/:taskListId" element={<AddAnswers tasksListData={tasksListData} userData={userData} />} />
                                 <Route path="/add-tasks" element={<AddTasks userData={userData} />} />
                             </Routes>
                         </div>
@@ -111,7 +112,8 @@ const App = () => {
 
                         <div className="profile">
                             <Routes>
-                                <Route path="/profile" element={<Profile tasksListData={tasksListData} userData={userData} />} />
+                                <Route path="/profile-student/" element={<ProfileStudent tasksListData={tasksListData} />} />
+                                <Route path="/profile-teacher" element={<ProfileTeacher userData={userData} />} />
                             </Routes>
                         </div>
                     </main>

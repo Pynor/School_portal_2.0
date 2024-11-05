@@ -12,7 +12,7 @@ import './CSS/nav.css'
 const Nav = (props: { userData: UserData, setName: (name: string) => void }) => {
   const [message, setMessage] = useState<React.ReactNode>(null);
   const [showMessage, setShowMessage] = useState(false);
-  
+
   const csrftoken = getCookie('csrftoken');
 
 
@@ -60,9 +60,16 @@ const Nav = (props: { userData: UserData, setName: (name: string) => void }) => 
     </ul>
   ) : (
     <ul className="navbar-nav">
-      <li className="nav-item">
-        <Link to="/profile" className="nav-link btn btn-primary">Профиль</Link>
-      </li>
+      {props.userData.is_staff ? (
+        <li className="nav-item">
+          <Link to="/profile-teacher" className="nav-link btn btn-primary">Профиль</Link>
+        </li>
+      ) : (
+        <li className="nav-item">
+          <Link to="/profile-student" className="nav-link btn btn-primary">Профиль</Link>
+        </li>
+      )
+      }
       <li className="nav-item">
         <Link to="/" className="nav-link btn btn-primary" onClick={logout}>Выйти</Link>
       </li>

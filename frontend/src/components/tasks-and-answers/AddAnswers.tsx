@@ -1,20 +1,23 @@
-import { Navigate } from "react-router-dom";
+import { Navigate, useParams } from "react-router-dom";
 import React, { useState } from "react";
 
-import { UserData, TaskListForAnswers, AnswerList } from "../../types";
+import { UserData, TaskList, AnswerList } from "../../types";
 import { BASE_URL } from '../../constants';
 import { getCookie, setCookie } from '../../functions';
 
 import './CSS/add-answer.css';
 
 
-const AddAnswers: React.FC<{ tasksListData: TaskListForAnswers, userData: UserData }> = ({ tasksListData, userData }) => {
-
+const AddAnswers: React.FC<{ tasksListData: TaskList, userData: UserData }> = ({ tasksListData, userData }) => {
+  
   const [message, setMessage] = useState<React.ReactNode>(null);
+  const taskListId = useParams<{ taskListId: string }>().taskListId as string;
+  const taskListIdNumber = parseInt(taskListId, 10) as number;
   const [answers, setAnswers] = useState<AnswerList[]>([
     {
       user: userData.id,
-      answers: tasksListData.task_list.tasks.map((task) => ({
+      task_list: tasksListData.task_list[taskListIdNumber].id,
+      answers: tasksListData.task_list[taskListIdNumber].tasks.map((task) => ({
         photo_to_the_answer: null,
         task: task.id,
         answer: '',
@@ -65,6 +68,7 @@ const AddAnswers: React.FC<{ tasksListData: TaskListForAnswers, userData: UserDa
   const prepareData = () => {
     return {
       user: answers[0].user,
+      task_list: tasksListData.task_list[taskListIdNumber].id,
       answers: answers[0].answers.map((answer) => ({
         task: answer.task,
         answer: answer.answer,
@@ -87,7 +91,7 @@ const AddAnswers: React.FC<{ tasksListData: TaskListForAnswers, userData: UserDa
 
     if (response.ok) {
       setMessage(<h2 className="success-message">Ответ получен.</h2>);
-      setCookie("completedTask", "true")
+      setCookie(`completedTask(${taskListId})`, `${taskListId}`)
       setTimeout(() => { setRedirect(true) }, 1000);
 
 
@@ -109,7 +113,7 @@ const AddAnswers: React.FC<{ tasksListData: TaskListForAnswers, userData: UserDa
     <nav className="form-container">
       <form onSubmit={handleSubmit}>
         {message && <p>{message}</p>}
-        {tasksListData.task_list.tasks.map((task, index) => (
+        {tasksListData.task_list[taskListIdNumber].tasks.map((task) => (
           <div key={task.id}>
             <div className="form-container">
               <h2>{`Задача ${task.sequence_number} (${task.title}):`}</h2>

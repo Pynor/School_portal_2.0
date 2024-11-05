@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { BASE_URL, CLASSES } from '../../constants';
-import { UserData, Task, TaskList } from '../../types';
+import { UserData, Task, TaskListForAddTasks } from '../../types';
 import { getCookie } from '../../functions';
 
 import './CSS/add-task.css';
@@ -22,14 +22,14 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
     id: 0
   };
 
-  const initialFormData: TaskList = {
+  const initialFormData: TaskListForAddTasks = {
     title: '',
     count_task: 1,
     task_for: '',
     tasks: [{ sequence_number: 1, ...emptyTask }],
   };
 
-  const [formData, setFormData] = useState<TaskList>(initialFormData);
+  const [formData, setFormData] = useState<TaskListForAddTasks>(initialFormData);
 
   useEffect(() => {
     setFormData((prevFormData) => ({

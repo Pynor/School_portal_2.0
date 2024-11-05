@@ -25,16 +25,17 @@ export type Props = {
   };
 };
 
-export type TaskListForAnswers = {
-  task_list: {
+export type TaskList = {
+  task_list: [{
     count_task: number;
     task_for: string;
     title: string;
     tasks: Task[];
-  }
+    id: number;
+  }]
 };
 
-export type TaskList = {
+export type TaskListForAddTasks = {
   count_task: number;
   task_for: string;
   title: string;
@@ -52,6 +53,7 @@ export type Task = {
 };
 
 export type AnswerList = {
+  task_list: number;
   answers: Answer[];
   user: number;
 };
@@ -63,12 +65,13 @@ export type Answer = {
 };
 
 const useDefaultState = () => {
-  const defaultTasksListData: TaskListForAnswers = useMemo(
-    () => ({task_list: {
+  const defaultTasksListData: TaskList = useMemo(
+    () => ({task_list: [{
       count_task: 0,
       task_for: "",
       title: "",
-      tasks: [], }
+      id: 0,
+      tasks: [], }]
     }),
   []
     );
