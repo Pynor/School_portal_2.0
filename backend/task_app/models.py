@@ -50,7 +50,7 @@ class TaskList(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default="Created", verbose_name="Task status")
 
     def __str__(self):
-        return f"Task list for: {self.task_for.title}"
+        return f"Task list ({self.title}) for: ({self.task_for.title})"
 
 
 class Answer(models.Model):
@@ -66,7 +66,8 @@ class Answer(models.Model):
 class AnswerList(models.Model):
     reviewed = models.BooleanField(default=False, verbose_name="Answer reviewed")
     user = models.ForeignKey(to=User, on_delete=models.CASCADE, verbose_name="Student")
+    task_list = models.ForeignKey(to=TaskList, on_delete=models.CASCADE, verbose_name="Task list")
     execution_time = models.DateTimeField(default=None, null=True, verbose_name="Execution time")
 
     def __str__(self):
-        return f"List of student's answer: {self.user.first_name} {self.user.last_name}"
+        return f"List of answer on ({self.task_list.title}) from: {self.user.first_name} {self.user.last_name}"
