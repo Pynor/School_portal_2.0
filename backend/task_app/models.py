@@ -30,7 +30,7 @@ class Task(models.Model):
                                   null=True, blank=True, verbose_name="Video file")
 
     def __str__(self):
-        return f"Task({self.sequence_number}): {self.title}"
+        return f"Task({self.sequence_number}) of ({self.task_list.title}): {self.title}"
 
 
 class TaskList(models.Model):

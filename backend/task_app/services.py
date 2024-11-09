@@ -1,7 +1,8 @@
-from django.db.models import Prefetch
+from rest_framework.exceptions import ValidationError
+from rest_framework.response import Response
+
 from user_app.models import SchoolClass, Student, User
 from .models import Task, TaskList, Answer, AnswerList
-from user_app.serializers import StudentSerializer
 
 
 class TaskListAPIService:
@@ -30,9 +31,15 @@ class TaskListAPIService:
 class AnswerListAPIService:
     @staticmethod
     def create_answer_list(validated_data: dict) -> AnswerList:
-        answer_list = AnswerList.objects.create(task_list=validated_data.pop("task_list"),
-                                                user=validated_data.pop("user"))
         answers_data = validated_data.pop("answers")
+        task_list = validated_data.get("task_list")
+        user = validated_data.get("user")
+
+        if AnswerList.objects.filter(task_list=task_list, user=user).exists():
+            raise ValidationError({"details": "Ответ на эту задачу уже был получен."})
+
+        answer_list = AnswerList.objects.create(task_list=task_list,
+                                                user=user)
 
         for answer_data in answers_data:
             Answer.objects.create(answer_list=answer_list, **answer_data)
@@ -40,19 +47,21 @@ class AnswerListAPIService:
         return answer_list
 
     @staticmethod
-    def get_student_and_answer_list(kwargs: dict, student_serializer: StudentSerializer, answer_serializer) -> list[dict]:
+    def get_student_and_answer_list(kwargs: dict, student_serializer, answer_serializer) -> Response:
+        task_list_id = kwargs["task_list_id"]
         school_class = SchoolClass.objects.get(title=kwargs["school_class"])
         students = Student.objects.filter(school_class=school_class).select_related("user")
 
         answers_and_students = []
 
         for student in students:
-            answers = Answer.objects.filter(answer_list__user=student.user).select_related("task")
-            serialized_answers = answer_serializer(answers, many=True).data
+            answers = Answer.objects.filter(answer_list__task_list=task_list_id,
+                                            answer_list__user=student.user,).select_related("task")
+            serialized_answers = answer_serializer(answers, many=True)
 
             answers_and_students.append({
                 "student": student_serializer(student).data,
-                "answers": serialized_answers
+                "answers": serialized_answers.data
             })
 
-        return answers_and_students
+        return Response(answers_and_students)

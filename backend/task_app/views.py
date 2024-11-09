@@ -19,9 +19,9 @@ class TaskListCreateAPIView(generics.CreateAPIView):
 
 class StudentAndAnswerListAPIView(APIView):
     def get(self, request, *args, **kwargs):
-        return Response(AnswerListSerializer.get_student_and_answer_list(kwargs=kwargs))
+        return AnswerListSerializer.get_student_and_answer_list(kwargs=kwargs)
 
 
 class TaskListAPIView(APIView):
     def get(self, request, *args, **kwargs):
-        return Response(TaskListSerializer.get_task_list(kwargs=kwargs))
+        return TaskListSerializer.get_task_list(kwargs=kwargs)
