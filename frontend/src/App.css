@@ -2,12 +2,6 @@
   margin-left: 20px;
 }
 
-.form-login-and-register {
-  max-width: 600px;
-  padding: 15px;
-  margin: auto;
-}
-
 .form-signin .checkbox {
   font-weight: 400;
 }
@@ -31,6 +25,24 @@
   justify-content: space-between;
   display: grid;
   grid-template-columns: 30% 70%;
+}
+
+.form-tasks-and-answers  {
+  max-width: 600px;
+  padding: 15px;
+  margin: auto;
+}
+
+.form-login-and-register {
+  max-width: 600px;
+  padding: 15px;
+  margin: auto;
+}
+
+.profile {
+  max-width: 600px;
+  padding: 15px;
+  margin: auto;
 }
 
 .Sidebar {

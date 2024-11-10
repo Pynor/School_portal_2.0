@@ -12,8 +12,9 @@ const ProfileTeacher = (props: { userData: UserData }) => {
         <div>
             {props.userData.is_staff ? (
                 <div className="form-container">
-                    <Link to="/register-students" className="btn-primary">Зарегистрировать учеников</Link>
-                    <Link to="/add-tasks" className="btn-primary">Создать тест</Link>
+                    <Link to="/register-students" className="btn-primary" style={{ width: '250px', textAlign: 'center' }}>Зарегистрировать учеников</Link>
+                    <Link to="/check-answers-hub" className="btn-primary" style={{ width: '250px', textAlign: 'center' }}>Проверить ответы учеников</Link>
+                    <Link to="/add-tasks" className="btn-primary" style={{ width: '250px', textAlign: 'center' }}>Создать тест</Link>
                 </div>
             ) : (
                 <h2 className="error-message">У вас нет на это прав.</h2>
