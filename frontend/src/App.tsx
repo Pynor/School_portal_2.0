@@ -9,6 +9,8 @@ import LoginStudent from './components/authorization/login/LoginStudent';
 import LoginTeacher from './components/authorization/login/LoginTeacher';
 import LoginHub from './components/authorization/login/LoginHub';
 
+import CheckAnswersHub from './components/tasks-and-answers/CheckAnswersHub';
+import CheckAnswers from './components/tasks-and-answers/CheckAnswers';
 import AddAnswers from './components/tasks-and-answers/AddAnswers';
 import AddTasks from './components/tasks-and-answers/AddTasks';
 
@@ -95,6 +97,9 @@ const App = () => {
                             <Routes>
                                 <Route path="/add-answers/:taskListId" element={<AddAnswers tasksListData={tasksListData} userData={userData} />} />
                                 <Route path="/add-tasks" element={<AddTasks userData={userData} />} />
+
+                                <Route path="/check-answers/:schoolClass/:taskListId" element={<CheckAnswers userData={userData} />} />
+                                <Route path="/check-answers-hub" element={<CheckAnswersHub userData={userData} />} />
                             </Routes>
                         </div>
 
@@ -112,7 +117,7 @@ const App = () => {
 
                         <div className="profile">
                             <Routes>
-                                <Route path="/profile-student/" element={<ProfileStudent tasksListData={tasksListData} />} />
+                                <Route path="/profile-student" element={<ProfileStudent tasksListData={tasksListData} />} />
                                 <Route path="/profile-teacher" element={<ProfileTeacher userData={userData} />} />
                             </Routes>
                         </div>
