@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
 
 import RegisterStudents from './components/authorization/register/RegisterStudent';
@@ -31,15 +31,18 @@ const App = () => {
 
     const [tasksListData, setTasksListData] = useState(defaultTasksListData);
     const [userData, setUserData] = useState(defaultUserData);
+    const hasFetchedRef = useRef(false);
 
     const [, setName] = useState('');
 
     useEffect(() => {
-        const controller = new AbortController();
-        const signal = controller.signal;
-
         const fetchData = async () => {
+
+            if (hasFetchedRef.current) return; 
+            hasFetchedRef.current = true;
+
             try {
+                console.log("Запрос пользователя начат");
                 const userGetResponse = await fetch(`${BASE_URL}/user_app/api/v1/api-user-get/`, {
                     headers: {
                         'Access-Control-Request-Headers': 'Content-Type',
@@ -47,7 +50,6 @@ const App = () => {
                     },
                     credentials: 'include',
                     method: 'GET',
-                    signal,
                 });
 
                 if (!userGetResponse.ok) {
@@ -56,8 +58,8 @@ const App = () => {
 
                 const userData = await userGetResponse.json();
                 setUserData(userData);
-
-                if (!userData.is_staff || userData.student) {
+                
+                if (!userData.is_staff && userData.student) {
                     const tasksGetResponse = await fetch(`${BASE_URL}/task_app/api/v1/api-task-list-get/${userData.student.school_class}`, {
                         headers: {
                             'Access-Control-Request-Headers': 'Content-Type',
@@ -65,7 +67,6 @@ const App = () => {
                         },
                         credentials: 'include',
                         method: 'GET',
-                        signal,
                     });
 
                     if (!tasksGetResponse.ok) {
@@ -75,14 +76,12 @@ const App = () => {
                     const tasksListData = await tasksGetResponse.json();
                     setTasksListData(tasksListData);
                 }
-            } catch { }
+            } catch (error) {
+                console.error("Ошибка при получении данных:", error);
+            }
         };
 
         fetchData();
-
-        return () => {
-            controller.abort();
-        };
     }, []);
 
 

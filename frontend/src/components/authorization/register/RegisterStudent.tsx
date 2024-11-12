@@ -2,7 +2,7 @@ import { Navigate } from 'react-router-dom';
 import React, { useState } from 'react';
 
 import { BASE_URL, CLASSES } from '../../../constants';
-import { UserData, Student } from '../../../types';
+import { UserData, StudentForRegister } from '../../../types';
 import { getCookie } from '../../../functions';
 
 import '../CSS/form-signing.css'
@@ -20,11 +20,11 @@ const RegisterStudents = (props: { userData: UserData }) => {
 
 
 
-  const [studentsData, setStudentsData] = useState<Student[]>(
+  const [studentsData, setStudentsData] = useState<StudentForRegister[]>(
     Array.from({ length: numStudents }, () => ({
-      last_name: '',
-      first_name: '',
       school_class: schoolClass,
+      first_name: '',
+      last_name: '',
     }))
   );
 
@@ -39,7 +39,7 @@ const RegisterStudents = (props: { userData: UserData }) => {
     );
   };
 
-  const handleInputChange = (index: number, field: keyof Student, value: string) => {
+  const handleInputChange = (index: number, field: keyof StudentForRegister, value: string) => {
     setStudentsData((prevData) => {
       const updatedData = [...prevData];
       updatedData[index][field] = value;
@@ -49,7 +49,7 @@ const RegisterStudents = (props: { userData: UserData }) => {
 
   const handleNumStudentsChange = (value: number) => {
     setNumStudents(value);
-    setStudentsData(Array.from({ length: value }, () => ({ last_name: '', first_name: '', school_class: '' })));
+    setStudentsData(Array.from({ length: value }, () => ({ last_name: '', first_name: '', school_class: ''})));
   };
 
 

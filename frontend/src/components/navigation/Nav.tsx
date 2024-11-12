@@ -30,8 +30,10 @@ const Nav = (props: { userData: UserData, setName: (name: string) => void }) => 
       props.setName('');
       setShowMessage(true);
       setMessage(
-        <div className="form-container">
-          <h2 className="success-message">Вы успешно вышли.</h2>
+        <div className="nav-container">
+          <div className="form-container">
+            <h2 className="success-message">Вы успешно вышли.</h2>
+          </div>
         </div>
       );
 
@@ -42,8 +44,10 @@ const Nav = (props: { userData: UserData, setName: (name: string) => void }) => 
     } catch (error) {
       setShowMessage(true);
       setMessage(
-        <div className="form-container">
-          <h2 className="error-message">Ошибка при выходе.</h2>
+        <div className="nav-container">
+          <div className="form-container">
+            <h2 className="error-message">Ошибка при выходе.</h2>
+          </div>
         </div>
       );
     }

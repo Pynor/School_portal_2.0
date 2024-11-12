@@ -12,11 +12,19 @@ export type UserData = {
   id: number;
 };
 
-export type Student = {
+export type StudentForRegister = {
   school_class: string;
   first_name: string;
   last_name: string;
 };
+
+export type Student = {
+  school_class: string;
+  authorized?: boolean;
+  first_name: string;
+  last_name: string;
+};
+
 
 export type Props = {
   userData: {
@@ -56,6 +64,11 @@ export type AnswerList = {
   task_list: number;
   answers: Answer[];
   user: number;
+};
+
+export type StudentAndAnswer = {
+  answers: Answer[];
+  student: Student;
 };
 
 export type Answer = {
