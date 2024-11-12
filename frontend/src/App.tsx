@@ -95,7 +95,7 @@ const App = () => {
                         <div className="form-tasks-and-answers">
                             <Routes>
                                 <Route path="/add-answers/:taskListId" element={<AddAnswers tasksListData={tasksListData} userData={userData} />} />
-                                <Route path="/add-tasks" element={<AddTasks userData={userData} />} />
+                                <Route path="/add-tasks" element={<AddTasks tasksListData={tasksListData} userData={userData} />} />
 
                                 <Route path="/check-answers/:schoolClass/:taskListId" element={<CheckAnswers userData={userData} />} />
                                 <Route path="/check-answers-hub" element={<CheckAnswersHub userData={userData} />} />

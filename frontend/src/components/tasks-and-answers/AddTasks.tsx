@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 
 import { BASE_URL, CLASSES } from '../../constants';
-import { UserData, Task, TaskListForAddTasks } from '../../types';
+import { UserData, Task, TaskListForAddTasks, TaskList } from '../../types';
 import { getCookie } from '../../functions';
 
 import './CSS/add-task.css';
 
 
-const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
+const AddTasks: React.FC<{ tasksListData: TaskList, userData: UserData }> = ({ tasksListData, userData }) => {
 
   const [message, setMessage] = useState<React.ReactNode>(null);
   const csrftoken = getCookie('csrftoken');

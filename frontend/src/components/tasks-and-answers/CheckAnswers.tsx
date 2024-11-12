@@ -9,7 +9,7 @@ import './CSS/add-task.css';
 
 const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
     const [data, setData] = useState<StudentAndAnswer[]>();
-    const [message, setMessage] = useState<React.ReactNode>(null);
+    const [errorMessage, setErrorMessage] = useState('');
     const { schoolClass, taskListId } = useParams();
     const hasFetchedRef = useRef(false);
 
@@ -32,12 +32,11 @@ const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
                 if (getResponse.ok) {
                     const responseData = await getResponse.json();
                     setData(responseData);
-                    setMessage(<h2 className="success-message">Задача получена.</h2>);
                 } else {
-                    setMessage(<h2 className="error-message">Произошла ошибка при получении задачи.</h2>);
+                    setErrorMessage('Произошла ошибка при получении задачи.');
                 }
             } catch (error) {
-                setMessage(<h2 className="error-message">Произошла ошибка</h2>);
+                setErrorMessage('Произошла ошибка.');
             }
         };
 
@@ -48,6 +47,7 @@ const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
     return (
         <div className="form-container">
             <Link to="/check-answers-hub" className="btn-primary" style={{alignSelf: "flex-start"}}>Вернутся</Link>
+            {errorMessage && <h2 className="error-message">{errorMessage}</h2>}
             {userData.is_staff ? (
                 <div>
                     <h1>Ответы учеников {schoolClass} класса.</h1>

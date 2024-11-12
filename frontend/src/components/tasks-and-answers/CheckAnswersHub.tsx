@@ -8,10 +8,11 @@ import './CSS/add-task.css';
 
 
 const CheckAnswersHub: React.FC<{ userData: UserData }> = ({ userData }) => {
-    const [message, setMessage] = useState<React.ReactNode>(null);
-    const [school_class, setSchoolClass] = useState('');
-    const [getTasksCompleted, setGetTasksCompleted] = useState(false);
+    
     const [data, setData] = useState<{ task_list: Task[] }>({ task_list: [] });
+    const [getTasksCompleted, setGetTasksCompleted] = useState(false);
+    const [errorMessage, setErrorMessage] = useState('');
+    const [school_class, setSchoolClass] = useState('');
 
     const getTasks = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -29,9 +30,8 @@ const CheckAnswersHub: React.FC<{ userData: UserData }> = ({ userData }) => {
             const responseData = await getResponse.json();
             setData(responseData);
             setGetTasksCompleted(true)
-            setMessage(<h2 className="success-message">Задача получена.</h2>);
         } else {
-            setMessage(<h2 className="error-message">Произошла ошибка при получении задачи.</h2>);
+            setErrorMessage('Произошла ошибка.')
         }
     };
 
@@ -39,6 +39,7 @@ const CheckAnswersHub: React.FC<{ userData: UserData }> = ({ userData }) => {
         <div className="form-container">
             {userData.is_staff ? (
                 <>
+                    {errorMessage && <h2 className="error-message">{errorMessage}</h2>}
                     <form onSubmit={getTasks}>
                         <select
                             className="form-control"
