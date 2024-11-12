@@ -38,7 +38,7 @@ const App = () => {
     useEffect(() => {
         const fetchData = async () => {
 
-            if (hasFetchedRef.current) return; 
+            if (hasFetchedRef.current) return;
             hasFetchedRef.current = true;
 
             try {
@@ -58,7 +58,7 @@ const App = () => {
 
                 const userData = await userGetResponse.json();
                 setUserData(userData);
-                
+
                 if (!userData.is_staff && userData.student) {
                     const tasksGetResponse = await fetch(`${BASE_URL}/task_app/api/v1/api-task-list-get/${userData.student.school_class}`, {
                         headers: {
@@ -95,7 +95,7 @@ const App = () => {
                         <div className="form-tasks-and-answers">
                             <Routes>
                                 <Route path="/add-answers/:taskListId" element={<AddAnswers tasksListData={tasksListData} userData={userData} />} />
-                                <Route path="/add-tasks" element={<AddTasks tasksListData={tasksListData} userData={userData} />} />
+                                <Route path="/add-tasks" element={<AddTasks userData={userData} />} />
 
                                 <Route path="/check-answers/:schoolClass/:taskListId" element={<CheckAnswers userData={userData} />} />
                                 <Route path="/check-answers-hub" element={<CheckAnswersHub userData={userData} />} />

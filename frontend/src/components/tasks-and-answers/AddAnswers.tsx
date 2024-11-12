@@ -10,8 +10,8 @@ import './CSS/add-answer.css';
 
 const AddAnswers: React.FC<{ tasksListData: TaskList, userData: UserData }> = ({ tasksListData, userData }) => {
   
-  const [message, setMessage] = useState<React.ReactNode>(null);
   const taskListId = useParams<{ taskListId: string }>().taskListId as string;
+  const [message, setMessage] = useState<React.ReactNode>(null);
   const taskListIdNumber = parseInt(taskListId, 10) as number;
   const [answers, setAnswers] = useState<AnswerList[]>([
     {

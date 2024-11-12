@@ -8,7 +8,7 @@ import './CSS/add-task.css';
 
 
 const CheckAnswersHub: React.FC<{ userData: UserData }> = ({ userData }) => {
-    
+
     const [data, setData] = useState<{ task_list: Task[] }>({ task_list: [] });
     const [getTasksCompleted, setGetTasksCompleted] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
@@ -65,7 +65,12 @@ const CheckAnswersHub: React.FC<{ userData: UserData }> = ({ userData }) => {
                             <h2 style={{ textAlign: 'center' }}>Задачи для {school_class} класса:</h2>
                             {data.task_list.length > 0 ? (
                                 data.task_list.map((option: Task, index: number) => (
-                                    <Link key={index} to={`/check-answers/${school_class}/${option.id}`} className="btn-primary" style={{ width: '300px' }}>
+                                    <Link
+                                        key={index}
+                                        className="btn-primary"
+                                        style={{ width: '300px' }}
+                                        to={`/check-answers/${school_class}/${option.id}`}
+                                    >
                                         Проверить задачу {option.title}
                                     </Link>
                                 ))
