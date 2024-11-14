@@ -30,7 +30,8 @@ class AnswerListSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_student_and_answer_list(kwargs) -> Response:
-        return AnswerListAPIService.get_student_and_answer_list(kwargs, StudentSerializer, AnswerSerializer)
+        return AnswerListAPIService.get_students_answers_and_tasks_by_task_list(kwargs, StudentSerializer,
+                                                                                AnswerSerializer, TaskSerializer)
 
 
 class TaskSerializer(serializers.ModelSerializer):
