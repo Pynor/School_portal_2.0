@@ -66,9 +66,12 @@ export type AnswerList = {
   user: number;
 };
 
-export type StudentAndAnswer = {
-  answers: Answer[];
+export type StudentAndAnswerForCheckAnswers = {
   student: Student;
+  tasks_and_answers: Array<{
+    answer: Answer,
+    task: Task
+  }>;
 };
 
 export type Answer = {
@@ -79,36 +82,38 @@ export type Answer = {
 
 const useDefaultState = () => {
   const defaultTasksListData: TaskList = useMemo(
-    () => ({task_list: [{
-      count_task: 0,
-      task_for: "",
-      title: "",
-      id: 0,
-      tasks: [], }]
+    () => ({
+      task_list: [{
+        count_task: 0,
+        task_for: "",
+        title: "",
+        id: 0,
+        tasks: [],
+      }]
     }),
-  []
-    );
+    []
+  );
 
-const defaultUserData: UserData = useMemo(
-  () => ({
-    student: {
-      school_class: "",
+  const defaultUserData: UserData = useMemo(
+    () => ({
+      student: {
+        school_class: "",
+        first_name: "",
+        last_name: "",
+      },
+      is_staff: false,
       first_name: "",
+      birth_date: "",
       last_name: "",
-    },
-    is_staff: false,
-    first_name: "",
-    birth_date: "",
-    last_name: "",
-    username: "",
-    email: "",
-    bio: "",
-    id: 0,
-  }),
-  []
-);
+      username: "",
+      email: "",
+      bio: "",
+      id: 0,
+    }),
+    []
+  );
 
-return { defaultTasksListData, defaultUserData };
-  };
+  return { defaultTasksListData, defaultUserData };
+};
 
 export default useDefaultState;

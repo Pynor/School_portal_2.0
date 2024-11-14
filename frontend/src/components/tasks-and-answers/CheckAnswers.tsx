@@ -1,7 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
-import { StudentAndAnswer, TaskList, UserData } from '../../types';
+import { StudentAndAnswerForCheckAnswers, UserData } from '../../types';
 import { BASE_URL } from '../../constants';
 
 import './CSS/add-task.css';
@@ -9,7 +9,7 @@ import './CSS/add-task.css';
 
 const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
 
-    const [data, setData] = useState<StudentAndAnswer[]>();
+    const [data, setData] = useState<StudentAndAnswerForCheckAnswers[]>();
     const [errorMessage, setErrorMessage] = useState('');
     const { schoolClass, taskListId } = useParams();
     const hasFetchedRef = useRef(false);
@@ -53,17 +53,18 @@ const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
                 <div>
                     <h1>Ответы учеников {schoolClass} класса.</h1>
 
-                    {data?.map((answer_and_student, index) => (
+                    {data?.map((student_answer_and_task, index) => (
                         <div key={index} className="form-container">
-                            <h3>{answer_and_student.student.first_name} {answer_and_student.student.last_name}</h3>
+                            <h2>{student_answer_and_task.student.first_name} {student_answer_and_task.student.last_name}</h2>
                             <div>
-                                {answer_and_student.student.authorized ? (
-                                    answer_and_student.answers.length === 0 ? (
+                                {student_answer_and_task.student.authorized ? (
+                                    student_answer_and_task.tasks_and_answers.length === 0 ? (
                                         <h2 className="normal-message">Ученик еще не дал ответа.</h2>
                                     ) : (
-                                        answer_and_student.answers.map((answer, index) => (
-                                            <div key={index} >
-                                                <h3>Ответ: {answer.answer}</h3>
+                                        student_answer_and_task.tasks_and_answers.map((answer_and_task, index) => (
+                                            <div key={index} className="form-container">
+                                                <h2>Задача: {answer_and_task.task.answer_to_the_task}</h2>
+                                                <h3>Ответ Ученика: {answer_and_task.answer.answer}</h3>
                                             </div>
                                         ))
                                     )

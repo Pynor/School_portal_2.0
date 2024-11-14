@@ -11,6 +11,20 @@
     padding: 30px;
 }
 
+.form-container .form-container .form-container {
+    box-shadow: none; 
+    border: none; 
+}
+
+@media (max-width: 300px) {
+    .form-container {
+        padding: 1rem; 
+        box-shadow: none; 
+        border: none; 
+    }
+}
+
+
 .hub-container {
     display: flex;
     flex-direction: column;
@@ -24,17 +38,12 @@
     font-size: 1.1rem;
     font-weight: 500;
     transition: color 0.3s ease;
-  }
-  
-  .hub-link:hover {
+}
+
+.hub-link:hover {
     color: #007bff;
-  }
-  
-  @media (max-width: 576px) {
-    .form-container {
-      padding: 1rem;
-    }
-  }
+}
+
 
 h1 {
     text-align: center;
@@ -76,13 +85,13 @@ form {
 
 .btn-primary {
     background-color: #000000;
-    border-color: #ccc; 
+    border-color: #ccc;
     color: #fff;
     border-radius: 8px;
     padding: 10px 20px;
     font-size: 18px;
     transition: background-color 0.5s ease;
-  }
+}
 
 .btn-primary:hover {
     background-color: #2840ad;
