@@ -140,8 +140,8 @@ const RegisterStudents = (props: { userData: UserData }) => {
             {numStudents >= 1 && (
               <form onSubmit={registerStudents}>
                 {studentsData.map((student, index) => (
-                  <div className="form-container">
-                    <div key={index} className="student-form">
+                  <div key={index} className="form-container">
+                    <div className="student-form">
                       <h2 className="h2">Ученик: "{index + 1}"</h2>
 
                       <div className="form-group">

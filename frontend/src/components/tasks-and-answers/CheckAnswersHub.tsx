@@ -68,7 +68,7 @@ const CheckAnswersHub: React.FC<{ userData: UserData }> = ({ userData }) => {
                                     <Link
                                         key={index}
                                         className="btn-primary"
-                                        style={{ width: '300px' }}
+                                        style={{ width: '300px', marginBottom: '10px', display: 'block' }}
                                         to={`/check-answers/${school_class}/${option.id}`}
                                     >
                                         Проверить задачу {option.title}

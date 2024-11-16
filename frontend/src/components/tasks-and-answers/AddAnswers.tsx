@@ -96,7 +96,12 @@ const AddAnswers: React.FC<{ tasksListData: TaskList, userData: UserData }> = ({
 
 
     } else {
-      setMessage(<h2 className="error-message">Произошла ошибка при получении ответа.</h2>);
+      const responseData = await response.json();
+      if (responseData.details) {
+        setMessage(<h2 className="error-message">{responseData.details}</h2>);
+      }else{
+        setMessage(<h2 className="error-message">Произошла ошибка при получении ответа.</h2>);
+      }
     }
   };
 

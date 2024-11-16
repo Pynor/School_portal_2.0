@@ -42,7 +42,6 @@ const App = () => {
             hasFetchedRef.current = true;
 
             try {
-                console.log("Запрос пользователя начат");
                 const userGetResponse = await fetch(`${BASE_URL}/user_app/api/v1/api-user-get/`, {
                     headers: {
                         'Access-Control-Request-Headers': 'Content-Type',
@@ -76,9 +75,7 @@ const App = () => {
                     const tasksListData = await tasksGetResponse.json();
                     setTasksListData(tasksListData);
                 }
-            } catch (error) {
-                console.error("Ошибка при получении данных:", error);
-            }
+            } catch (error) {}
         };
 
         fetchData();
