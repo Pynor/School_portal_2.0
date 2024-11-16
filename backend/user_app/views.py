@@ -7,38 +7,46 @@ from .models import *
 
 
 class TeacherRegisterAPIView(generics.CreateAPIView):
-    serializer_class = TeacherSerializer
+    serializer_class = TeacherRegisterSerializer
     permission_classes = [permissions.AllowAny]
 
 
 class StudentsRegisterListAPIView(generics.CreateAPIView):
-    serializer_class = StudentsRegisterListSerializer
+    serializer_class = StudentsRegisterListAPISerializer
     permission_classes = [permissions.AllowAny]
 
 
 class TeacherLoginAPIView(APIView):
     def post(self, request) -> Response:
-        user = TeacherLoginAPIService(request=request)
+        user = TeacherLoginAPIService(student_serializer=StudentSerializer,
+                                      user_serializer=UserSerializer,
+                                      request=request)
         response = user.login()
         return response
 
 
 class StudentLoginAPIView(APIView):
     def post(self, request) -> Response:
-        user = StudentLoginAPIService(request=request)
+        user = StudentLoginAPIService(student_serializer=StudentSerializer,
+                                      user_serializer=UserSerializer,
+                                      request=request)
         response = user.login()
         return response
 
 
 class UserAPIView(APIView):
     def get(self, request) -> Response:
-        user = UserAPIService(request=request)
+        user = UserAPIService(student_serializer=StudentSerializer,
+                              user_serializer=UserSerializer,
+                              request=request)
         response = user.get()
         return response
 
 
 class UserLogoutAPIView(APIView):
     def post(self, request) -> Response:
-        user = UserLogoutAPIService(request=request)
+        user = UserLogoutAPIService(student_serializer=StudentSerializer,
+                                    user_serializer=UserSerializer,
+                                    request=request)
         response = user.logout()
         return response

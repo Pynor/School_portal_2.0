@@ -1,8 +1,7 @@
 from rest_framework import serializers
-from django.db import transaction
-from rest_framework.exceptions import AuthenticationFailed
 
-from .models import Teacher, TeacherSecretKey, Student, SchoolClass, User
+from .services import StudentsRegisterListAPIService, TeacherRegisterAPIService
+from .models import Teacher, Student, SchoolClass, User
 
 
 class StudentSerializer(serializers.ModelSerializer):
@@ -33,64 +32,26 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 
-class TeacherSerializer(serializers.ModelSerializer):
-    user = UserSerializer(write_only=True)
+class TeacherRegisterSerializer(serializers.ModelSerializer):
     secret_key = serializers.CharField(max_length=40)
+    user = UserSerializer(write_only=True)
 
     class Meta:
         model = Teacher
         fields = "__all__"
 
     def create(self, validated_data: dict[str]) -> Teacher:
-        user_data = validated_data.pop("user")
-        secret_key = TeacherSecretKey.objects.filter(key=validated_data.get("secret_key")).first()
-
-        if not secret_key:
-            raise AuthenticationFailed("Неверный секретный ключ.")
-
-        user = User.objects.create_user(**user_data, is_staff=True)
-        teacher = Teacher.objects.create(user=user, phone_number=validated_data.get("phone_number"))
-        secret_key.logged = True
-
-        return teacher
+        return TeacherRegisterAPIService.create_teacher(validated_data)
 
 
-class StudentsRegisterListSerializer(serializers.ListSerializer):
+class StudentsRegisterListAPISerializer(serializers.ListSerializer):
     child = StudentSerializer()
 
-    def _create_user(self, data: dict) -> User:
-        first_name = data["user"]["first_name"]
-        last_name = data["user"]["last_name"]
-        username = f"{first_name}{last_name}{data['school_class']}"
-        password = f"{first_name[0]}{last_name[0]}"
+    def create(self, validated_data: list[dict[str, str]]):
+        return StudentsRegisterListAPIService.create_students(validated_data)
 
-        return User.objects.create_user(
-            first_name=first_name,
-            last_name=last_name,
-            password=password,
-            username=username
-        )
-
-    def _get_school_class(self, school_class_title: str) -> dict[str]:
-        if school_class_title not in self.school_classes:
-            self.school_classes[school_class_title] = SchoolClass.objects.select_related().get(title=school_class_title)
-
-        return self.school_classes[school_class_title]
-
-    @transaction.atomic
-    def _create_students(self, validated_data: list[dict[str, str]]) -> Student:
-        students = []
-
-        for data in validated_data:
-            user = self._create_user(data)
-            school_class = self._get_school_class(data["school_class"])
-            student = Student(user=user, school_class=school_class)
-            students.append(student)
-        return Student.objects.bulk_create(students)
-
-    def create(self, validated_data: list[dict[str, str]]) -> Student:
-        self.school_classes = {}
-        return self._create_students(validated_data)
+    def update(self, instance, validated_data):
+        return ...
 
 
 class SchoolClassSerializer(serializers.ModelSerializer):
