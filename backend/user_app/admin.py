@@ -1,9 +1,10 @@
-from .models import *
 from django.contrib import admin
 
+from .models import *
 
-admin.site.register(User)
+
+admin.site.register(TeacherSecretKey)
+admin.site.register(SchoolClass)
 admin.site.register(Teacher)
 admin.site.register(Student)
-admin.site.register(SchoolClass)
-admin.site.register(TeacherSecretKey)
+admin.site.register(User)

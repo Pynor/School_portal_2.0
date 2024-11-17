@@ -17,9 +17,9 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class Teacher(models.Model):
-    secret_key = models.CharField(max_length=40, verbose_name="Secret Key")
     user = models.OneToOneField(settings.AUTH_USER_MODEL, verbose_name="User", on_delete=models.CASCADE)
     phone_number = models.CharField(max_length=20, null=True, verbose_name="Phone number")
+    secret_key = models.CharField(max_length=40, verbose_name="Secret Key")
 
     def __str__(self):
         return f"Teacher: {self.user.first_name} {self.user.last_name}."

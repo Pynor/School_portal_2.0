@@ -13,11 +13,11 @@ if os.path.isfile(dotenv_file):
 
 SECRET_KEY = os.environ['SECRET_KEY']
 
-DEBUG = True
+AUTH_USER_MODEL = 'user_app.User'
 
 ALLOWED_HOSTS = []
 
-AUTH_USER_MODEL = 'user_app.User'
+DEBUG = True
 
 
 INSTALLED_APPS = [
@@ -48,11 +48,11 @@ MIDDLEWARE = [
 ]
 
 
+CSRF_TRUSTED_ORIGINS = ['http://localhost:3000']
+
 CORS_ALLOW_CREDENTIALS = True
 
 CORS_ORIGIN_ALLOW_ALL = True
-
-CSRF_TRUSTED_ORIGINS = ['http://localhost:3000']
 
 
 REST_FRAMEWORK = {
