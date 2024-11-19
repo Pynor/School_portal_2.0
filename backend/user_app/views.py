@@ -7,7 +7,7 @@ from .models import *
 
 
 class TeacherRegisterAPIView(generics.CreateAPIView):
-    serializer_class = TeacherRegisterSerializer
+    serializer_class = TeacherRegisterAPISerializer
     permission_classes = [permissions.AllowAny]
 
 

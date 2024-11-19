@@ -3,6 +3,7 @@ from __future__ import annotations
 from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.response import Response
 
+from django.contrib.auth.hashers import make_password
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import login
 from django.db import transaction
@@ -81,7 +82,12 @@ class StudentsRegisterListAPIService:
             last_name = data["user"]["last_name"]
             username = f"{first_name}{last_name}{data['school_class']}"
             password = f"{first_name[0]}{last_name[0]}"
-            users.append(User(first_name=first_name, last_name=last_name, username=username, password=password))
+            users.append(User(
+                password=make_password(password),
+                first_name=first_name,
+                last_name=last_name,
+                username=username,
+            ))
 
         return User.objects.bulk_create(users)
 

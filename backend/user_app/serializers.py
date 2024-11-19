@@ -32,7 +32,7 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 
-class TeacherRegisterSerializer(serializers.ModelSerializer):
+class TeacherRegisterAPISerializer(serializers.ModelSerializer):
     secret_key = serializers.CharField(max_length=40)
     user = UserSerializer(write_only=True)
 
