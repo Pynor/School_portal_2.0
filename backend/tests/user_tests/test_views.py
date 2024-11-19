@@ -109,7 +109,8 @@ class UserAPITest(APITestCase):
 
         self.user_student = User.objects.create_user(username="IgorLox9Г", password="IL",
                                                      first_name="Igor", last_name="Lox")
-        self.user_teacher = User.objects.create_user(username="Teacher", password="password")
+
+        self.user_teacher = User.objects.create_user(username="Teacher", password="password", is_staff=True)
 
         self.student = Student.objects.create(user=self.user_student, school_class=self.school_class)
         self.teacher = Teacher.objects.create(user=self.user_teacher, secret_key="123")

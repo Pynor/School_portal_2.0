@@ -1,17 +1,17 @@
 from rest_framework.test import APITestCase
 
 from user_app.models import User, Teacher, Student, TeacherSecretKey, SchoolClass
-from user_app.serializers import UserSerializer, TeacherSerializer, StudentsRegisterListSerializer, SchoolClassSerializer
+from user_app.serializers import UserSerializer, TeacherRegisterAPISerializer, StudentsRegisterListAPISerializer, SchoolClassSerializer
 
 
 class UserSerializerTestCase(APITestCase):
 
     def setUp(self) -> None:
         self.user_data: dict = {
+            "first_name": "Test_first_name",
+            "last_name": "Test_last_name",
             "username": "Test_username",
             "password": "Test_password",
-            "last_name": "Test_last_name",
-            "first_name": "Test_first_name"
         }
 
     def test_create_user(self) -> None:
@@ -19,8 +19,8 @@ class UserSerializerTestCase(APITestCase):
         self.assertTrue(serializer.is_valid())
         user = serializer.save()
 
-        self.assertEqual(user.username, self.user_data["username"])
         self.assertTrue(user.check_password(self.user_data["password"]))
+        self.assertEqual(user.username, self.user_data["username"])
 
 
 class TeacherSerializerTestCase(APITestCase):
@@ -34,12 +34,12 @@ class TeacherSerializerTestCase(APITestCase):
                 "username": "Test_username",
                 "password": "Test_password"
             },
-            "secret_key": "123",
-            "phone_number": "1234567890"
+            "phone_number": "1234567890",
+            "secret_key": "123"
         }
 
     def test_create_teacher(self) -> None:
-        serializer = TeacherSerializer(data=self.teacher_data)
+        serializer = TeacherRegisterAPISerializer(data=self.teacher_data)
         self.assertTrue(serializer.is_valid())
         user = serializer.save()
 
@@ -71,13 +71,15 @@ class StudentListSerializerTestCase(APITestCase):
         ]
 
     def test_create_students(self) -> None:
-        serializer = StudentsRegisterListSerializer(data=self.student_data)
+        serializer = StudentsRegisterListAPISerializer(data=self.student_data)
         self.assertTrue(serializer.is_valid())
         students = serializer.save()
 
+        username = self.student_data[0]["first_name"] + self.student_data[0]["last_name"] + self.student_data[0]["school_class"]
         password = self.student_data[0]["first_name"][0] + self.student_data[0]["last_name"][0]
 
-        self.assertFalse(students[0].user.is_staff)
-        self.assertEqual(Student.objects.count(), 3)
-        self.assertTrue(students[0].user.check_password(password))
         self.assertEqual(students[0].school_class.title, self.student_data[0]["school_class"])
+        self.assertTrue(students[0].user.check_password(password))
+        self.assertEqual(students[0].user.username, username)
+        self.assertEqual(Student.objects.count(), 3)
+        self.assertFalse(students[0].user.is_staff)

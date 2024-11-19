@@ -54,7 +54,7 @@ class SchoolClassModelTest(TestCase):
             SchoolClass.objects.create(title="1B", slug="1a")
 
     def test_school_class_str_representation(self):
-        self.assertEqual(str(self.school_class), "1A class.")
+        self.assertEqual(str(self.school_class), "1A")
 
     def test_school_class_save_method(self) -> None:
         school_class = SchoolClass(title="1B", slug="1b")
