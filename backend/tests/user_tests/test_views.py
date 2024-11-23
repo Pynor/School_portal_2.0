@@ -5,7 +5,7 @@ from rest_framework import status
 from user_app.models import User, Teacher, Student, TeacherSecretKey, SchoolClass
 
 
-class TeacherRegisterAPITest(APITestCase):
+class TeacherRegisterAPITestCase(APITestCase):
     def setUp(self) -> None:
         self.secret_key = TeacherSecretKey.objects.create(key="123")
 
@@ -20,13 +20,15 @@ class TeacherRegisterAPITest(APITestCase):
             },
             "secret_key": "123"
         }
+
         response = client.post("/user_app/api/v1/api-teacher-register/", data, format="json")
+
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(Teacher.objects.count(), 1)
         self.assertEqual(User.objects.get().username, "Teacher")
 
 
-class StudentsRegisterListAPITest(APITestCase):
+class StudentsRegisterListAPITestCase(APITestCase):
     def setUp(self) -> None:
         self.school_class = SchoolClass.objects.create(title="9Г", slug="9Г")
 
@@ -63,7 +65,7 @@ class StudentsRegisterListAPITest(APITestCase):
             User.objects.filter(first_name="Mike", last_name="Johnson", username="MikeJohnson9Г").count(), 1)
 
 
-class TeacherLoginAPITest(APITestCase):
+class TeacherLoginAPITestCase(APITestCase):
     def setUp(self) -> None:
         self.secret_key = TeacherSecretKey.objects.create(key="123")
         self.user = User.objects.create_user(username="Teacher", password="password")
@@ -75,12 +77,14 @@ class TeacherLoginAPITest(APITestCase):
             "username": "Teacher",
             "password": "password",
         }
+
         response = client.post("/user_app/api/v1/api-teacher-login/", data, format="json")
+
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertIn("jwt_token", response.data)
 
 
-class StudentLoginAPITest(APITestCase):
+class StudentLoginAPITestCase(APITestCase):
     def setUp(self) -> None:
         self.school_class = SchoolClass.objects.create(title="9Г", slug="9Г")
         self.user = User.objects.create_user(username="JohnDoe9Г", password="JD", first_name="John", last_name="Doe")
@@ -94,6 +98,7 @@ class StudentLoginAPITest(APITestCase):
             "password": "JD",
             "school_class": "9Г"
         }
+
         response = client.post("/user_app/api/v1/api-student-login/", data, format="json")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -101,7 +106,7 @@ class StudentLoginAPITest(APITestCase):
         self.assertIn("jwt_token", response.data)
 
 
-class UserAPITest(APITestCase):
+class UserAPITestCase(APITestCase):
     def setUp(self) -> None:
         self.client = APIClient()
 
@@ -125,6 +130,7 @@ class UserAPITest(APITestCase):
                                                        }).data["jwt_token"]
 
         self.client.credentials(HTTP_AUTHORIZATION="jwt_token " + self.student_jwt_token)
+
         response = self.client.get("/user_app/api/v1/api-user-get/")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -136,6 +142,7 @@ class UserAPITest(APITestCase):
                                                        format="json").data["jwt_token"]
 
         self.client.credentials(HTTP_AUTHORIZATION="jwt_token " + self.teacher_jwt_token)
+
         response = self.client.get("/user_app/api/v1/api-user-get/")
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
