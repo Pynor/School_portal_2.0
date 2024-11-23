@@ -4,7 +4,7 @@ from django.test import TestCase
 from user_app.models import User, Teacher, TeacherSecretKey, Student, SchoolClass
 
 
-class UserModelTest(TestCase):
+class UserModelTestCase(TestCase):
     def setUp(self) -> None:
         self.user = User.objects.create_user(username="TestTeacher",  email="Test@mail.ru", password="TestPassword",
                                              first_name="Test", last_name="User")
@@ -17,7 +17,7 @@ class UserModelTest(TestCase):
         self.assertEqual(self.user.last_name, "User")
 
 
-class TeacherModelTest(TestCase):
+class TeacherModelTestCase(TestCase):
     def setUp(self) -> None:
         self.user = User.objects.create_user(username="TestTeacher", email="Test@mail.ru", password="TestPassword",
                                              first_name="Test", last_name="User")
@@ -25,12 +25,12 @@ class TeacherModelTest(TestCase):
 
     def test_teacher_creation(self) -> None:
         self.assertIsInstance(self.teacher, Teacher)
-        self.assertEqual(self.teacher.user.username, "TestTeacher")
         self.assertEqual(self.teacher.secret_key, "123")
         self.assertEqual(self.teacher.phone_number, "1234567890")
+        self.assertEqual(self.teacher.user.username, "TestTeacher")
 
 
-class TeacherSecretKeyModelTest(TestCase):
+class TeacherSecretKeyModelTestCase(TestCase):
     def setUp(self) -> None:
         self.key = TeacherSecretKey.objects.create(key="123")
 
@@ -40,7 +40,7 @@ class TeacherSecretKeyModelTest(TestCase):
         self.assertFalse(self.key.logged)
 
 
-class SchoolClassModelTest(TestCase):
+class SchoolClassModelTestCase(TestCase):
     def setUp(self) -> None:
         self.school_class = SchoolClass.objects.create(title="1A", slug="1a")
 

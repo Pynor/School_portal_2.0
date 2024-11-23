@@ -1,7 +1,7 @@
 from rest_framework.test import APITestCase
 
+from user_app.serializers import StudentsRegisterListAPISerializer, TeacherRegisterAPISerializer, SchoolClassSerializer, UserSerializer
 from user_app.models import User, Teacher, Student, TeacherSecretKey, SchoolClass
-from user_app.serializers import UserSerializer, TeacherRegisterAPISerializer, StudentsRegisterListAPISerializer, SchoolClassSerializer
 
 
 class UserSerializerTestCase(APITestCase):
