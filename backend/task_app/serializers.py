@@ -25,7 +25,7 @@ class AnswerListSerializer(serializers.ModelSerializer):
         model = AnswerList
         fields = "__all__"
 
-    def create(self, validated_data: dict[str]) -> AnswerList:
+    def create(self, validated_data: dict) -> AnswerList:
         return AnswerListAPIService.create_answer_list(validated_data)
 
     @staticmethod
@@ -35,10 +35,13 @@ class AnswerListSerializer(serializers.ModelSerializer):
 
 
 class TaskSerializer(serializers.ModelSerializer):
+    docx_file = serializers.FileField(required=False)
+    video_file = serializers.FileField(required=False)
+
     class Meta:
         model = Task
         fields = ("sequence_number", "answer_to_the_task", "title",
-                  "description", "additional_condition", "time_to_task", "id")
+                  "description", "additional_condition", "time_to_task", "id", "docx_file", "video_file")
 
 
 class TaskListSerializer(serializers.ModelSerializer):

@@ -80,8 +80,6 @@ const RegisterStudents = (props: { userData: UserData }) => {
       }, 2000);
 
     } else {
-      const data = await postResponse.json();
-      
       setMessage(
         <div className="form-container">
           <h2 className="error-message">Что то пошло не так.</h2>
