@@ -9,7 +9,7 @@ import './CSS/add-answer.css';
 
 
 const AddAnswers: React.FC<{ tasksListData: TaskList, userData: UserData }> = ({ tasksListData, userData }) => {
-  
+
   const taskListId = useParams<{ taskListId: string }>().taskListId as string;
   const [message, setMessage] = useState<React.ReactNode>(null);
   const taskListIdNumber = parseInt(taskListId, 10) as number;
@@ -50,35 +50,48 @@ const AddAnswers: React.FC<{ tasksListData: TaskList, userData: UserData }> = ({
     );
   };
 
-  const formDataToSend = new FormData();
-
-  answers.forEach((answerObj) => {
-    formDataToSend.append('user', answerObj.user.toString());
-
-    answerObj.answers.forEach((answer) => {
-      formDataToSend.append(`answers[${answer.task}][answer]`, answer.answer);
-      if (answer.photo_to_the_answer) {
-        formDataToSend.append(
-          `answers[${answer.task}].photo_to_the_answer`,
-          answer.photo_to_the_answer
-        );
-      }
+  const convertFileToBase64 = (file: File) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        resolve(reader.result); 
+      };
+      reader.onerror = (error) => {
+        reject(error);
+      };
+      reader.readAsDataURL(file); 
     });
-  });
-  const prepareData = () => {
+  };
+
+ 
+  const prepareData = async () => {
+    const answersWithBase64Photos = await Promise.all(
+      answers[0].answers.map(async (answer) => {
+        let photoBase64 = null;
+  
+        if (answer.photo_to_the_answer) {
+          photoBase64 = await convertFileToBase64(answer.photo_to_the_answer);
+        }
+  
+        return {
+          task: answer.task,
+          answer: answer.answer,
+          photo_to_the_answer: photoBase64 ? photoBase64 : null, 
+        };
+      })
+    );
+  
     return {
       user: answers[0].user,
       task_list: tasksListData.task_list[taskListIdNumber].id,
-      answers: answers[0].answers.map((answer) => ({
-        task: answer.task,
-        answer: answer.answer,
-        photo_to_the_answer: answer.photo_to_the_answer ? answer.photo_to_the_answer.name : null,
-      })),
+      answers: answersWithBase64Photos,
     };
   };
-
+  
   const postResponse = async () => {
-    const data = prepareData();
+    const data = await prepareData(); 
+    console.log('Data to be sent:', data);
+  
     const response = await fetch(`${BASE_URL}/task_app/api/v1/api-answer-list-create/`, {
       method: 'POST',
       headers: {
@@ -88,18 +101,17 @@ const AddAnswers: React.FC<{ tasksListData: TaskList, userData: UserData }> = ({
       credentials: 'include',
       body: JSON.stringify(data),
     });
-
+  
     if (response.ok) {
       setMessage(<h2 className="success-message">Ответ получен.</h2>);
-      setCookie(`completedTask(${taskListId})`, `${taskListId}`)
+      setCookie(`completedTask(${taskListId})`, `${taskListId}`);
       setTimeout(() => { setRedirect(true) }, 1000);
-
-
     } else {
       const responseData = await response.json();
+      console.error('Error response data:', responseData); 
       if (responseData.details) {
         setMessage(<h2 className="error-message">{responseData.details}</h2>);
-      }else{
+      } else {
         setMessage(<h2 className="error-message">Произошла ошибка при получении ответа.</h2>);
       }
     }
@@ -107,7 +119,7 @@ const AddAnswers: React.FC<{ tasksListData: TaskList, userData: UserData }> = ({
 
   if (redirect) {
     return <Navigate to="/profile" />;
-}
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -123,23 +135,23 @@ const AddAnswers: React.FC<{ tasksListData: TaskList, userData: UserData }> = ({
             <div className="form-container">
               <h2>{`Задача ${task.sequence_number} (${task.title}):`}</h2>
               <h3>{task.description}</h3>
-                <input
-                  type="text"
-                  placeholder="Ответ:"
-                  className="form-control"
-                  key={`answer-${task.id}`}
-                  name={`answer-${task.id}`}
-                  onChange={(e) => handleAnswerChange(task.id, e)}
-                />
+              <input
+                type="text"
+                placeholder="Ответ:"
+                className="form-control"
+                key={`answer-${task.id}`}
+                name={`answer-${task.id}`}
+                onChange={(e) => handleAnswerChange(task.id, e)}
+              />
               {task.additional_condition === 'Photo' && (
-                  <input
-                    type="file"
-                    className="form-control"
-                    key={`photo-${task.id}`}
-                    name={`photo-${task.id}`}
-                    accept="image/png, image/jpeg"
-                    onChange={(e) => handlePhotoChange(task.id, e)}
-                  />
+                <input
+                  type="file"
+
+                  key={`photo-${task.id}`}
+                  name={`photo-${task.id}`}
+                  accept="image/png, image/jpeg"
+                  onChange={(e) => handlePhotoChange(task.id, e)}
+                />
               )}
             </div>
           </div>

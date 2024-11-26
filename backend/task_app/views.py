@@ -1,4 +1,4 @@
-from rest_framework import generics, permissions
+from rest_framework import generics, permissions, status
 from rest_framework.views import APIView
 
 from .serializers import *
@@ -11,11 +11,6 @@ class AnswerListCreateAPIView(generics.CreateAPIView):
     permission_classes = [permissions.AllowAny]
 
 
-class TaskListCreateAPIView(generics.CreateAPIView):
-    serializer_class = TaskListSerializer
-    permission_classes = [permissions.AllowAny]
-
-
 class StudentAndAnswerListAPIView(APIView):
     def get(self, request, *args, **kwargs):
         return AnswerListSerializer.get_student_and_answer_list(kwargs=kwargs)
@@ -24,3 +19,6 @@ class StudentAndAnswerListAPIView(APIView):
 class TaskListAPIView(APIView):
     def get(self, request, *args, **kwargs):
         return TaskListSerializer.get_task_list(kwargs=kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return TaskListSerializer.create(request=request.data,)

@@ -9,11 +9,12 @@ from user_app.models import SchoolClass, Student
 
 
 class AnswerSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Answer
         fields = ("answer", "task", "photo_to_the_answer")
         extra_kwargs = {
-            "photo_to_the_answer": {"allow_null": True},
+            "task": {"required": True},
             "answer": {"default": ""}
         }
 
@@ -60,5 +61,5 @@ class TaskListSerializer(serializers.ModelSerializer):
 
         return Response({"task_list": task_list_serializers}, status=200)
 
-    def create(self, validated_data: dict[str]) -> TaskList:
-        return TaskListAPIService.create_task_list(validated_data)
+    def create(self, request: dict[str]) -> TaskList:
+        return TaskListAPIService.create_task_list(request)

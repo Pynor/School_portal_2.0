@@ -15,7 +15,7 @@ const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
     const hasFetchedRef = useRef(false);
 
     useEffect(() => {
-        const addTasks = async () => {
+        const getAnswerLists = async () => {
 
             if (hasFetchedRef.current) return;
             hasFetchedRef.current = true;
@@ -41,7 +41,7 @@ const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
             }
         };
 
-        addTasks();
+        getAnswerLists();
     }, []);
 
 
