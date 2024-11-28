@@ -1,11 +1,6 @@
-import os
-import base64
-from django.core.files import File
-from django.core.exceptions import ValidationError
-from django.conf import settings
-from django.utils.crypto import get_random_string
-
 from django.db.models import Prefetch
+
+from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 
 from user_app.models import SchoolClass, Student, User
@@ -39,25 +34,13 @@ class TaskListAPIService:
 class AnswerListAPIService:
     @staticmethod
     def create_answer_list(validated_data: dict) -> AnswerList:
-        photo_base64 = validated_data.pop('photo_to_the_answer', None)
+        print(validated_data)
         answers_data = validated_data.pop("answers")
         task_list = validated_data.get("task_list")
         user = validated_data.get("user")
 
         if AnswerList.objects.filter(task_list=task_list, user=user).exists():
             raise ValidationError({"details": "Ответ на эту задачу уже был получен."})
-
-        if photo_base64:
-            format, img_str = photo_base64.split(';base64,')
-            ext = format.split('/')[-1]
-            unique_filename = f"{get_random_string(10)}.{ext}"
-            upload_dir = os.path.join(settings.MEDIA_ROOT, 'uploads')
-            os.makedirs(upload_dir, exist_ok=True)
-            file_path = os.path.join(upload_dir, unique_filename)
-
-            with open(file_path, 'wb') as f:
-                f.write(base64.b64decode(img_str))
-            validated_data['photo_to_the_answer'] = os.path.join('uploads', unique_filename)
 
         answer_list = AnswerList.objects.create(task_list=task_list, user=user)
 

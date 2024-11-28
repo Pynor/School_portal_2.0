@@ -57,7 +57,7 @@ class Answer(models.Model):
     answer = models.CharField(null=True, blank=True, verbose_name="Answer")
     task = models.ForeignKey("Task", on_delete=models.CASCADE, verbose_name="Task")
     answer_list = models.ForeignKey("AnswerList", on_delete=models.CASCADE, verbose_name="List answers")
-    photo_to_the_answer = models.CharField(null=True, verbose_name="Photo to answer")
+    photo_to_the_answer = models.ImageField(upload_to="tasks_media/images/", null=True, verbose_name="Photo to answer")
 
     def __str__(self):
         return f"Answer: ({self.answer}) to Task: ({self.task.title})"
