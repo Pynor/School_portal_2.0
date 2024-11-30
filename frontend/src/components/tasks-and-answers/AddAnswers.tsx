@@ -9,10 +9,13 @@ import './CSS/add-answer.css';
 
 
 const AddAnswers: React.FC<{ tasksListData: TaskList, userData: UserData }> = ({ tasksListData, userData }) => {
-  
+
   const taskListId = useParams<{ taskListId: string }>().taskListId as string;
   const [message, setMessage] = useState<React.ReactNode>(null);
   const taskListIdNumber = parseInt(taskListId, 10) as number;
+  const [redirect, setRedirect] = useState(false);
+  const csrftoken = getCookie('csrftoken');
+
   const [answers, setAnswers] = useState<AnswerList[]>([
     {
       user: userData.id,
@@ -24,9 +27,6 @@ const AddAnswers: React.FC<{ tasksListData: TaskList, userData: UserData }> = ({
       })),
     },
   ]);
-
-  const [redirect, setRedirect] = useState(false);
-  const csrftoken = getCookie('csrftoken');
 
   const handleAnswerChange = (taskId: number, e: React.ChangeEvent<HTMLInputElement>) => {
     setAnswers(
@@ -54,15 +54,15 @@ const AddAnswers: React.FC<{ tasksListData: TaskList, userData: UserData }> = ({
     const formData = new FormData();
 
     answers.forEach((answerObj) => {
-        formData.append('user', answerObj.user.toString());
-        formData.append('task_list', answerObj.task_list.toString());
-        answerObj.answers.forEach((answer, index) => {
-            formData.append(`answers[${index}][answer]`, answer.answer);
-            formData.append(`answers[${index}][task]`, answer.task.toString());
-            if (answer.photo_to_the_answer) {
-                formData.append(`answers[${index}][photo_to_the_answer]`, answer.photo_to_the_answer);
-            }
-        });
+      formData.append('user', answerObj.user.toString());
+      formData.append('task_list', answerObj.task_list.toString());
+      answerObj.answers.forEach((answer, index) => {
+        formData.append(`answers[${index}][answer]`, answer.answer);
+        formData.append(`answers[${index}][task]`, answer.task.toString());
+        if (answer.photo_to_the_answer) {
+          formData.append(`answers[${index}][photo_to_the_answer]`, answer.photo_to_the_answer);
+        }
+      });
     });
 
     const response = await fetch(`${BASE_URL}/task_app/api/v1/api-answer-list-create/`, {
@@ -84,7 +84,7 @@ const AddAnswers: React.FC<{ tasksListData: TaskList, userData: UserData }> = ({
       const responseData = await response.json();
       if (responseData.details) {
         setMessage(<h2 className="error-message">{responseData.details}</h2>);
-      }else{
+      } else {
         setMessage(<h2 className="error-message">Произошла ошибка при получении ответа.</h2>);
       }
     }
@@ -92,7 +92,7 @@ const AddAnswers: React.FC<{ tasksListData: TaskList, userData: UserData }> = ({
 
   if (redirect) {
     return <Navigate to="/profile" />;
-}
+  }
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -108,23 +108,23 @@ const AddAnswers: React.FC<{ tasksListData: TaskList, userData: UserData }> = ({
             <div className="form-container">
               <h2>{`Задача ${task.sequence_number} (${task.title}):`}</h2>
               <h3>{task.description}</h3>
-                <input
-                  type="text"
-                  placeholder="Ответ:"
-                  className="form-control"
-                  key={`answer-${task.id}`}
-                  name={`answer-${task.id}`}
-                  onChange={(e) => handleAnswerChange(task.id, e)}
-                />
+              <input
+                type="text"
+                placeholder="Ответ:"
+                className="form-control"
+                key={`answer-${task.id}`}
+                name={`answer-${task.id}`}
+                onChange={(e) => handleAnswerChange(task.id, e)}
+              />
               {task.additional_condition === 'Photo' && (
-                  <input
-                    type="file"
-                    className="form-control"
-                    key={`photo-${task.id}`}
-                    name={`photo-${task.id}`}
-                    accept="image/png, image/jpeg"
-                    onChange={(e) => handlePhotoChange(task.id, e)}
-                  />
+                <input
+                  type="file"
+                  className="form-control"
+                  key={`photo-${task.id}`}
+                  name={`photo-${task.id}`}
+                  accept="image/png, image/jpeg"
+                  onChange={(e) => handlePhotoChange(task.id, e)}
+                />
               )}
             </div>
           </div>
