@@ -146,6 +146,10 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
                   <input className="form-control" type="text" name="answer_to_the_task" placeholder="Ответ на задачу" value={task.answer_to_the_task} onChange={(e) => handleTaskChange(index, e)} />
                 </div>
 
+                <div className='form-group'>
+                  <input className="form-control" type="file" name={`photo-${task.id}`} accept="image/png, image/jpeg"  onChange={(e) => handleTaskChange(task.id, e)} />
+                </div>
+
                 <div className="form-group">
                   <select className="form-control" id="additional_condition" name="additional_condition" value={task.additional_condition} onChange={(e) => handleTaskChange(index, e)} required>
                     <option value="None">Без доп. условий</option>
