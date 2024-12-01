@@ -34,7 +34,6 @@ class TaskListAPIService:
 class AnswerListAPIService:
     @staticmethod
     def create_answer_list(validated_data: dict) -> AnswerList:
-        print(validated_data)
         answers_data = validated_data.pop("answers")
         task_list = validated_data.get("task_list")
         user = validated_data.get("user")
