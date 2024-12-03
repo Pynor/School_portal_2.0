@@ -12,7 +12,7 @@ class AnswerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Answer
-        fields = ("answer", "task", "photo_to_the_answer")
+        fields = ("photo_to_the_answer", "answer", "task")
         extra_kwargs = {
             "task": {"required": True},
             "answer": {"default": ""}
@@ -37,12 +37,13 @@ class AnswerListSerializer(serializers.ModelSerializer):
 
 class TaskSerializer(serializers.ModelSerializer):
     docx_file = serializers.FileField(required=False)
+    photo_file = serializers.FileField(required=False)
     video_file = serializers.FileField(required=False)
 
     class Meta:
         model = Task
-        fields = ("sequence_number", "answer_to_the_task", "title",
-                  "description", "additional_condition", "time_to_task", "id", "docx_file", "video_file")
+        fields = ("additional_condition", "answer_to_the_task", "link_to_article", "sequence_number",
+                  "description", "docx_file", "photo_file", "video_file", "title", "id",)
 
 
 class TaskListSerializer(serializers.ModelSerializer):
@@ -51,7 +52,7 @@ class TaskListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TaskList
-        fields = ("id", "title", "count_task", "tasks", "task_for")
+        fields = ("time_to_tasks", "count_task", "task_for", "title",  "tasks", "id")
         read_only_fields = ("count_task",)
 
     @staticmethod
@@ -61,5 +62,5 @@ class TaskListSerializer(serializers.ModelSerializer):
 
         return Response({"task_list": task_list_serializers}, status=200)
 
-    def create(self, request: dict[str]) -> TaskList:
-        return TaskListAPIService.create_task_list(request)
+    def create(self, validated_data: dict[str]) -> TaskList:
+        return TaskListAPIService.create_task_list(validated_data)

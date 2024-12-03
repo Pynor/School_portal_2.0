@@ -10,13 +10,15 @@ from .models import Task, TaskList, Answer, AnswerList
 class TaskListAPIService:
     @staticmethod
     def create_task_list(validated_data: dict) -> TaskList:
+        time_to_tasks = validated_data.pop("time_to_tasks")
         task_for_title = validated_data.pop("task_for")
         tasks_data = validated_data.pop("tasks")
         title = validated_data.pop("title")
 
         task_for = SchoolClass.objects.get(title=task_for_title)
 
-        task_list = TaskList.objects.create(count_task=len(tasks_data),
+        task_list = TaskList.objects.create(time_to_tasks=time_to_tasks,
+                                            count_task=len(tasks_data),
                                             task_for=task_for,
                                             title=title)
 
