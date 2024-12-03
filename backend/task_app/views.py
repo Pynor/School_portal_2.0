@@ -15,11 +15,12 @@ class AnswerListCreateAPIView(generics.CreateAPIView):
         i = 0
 
         while f'answers[{i}][answer]' in request.data:
-            answers_data.append({
-                'photo_to_the_answer': request.data.get(f'answers[{i}][photo_to_the_answer]'),
-                'answer': request.data.get(f'answers[{i}][answer]'),
-                'task': request.data.get(f'answers[{i}][task]'),
-            })
+            answer_data = {key: request.data.get(f'answers[{i}][{key}]') for key in [
+                'photo_to_the_answer',
+                'answer',
+                'task'
+            ]}
+            answers_data.append(answer_data)
             i += 1
 
         request._full_data = {
