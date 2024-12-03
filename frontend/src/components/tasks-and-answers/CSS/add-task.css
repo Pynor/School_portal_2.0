@@ -11,6 +11,8 @@
 .form-group-time {
     display: flex;
     align-items: center;
+    margin-bottom: 13px;
+
 }
 
 .form-time-div {
@@ -19,5 +21,21 @@
     width: 60%;
     display: flex;
     align-items: center;
+    margin-bottom: 13px;
+
+}
+
+.form-group-time {
+    display: flex;
+    align-items: center;
+}
+
+.form-file-div {
+    color: #4a525a;
+    font-size: 19px;
+    width: 60%;
+    display: flex;
+    align-items: center;
+    
 }
 

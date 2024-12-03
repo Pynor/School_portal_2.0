@@ -44,6 +44,7 @@ export type TaskList = {
 };
 
 export type TaskListForAddTasks = {
+  time_to_tasks: string,
   count_task: number;
   task_for: string;
   title: string;
@@ -53,10 +54,11 @@ export type TaskListForAddTasks = {
 export type Task = {
   additional_condition?: string;
   answer_to_the_task: string;
+  link_to_article?: string;
   sequence_number: number;
-  time_to_task?: string;
   description: string;
   video_file?: File;
+  photo_file?: File;
   docx_file?: File; 
   title: string;
   id: number;
