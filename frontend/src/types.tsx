@@ -35,6 +35,7 @@ export type Props = {
 
 export type TaskList = {
   task_list: [{
+    time_to_tasks: string,
     count_task: number;
     task_for: string;
     title: string;
@@ -88,6 +89,7 @@ const useDefaultState = () => {
   const defaultTasksListData: TaskList = useMemo(
     () => ({
       task_list: [{
+        time_to_tasks: "",
         count_task: 0,
         task_for: "",
         title: "",

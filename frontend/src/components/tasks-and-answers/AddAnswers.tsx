@@ -1,5 +1,5 @@
 import { Navigate, useParams } from "react-router-dom";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { UserData, TaskList, AnswerList } from "../../types";
 import { getCookie, setCookie } from '../../functions';
@@ -8,12 +8,13 @@ import { BASE_URL } from '../../constants';
 import './CSS/add-answer.css';
 
 
-const AddAnswers: React.FC<{ tasksListData: TaskList, userData: UserData }> = ({ tasksListData, userData }) => {
 
+const AddAnswers: React.FC<{ tasksListData: TaskList, userData: UserData }> = ({ tasksListData, userData }) => {
   const taskListId = useParams<{ taskListId: string }>().taskListId as string;
   const [message, setMessage] = useState<React.ReactNode>(null);
-  const taskListIdNumber = parseInt(taskListId, 10) as number;
+  const taskListIdNumber = parseInt(taskListId, 10);
   const [redirect, setRedirect] = useState(false);
+  const [timeLeft, setTimeLeft] = useState(0);
   const csrftoken = getCookie('csrftoken');
 
   const [answers, setAnswers] = useState<AnswerList[]>([
@@ -27,6 +28,25 @@ const AddAnswers: React.FC<{ tasksListData: TaskList, userData: UserData }> = ({
       })),
     },
   ]);
+
+  useEffect(() => {
+    const timeParts = tasksListData.task_list[taskListIdNumber].time_to_tasks.split(':');
+    const totalSeconds = parseInt(timeParts[0]) * 3600 + parseInt(timeParts[1]) * 60 + parseInt(timeParts[2]);
+    setTimeLeft(totalSeconds);
+
+    const interval = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 0) {
+          clearInterval(interval);
+          postResponse();
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => clearInterval(interval);
+  }, [tasksListData, taskListIdNumber]);
 
   const handleAnswerChange = (taskId: number, e: React.ChangeEvent<HTMLInputElement>) => {
     setAnswers(
@@ -76,10 +96,8 @@ const AddAnswers: React.FC<{ tasksListData: TaskList, userData: UserData }> = ({
 
     if (response.ok) {
       setMessage(<h2 className="success-message">Ответ получен.</h2>);
-      setCookie(`completedTask(${taskListId})`, `${taskListId}`)
-      setTimeout(() => { setRedirect(true) }, 1000);
-
-
+      setCookie(`completedTask(${taskListId})`, `${taskListId}`);
+      setTimeout(() => { setRedirect(true); }, 1000);
     } else {
       const responseData = await response.json();
       if (responseData.details) {
@@ -102,6 +120,10 @@ const AddAnswers: React.FC<{ tasksListData: TaskList, userData: UserData }> = ({
   return (
     <nav className="form-container">
       <form onSubmit={handleSubmit}>
+        <h2 style={{ textAlign: 'center' }}>
+          Оставшееся время: {Math.floor(timeLeft / 3600)}:{Math.floor((timeLeft % 3600) / 60).toString().padStart(2, '0')}:{(timeLeft % 60).toString().padStart(2, '0')}
+        </h2>
+        
         {message && <p>{message}</p>}
         {tasksListData.task_list[taskListIdNumber].tasks.map((task) => (
           <div key={task.id}>
