@@ -1,6 +1,9 @@
 .form-group {
-    margin-bottom: 13px;
-}
+    display: flex;
+    flex-direction: column;
+    align-items: center; 
+    width: 100%; 
+  }
 
 .form-container {
     max-width: 450px;

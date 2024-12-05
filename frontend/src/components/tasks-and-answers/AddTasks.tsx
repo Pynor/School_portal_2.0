@@ -56,6 +56,15 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
     });
   };
 
+  const handleFileChange = (index: number, fileType: string, e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null;
+    setFormData((prevFormData) => {
+      const updatedTasks = [...prevFormData.tasks];
+      updatedTasks[index] = { ...updatedTasks[index], [fileType]: file };
+      return { ...prevFormData, tasks: updatedTasks };
+    });
+  };
+
   const addTask = () => {
     setFormData((prevFormData) => {
       const newTask = { sequence_number: prevFormData.count_task + 1, ...emptyTask };
@@ -71,25 +80,21 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
     e.preventDefault();
 
     const formToSend = new FormData();
-
     formToSend.append('title', formData.title);
+    formToSend.append('task_for', formData.task_for);
     formToSend.append('count_task', formData.count_task.toString());
     formToSend.append('time_to_tasks', formData.time_to_tasks.toString());
-    formToSend.append('task_for', formData.task_for);
 
     formData.tasks.forEach((task, index) => {
       Object.entries(task).forEach(([key, value]) => {
         const val: any = value;
-        if (typeof value === 'string') {
-          formToSend.append(`tasks[${index}][${key}]`, val);
-        } else if (typeof value === 'number') {
+        if (typeof val === 'string' || typeof val === 'number') {
           formToSend.append(`tasks[${index}][${key}]`, val.toString());
-        } else if (value instanceof Blob || val instanceof File) {
+        } else if (val instanceof Blob || val instanceof File) {
           formToSend.append(`tasks[${index}][${key}]`, val);
         }
       });
     });
-
 
     try {
       const postResponse = await fetch(`${BASE_URL}/task_app/api/v1/api-task-list-create/`, {
@@ -106,10 +111,13 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
       } else {
         setMessage(<h2 className="error-message">Произошла ошибка при создании задачи.</h2>);
       }
-    } catch (error) { }
+    } catch (error) {
+      setMessage(<h2 className="error-message">Произошла ошибка при отправке данных.</h2>);
+    }
 
     setFormData(initialFormData);
   };
+
   return (
     <nav className="form-container">
       {message && message}
@@ -138,11 +146,10 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
                   <div className='form-time-div'>Время на выполнение:</div>
                   <input className="form-control" type="time" name="time_to_tasks" value={formData.time_to_tasks} onChange={handleChange} style={{ width: '31%' }} />
                 </div>
+                <div className="form-group">
+                  <input className="form-control" style={{ width: '91.9%' }} type="number" name="count_task" placeholder="Кол-во задач" value={formData.count_task} onChange={handleChange} min={1} required />
+                </div>
 
-              </div>
-
-              <div className="form-group">
-                <input className="form-control" type="number" name="count_task" placeholder="Кол-во задач" value={formData.count_task} onChange={handleChange} min={1} required />
               </div>
 
               <button className="btn-primary" type="button" onClick={addTask}>
@@ -152,45 +159,48 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
           </div>
 
           {formData.tasks.map((task, index) => (
-            <div key={index} className="form-group">
+            <div key={index}>
               <div className="form-container">
                 <div className="form-group">
-                  <input className="form-control" type="text" name="title" placeholder="Название задачи" value={task.title}
-                    onChange={(e) => handleTaskChange(index, e)} required />
-                </div>
 
-                <div className="form-group">
-                  <textarea className="form-control" name="description" value={task.description} placeholder="Описание задачи"
-                    onChange={(e) => handleTaskChange(index, e)} required />
-                </div>
+                  <div className="form-group">
+                    <input className="form-control" type="text" name="title" placeholder="Название задачи" value={task.title}
+                      onChange={(e) => handleTaskChange(index, e)} required />
+                  </div>
 
-                <div className="form-group">
-                  <input className="form-control" type="text" name="answer_to_the_task" placeholder="Ответ на задачу" value={task.answer_to_the_task}
-                    onChange={(e) => handleTaskChange(index, e)} />
-                </div>
-                
-                <div className="form-group">
-                  <select className="form-control" id="additional_condition" name="additional_condition" value={task.additional_condition}
-                    onChange={(e) => handleTaskChange(index, e)} required>
-                    <option value="None">Без доп. условий</option>
-                    <option value="Photo">Сделать фото решения</option>
-                  </select>
-                </div>
-                
-                <div className='form-group'>
-                  <div className='form-file-div'>DOCX файл:</div>
-                  <input className="form-control" type="file" name="docx_file" accept=".docx, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                    onChange={(e) => handleTaskChange(task.id, e)} />
-                </div>
-                <div className='form-group'>
-                  <div className='form-file-div'>Фото файл:</div>
-                  <input className="form-control" type="file" name="photo_file" accept="image/png, image/jpeg"
-                    onChange={(e) => handleTaskChange(task.id, e)} />
-                </div>
-                <div className='form-group'>
-                  <div className='form-file-div'>Видео файл:</div>
-                  <input className="form-control" type="file" name="video_file" accept="video/mp4, video/x-m4v, video/*"
-                    onChange={(e) => handleTaskChange(task.id, e)} />
+                  <div className="form-group">
+                    <textarea className="form-control" name="description" value={task.description} placeholder="Описание задачи"
+                      onChange={(e) => handleTaskChange(index, e)} required />
+                  </div>
+
+                  <div className="form-group">
+                    <input className="form-control" type="text" name="answer_to_the_task" placeholder="Ответ на задачу" value={task.answer_to_the_task}
+                      onChange={(e) => handleTaskChange(index, e)} />
+                  </div>
+
+                  <div className="form-group">
+                    <select className="form-control" id="additional_condition" name="additional_condition" value={task.additional_condition}
+                      onChange={(e) => handleTaskChange(index, e)} required>
+                      <option value="None">Без доп. условий</option>
+                      <option value="Photo">Сделать фото решения</option>
+                    </select>
+                  </div>
+
+                  <div className='form-group'>
+                    <div className='form-file-div'>DOCX файл:</div>
+                    <input className="form-control" type="file" name="docx_file" accept=".docx, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                      onChange={(e) => handleFileChange(index, 'docx_file', e)} />
+                  </div>
+                  <div className='form-group'>
+                    <div className='form-file-div'>Фото файл:</div>
+                    <input className="form-control" type="file" name="photo_file" accept="image/png, image/jpeg"
+                      onChange={(e) => handleFileChange(index, 'photo_file', e)} />
+                  </div>
+                  <div className='form-group'>
+                    <div className='form-file-div'>Видео файл:</div>
+                    <input className="form-control" type="file" name="video_file" accept="video/mp4, video/x-m4v, video/*"
+                      onChange={(e) => handleFileChange(index, 'video_file', e)} />
+                  </div>
                 </div>
               </div>
             </div>
@@ -202,7 +212,9 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
 
         </form>) : (<h2 className="error-message">У вас нет на это прав.</h2>)}
     </nav>
-  )
-}
+
+  );
+};
+
 
 export default AddTasks;
