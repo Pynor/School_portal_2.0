@@ -36,14 +36,17 @@ class AnswerListSerializer(serializers.ModelSerializer):
 
 
 class TaskSerializer(serializers.ModelSerializer):
-    docx_file = serializers.FileField(required=False)
-    photo_file = serializers.FileField(required=False)
-    video_file = serializers.FileField(required=False)
 
     class Meta:
         model = Task
         fields = ("additional_condition", "answer_to_the_task", "link_to_article", "sequence_number",
                   "description", "docx_file", "photo_file", "video_file", "title", "id",)
+
+        extra_kwargs = {
+            "video_file": {"required": True},
+            "photo_file": {"required": True},
+            "docx_file": {"required": True},
+        }
 
 
 class TaskListSerializer(serializers.ModelSerializer):
