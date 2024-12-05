@@ -14,6 +14,7 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
   const emptyTask: Omit<Task, 'sequence_number'> = {
     additional_condition: 'None',
     answer_to_the_task: '',
+    link_to_article: '',
     description: '',
     title: '',
     id: 0,
@@ -177,6 +178,10 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
                     <input className="form-control" type="text" name="answer_to_the_task" placeholder="Ответ на задачу" value={task.answer_to_the_task}
                       onChange={(e) => handleTaskChange(index, e)} />
                   </div>
+                  <div className="form-group">
+                    <input className="form-control" type="url" name="link_to_article" placeholder="Ссылка на статью" value={task.link_to_article}
+                      onChange={(e) => handleTaskChange(index, e)} />
+                  </div>
 
                   <div className="form-group">
                     <select className="form-control" id="additional_condition" name="additional_condition" value={task.additional_condition}
@@ -185,7 +190,7 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
                       <option value="Photo">Сделать фото решения</option>
                     </select>
                   </div>
-
+                  <h3 className="normal-message">Нежелательно отправлять более 1 файла.</h3>
                   <div className='form-group'>
                     <div className='form-file-div'>DOCX файл:</div>
                     <input className="form-control" type="file" name="docx_file" accept=".docx, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
