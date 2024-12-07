@@ -13,9 +13,9 @@ class Task(models.Model):
 
     answer_to_the_task = models.CharField(verbose_name="Answer to task")
     sequence_number = models.IntegerField(verbose_name="Sequence number")
-    link_to_article = models.URLField(null=True, verbose_name="Link to article")
     title = models.CharField(max_length=30, unique=True, verbose_name="Title to task")
     description = models.TextField(max_length=300, null=True, verbose_name="Description")
+    link_to_article = models.URLField(null=True, blank=True, verbose_name="Link to article")
 
     task_list = models.ForeignKey("TaskList", related_name="tasks", verbose_name="List tasks",
                                   on_delete=models.CASCADE)

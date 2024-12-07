@@ -17,6 +17,12 @@ const AddAnswers: React.FC<{ tasksListData: TaskList, userData: UserData }> = ({
   const [timeLeft, setTimeLeft] = useState(0);
   const csrftoken = getCookie('csrftoken');
 
+  const timeParts = tasksListData.task_list[taskListIdNumber].time_to_tasks.split(':');
+  const totalSeconds = parseInt(timeParts[0]) * 3600 + parseInt(timeParts[1]) * 60 + parseInt(timeParts[2]);
+
+  const twentyPercentTime = Math.floor((totalSeconds * 20) / 100);
+  const halfTime = Math.floor(totalSeconds / 2);
+
   const [answers, setAnswers] = useState<AnswerList[]>([
     {
       user: userData.id,
@@ -30,8 +36,6 @@ const AddAnswers: React.FC<{ tasksListData: TaskList, userData: UserData }> = ({
   ]);
 
   useEffect(() => {
-    const timeParts = tasksListData.task_list[taskListIdNumber].time_to_tasks.split(':');
-    const totalSeconds = parseInt(timeParts[0]) * 3600 + parseInt(timeParts[1]) * 60 + parseInt(timeParts[2]);
     setTimeLeft(totalSeconds);
 
     const interval = setInterval(() => {
@@ -43,10 +47,21 @@ const AddAnswers: React.FC<{ tasksListData: TaskList, userData: UserData }> = ({
         }
         return prev - 1;
       });
-    }, 1000);
+    }, 1000);    
 
     return () => clearInterval(interval);
   }, [tasksListData, taskListIdNumber]);
+
+
+  const getTimeColor = () => {
+    if (timeLeft <= twentyPercentTime) {
+      return 'red'; 
+    } else if (timeLeft <= halfTime) {
+      return 'orange'; 
+    } else {
+      return 'black';
+    }
+  };
 
   const handleAnswerChange = (taskId: number, e: React.ChangeEvent<HTMLInputElement>) => {
     setAnswers(
@@ -120,16 +135,25 @@ const AddAnswers: React.FC<{ tasksListData: TaskList, userData: UserData }> = ({
   return (
     <nav className="form-container">
       <form onSubmit={handleSubmit}>
-        <h2 style={{ textAlign: 'center' }}>
+      <h2 style={{ textAlign: 'center', color: getTimeColor() }}>
           Оставшееся время: {Math.floor(timeLeft / 3600)}:{Math.floor((timeLeft % 3600) / 60).toString().padStart(2, '0')}:{(timeLeft % 60).toString().padStart(2, '0')}
         </h2>
-        
+
         {message && <p>{message}</p>}
         {tasksListData.task_list[taskListIdNumber].tasks.map((task) => (
           <div key={task.id}>
             <div className="form-container">
-              <h2>{`Задача ${task.sequence_number} (${task.title}):`}</h2>
-              <h3>{task.description}</h3>
+              <div className="form-container">
+                <h2>{`Задача ${task.sequence_number} (${task.title}):`}</h2>
+                {task.link_to_article && (
+                  <a
+                    href={task.link_to_article} target="_blank"
+                    rel="noopener noreferrer" className="hub-link">
+                    Ссылка на статью к задаче
+                  </a>
+                )}
+                <h3 className="no-select">{task.description}</h3>
+              </div>
               <input
                 type="text"
                 placeholder="Ответ:"

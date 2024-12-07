@@ -43,6 +43,7 @@ class TaskSerializer(serializers.ModelSerializer):
                   "description", "docx_file", "photo_file", "video_file", "title", "id",)
 
         extra_kwargs = {
+            "link_to_article": {"required": True},
             "video_file": {"required": True},
             "photo_file": {"required": True},
             "docx_file": {"required": True},

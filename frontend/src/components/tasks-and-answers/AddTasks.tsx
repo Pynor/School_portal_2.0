@@ -144,7 +144,9 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
                 </div>
 
                 <div className='form-group-time'>
-                  <div className='form-time-div'>Время на выполнение:</div>
+                  <div className='form-time-div'>Время на выполнение
+                    (мин:сек):
+                  </div>
                   <input className="form-control" type="time" name="time_to_tasks" value={formData.time_to_tasks} onChange={handleChange} style={{ width: '31%' }} />
                 </div>
                 <div className="form-group">
