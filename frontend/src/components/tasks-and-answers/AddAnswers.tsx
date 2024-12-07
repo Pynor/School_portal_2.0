@@ -47,7 +47,7 @@ const AddAnswers: React.FC<{ tasksListData: TaskList, userData: UserData }> = ({
         }
         return prev - 1;
       });
-    }, 1000);    
+    }, 1000);
 
     return () => clearInterval(interval);
   }, [tasksListData, taskListIdNumber]);
@@ -55,9 +55,9 @@ const AddAnswers: React.FC<{ tasksListData: TaskList, userData: UserData }> = ({
 
   const getTimeColor = () => {
     if (timeLeft <= twentyPercentTime) {
-      return 'red'; 
+      return 'red';
     } else if (timeLeft <= halfTime) {
-      return 'orange'; 
+      return 'orange';
     } else {
       return 'black';
     }
@@ -135,7 +135,7 @@ const AddAnswers: React.FC<{ tasksListData: TaskList, userData: UserData }> = ({
   return (
     <nav className="form-container">
       <form onSubmit={handleSubmit}>
-      <h2 style={{ textAlign: 'center', color: getTimeColor() }}>
+        <h2 style={{ textAlign: 'center', color: getTimeColor() }}>
           Оставшееся время: {Math.floor(timeLeft / 3600)}:{Math.floor((timeLeft % 3600) / 60).toString().padStart(2, '0')}:{(timeLeft % 60).toString().padStart(2, '0')}
         </h2>
 
@@ -145,6 +145,42 @@ const AddAnswers: React.FC<{ tasksListData: TaskList, userData: UserData }> = ({
             <div className="form-container">
               <div className="form-container">
                 <h2>{`Задача ${task.sequence_number} (${task.title}):`}</h2>
+
+                {task.photo_file && task.photo_file instanceof File && (
+                  <div>
+                    <h4>Загруженное изображение:</h4>
+                    <img
+                      src={URL.createObjectURL(task.photo_file)}
+                      alt="Загруженное"
+                      style={{ maxWidth: '200px', maxHeight: '200px' }}
+                    />
+                  </div>
+                )}
+                {task.video_file && task.video_file instanceof File && (
+                  <div>
+                    <h4>Загруженное видео:</h4>
+                    <video controls style={{ maxWidth: '300px' }}>
+                      <source
+                        src={URL.createObjectURL(task.video_file)}
+                        type={task.video_file.type}
+                      />
+                      Ваш браузер не поддерживает видео.
+                    </video>
+                  </div>
+                )}
+                {task.docx_file && (
+                  <div>
+                    <h4>Загруженный документ:</h4>
+                    <p>{task.docx_file.name}</p>
+                    <a
+                      href={URL.createObjectURL(task.docx_file)}
+                      download={task.docx_file.name}
+                    >
+                      Скачать
+                    </a>
+                  </div>
+                )}
+
                 {task.link_to_article && (
                   <a
                     href={task.link_to_article} target="_blank"
