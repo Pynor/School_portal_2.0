@@ -49,6 +49,11 @@ class TaskSerializer(serializers.ModelSerializer):
             "docx_file": {"required": True},
         }
 
+    def to_representation(self, instance):
+        representation = super().to_representation(instance)
+        representation.pop("answer_to_the_task", None)
+        return representation
+
 
 class TaskListSerializer(serializers.ModelSerializer):
     tasks = TaskSerializer(many=True)
