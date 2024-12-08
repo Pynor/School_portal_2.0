@@ -146,39 +146,39 @@ const AddAnswers: React.FC<{ tasksListData: TaskList, userData: UserData }> = ({
               <div className="form-container">
                 <h2>{`Задача ${task.sequence_number} (${task.title}):`}</h2>
 
-                {task.photo_file && task.photo_file instanceof File && (
+                <h3 className="no-select">{task.description}</h3>
+
+                {task.photo_file && (
                   <div>
-                    <h4>Загруженное изображение:</h4>
+                    <h4>Изображение к заданию:</h4>
                     <img
-                      src={URL.createObjectURL(task.photo_file)}
+                      src={`${BASE_URL}${task.photo_file}`}
                       alt="Загруженное"
-                      style={{ maxWidth: '200px', maxHeight: '200px' }}
+                      style={{ width: '290px', height: '200px', objectFit: 'cover' }}
                     />
                   </div>
                 )}
-                {task.video_file && task.video_file instanceof File && (
+
+                {task.video_file && (
                   <div>
-                    <h4>Загруженное видео:</h4>
-                    <video controls style={{ maxWidth: '300px' }}>
+                    <h4>Видео к заданию:</h4>
+                    <video controls style={{ width: '290px', height: '200px', objectFit: 'cover' }}>
                       <source
-                        src={URL.createObjectURL(task.video_file)}
+                        src={`${BASE_URL}${task.video_file}`}
                         type={task.video_file.type}
                       />
                       Ваш браузер не поддерживает видео.
                     </video>
                   </div>
                 )}
+
                 {task.docx_file && (
-                  <div>
-                    <h4>Загруженный документ:</h4>
-                    <p>{task.docx_file.name}</p>
-                    <a
-                      href={URL.createObjectURL(task.docx_file)}
-                      download={task.docx_file.name}
-                    >
-                      Скачать
-                    </a>
-                  </div>
+                  <a
+                    href={`${BASE_URL}${task.docx_file}`}
+                    download={task.docx_file.name} className="hub-link"
+                  >
+                    Скачать файл 
+                  </a>
                 )}
 
                 {task.link_to_article && (
@@ -188,7 +188,7 @@ const AddAnswers: React.FC<{ tasksListData: TaskList, userData: UserData }> = ({
                     Ссылка на статью к задаче
                   </a>
                 )}
-                <h3 className="no-select">{task.description}</h3>
+  
               </div>
               <input
                 type="text"
