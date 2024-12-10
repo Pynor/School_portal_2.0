@@ -129,7 +129,7 @@ const AddAnswers: React.FC<{ tasksListData: TaskList; userData: UserData }> = ({
     postResponse();
   };
 
-  
+
   // Rendering HTMLElement/Отрисовка HTMLElement:
   if (redirect) return <Navigate to="/profile" />;
 
@@ -151,7 +151,9 @@ const AddAnswers: React.FC<{ tasksListData: TaskList; userData: UserData }> = ({
             <h2>{`Задача ${task.sequence_number} (${task.title}):`}</h2>
 
             <div className="description no-select">
-              {task.description}
+              {task.description.split(' ').map((word, index) => (
+                <span key={index} style={{ wordBreak: 'break-all' }}>{word} </span>
+              ))}
             </div>
 
             {task.photo_file && (
@@ -181,7 +183,7 @@ const AddAnswers: React.FC<{ tasksListData: TaskList; userData: UserData }> = ({
                 Ссылка на статью к задаче
               </a>
             )}
-            
+
             {task.docx_file && (
               <a href={`${BASE_URL}${task.docx_file}`} download={task.docx_file.name} className="hub-link">
                 Скачать файл к задаче
