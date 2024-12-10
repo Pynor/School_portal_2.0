@@ -11,11 +11,12 @@
 }
 
 .description {
-  background-color: #f9f9f9;
-  font-size: 1.5em;
-  margin: 10px 0; 
-  padding: 10px; 
- 
+  white-space: normal; /* Позволяет перенос строк */
+  overflow-wrap: break-word; /* Перенос длинных слов */
+  max-height: 200px; /* Максимальная высота */
+  overflow: auto; /* Прокрутка при переполнении */
+  font-size: 1.5em; /* Размер шрифта */
+  padding: 10px; /* Внутренние отступы */
 }
 
 .no-select {
