@@ -2,25 +2,50 @@ import { Link } from 'react-router-dom';
 
 
 import { getCookie } from '../../functions';
-import { TaskList } from '../../types';
+import { TaskList, UserData, Task } from '../../types';
 
 import './CSS/profile.css';
 
 
-const ProfileStudent = ({ tasksListData }: { tasksListData: TaskList }) => {
+const ComponentTaskList = ({ task_list }: { task_list: TaskList }) => {
+    return (
+        <>
+            {task_list.task_list.map((option, index) => {
+                const isCompleted = getCookie(`completedTask(${index})`) === `${index}`;
+                return isCompleted ? (
+                    <h3 key={index} className="success-message" style={{ width: '300px' }}>
+                        Задание {option.title} сделано.
+                    </h3>
+                ) : (
+                    <Link key={index} to={`/add-answers/${index}`} className="btn-primary" style={{ width: '300px' }}>
+                        Задание {option.title}
+                    </Link>
+                );
+            })}
+        </>
+    );
+};
+
+const NoTasksMessage = () => (
+    <h2 className="success-message">Задач для вас пока нет.</h2>
+);
+
+const NotRegisteredMessage = () => (
+    <h2 className="error-message">Вы не авторизованы.</h2>
+);
+
+const ProfileStudent = ({ tasksListData, userData }: { tasksListData: TaskList; userData: UserData }) => {
+    const hasTasks = tasksListData && tasksListData.task_list.length > 0;
+
     return (
         <div>
             <div className="form-container">
-                {tasksListData && tasksListData.task_list.length > 0 ? (
-                    tasksListData.task_list.map((option, index) => (
-                        getCookie(`completedTask(${index})`) !== `${index}` ? (
-                            <Link key={index} to={`/add-answers/${index}`} className="btn-primary" style={{ width: '300px'}}> Задание {option.title} </Link>
-                        ) : (
-                        <h3 className="success-message" style={{ width: '300px'}}> Задание {option.title} сделано.</h3>
-                    )
-                    ))
+                {!userData || !userData.username ? (
+                    <NotRegisteredMessage />
+                ) : hasTasks ? (
+                    <ComponentTaskList task_list={tasksListData} />
                 ) : (
-                    <h2 className="success-message">Задач для вас пока нет.</h2>
+                    <NoTasksMessage />
                 )}
             </div>
         </div>

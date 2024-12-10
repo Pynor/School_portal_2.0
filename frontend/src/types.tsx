@@ -44,6 +44,12 @@ export type TaskList = {
   }]
 };
 
+export interface ModalProps {
+  onClose: () => void;
+  imageSrc: string;
+  isOpen: boolean;
+}
+
 export type TaskListForAddTasks = {
   time_to_tasks: string,
   count_task: number;
@@ -60,7 +66,7 @@ export type Task = {
   description: string;
   video_file?: File;
   photo_file?: File;
-  docx_file?: File; 
+  docx_file?: File;
   title: string;
   id: number;
 };

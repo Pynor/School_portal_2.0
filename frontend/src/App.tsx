@@ -113,7 +113,7 @@ const App = () => {
 
                         <div className="profile">
                             <Routes>
-                                <Route path="/profile-student" element={<ProfileStudent tasksListData={tasksListData} />} />
+                                <Route path="/profile-student" element={<ProfileStudent tasksListData={tasksListData} userData={userData} />} />
                                 <Route path="/profile-teacher" element={<ProfileTeacher userData={userData} />} />
                             </Routes>
                         </div>

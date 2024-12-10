@@ -17,7 +17,9 @@ const ProfileTeacher = (props: { userData: UserData }) => {
                     <Link to="/add-tasks" className="btn-primary" style={{ width: '250px', textAlign: 'center' }}>Создать тест</Link>
                 </div>
             ) : (
-                <h2 className="error-message">У вас нет на это прав.</h2>
+                <div className="form-container">
+                    <h2 className="error-message">У вас нет на это прав.</h2>
+                </div>
             )
             }
         </div>

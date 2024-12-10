@@ -1,17 +1,26 @@
 .form-container {
-    max-width: 80%;
-    margin-bottom: 20px;
+  margin-bottom: 20px;
+  max-width: 80%;
 }
 
 .form-container h2,
 .form-container h3 {
-  width: 100%;
+  overflow-wrap: break-word;
   white-space: pre-wrap; 
-  overflow-wrap: break-word; 
+  width: 100%;
 }
+
+.description {
+  background-color: #f9f9f9;
+  font-size: 1.5em;
+  margin: 10px 0; 
+  padding: 10px; 
+ 
+}
+
 .no-select {
-  user-select: none; 
   -webkit-user-select: none; 
   -moz-user-select: none; 
   -ms-user-select: none; 
+  user-select: none; 
 }
