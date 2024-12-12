@@ -87,7 +87,7 @@ const AddAnswers: React.FC<{ tasksListData: TaskList; userData: UserData }> = ({
   };
 
 
-  // Receiving a POST request/Получение POST запроса:
+  // Generation data for POST request/Формирование данных для POST запроса:
   const postResponse = async () => {
     const formData = new FormData();
     answers.forEach(({ user, task_list, answers }) => {

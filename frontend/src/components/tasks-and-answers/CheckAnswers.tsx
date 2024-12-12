@@ -10,15 +10,15 @@ import './CSS/check-answers.css'
 
 
 const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
-
+    // Assigning variables/Назначение переменных:
     const [data, setData] = useState<StudentAndAnswerForCheckAnswers[]>();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const { schoolClass, taskListId } = useParams();
     const hasFetchedRef = useRef(false);
 
-    console.log(data)
 
+    // Sending a GET request/Отправка GET запроса:
     useEffect(() => {
         const getAnswerLists = async () => {
 
@@ -26,6 +26,8 @@ const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
             hasFetchedRef.current = true;
 
             try {
+
+                // Send request/Отправка запроса:
                 const getResponse = await fetch(`${BASE_URL}/task_app/api/v1/api-answer-list-get/${schoolClass}/${taskListId}`, {
                     headers: {
                         'Access-Control-Request-Headers': 'Content-Type',
@@ -34,13 +36,15 @@ const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
                     credentials: 'include',
                     method: 'GET'
                 });
-
+                
+                // Response processing/Обработка ответа:
                 if (getResponse.ok) {
                     const responseData = await getResponse.json();
                     setData(responseData);
                 } else {
                     setErrorMessage('Произошла ошибка при получении задачи.');
                 }
+
             } catch (error) {
                 setErrorMessage('Произошла ошибка.');
             }
@@ -49,7 +53,8 @@ const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
         getAnswerLists();
     }, []);
 
-
+    
+    // Rendering HTMLElement/Отрисовка HTMLElement:
     return (
         <div className="form-container" style={{ boxShadow: 'none' }}>
             <Link to="/check-answers-hub" className="btn-primary" style={{ alignSelf: "flex-start" }}>Вернуться</Link>
