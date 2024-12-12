@@ -1,22 +1,15 @@
 .form-container {
   margin-bottom: 20px;
-  max-width: 80%;
+  max-width: 80%; 
+  margin-left: auto; 
+  margin-right: auto; 
 }
 
 .form-container h2,
 .form-container h3 {
   overflow-wrap: break-word;
   white-space: pre-wrap; 
-  width: 100%;
-}
-
-.description {
-  white-space: normal; /* Позволяет перенос строк */
-  overflow-wrap: break-word; /* Перенос длинных слов */
-  max-height: 200px; /* Максимальная высота */
-  overflow: auto; /* Прокрутка при переполнении */
-  font-size: 1.5em; /* Размер шрифта */
-  padding: 10px; /* Внутренние отступы */
+  font-size: 1.5em; 
 }
 
 .no-select {
