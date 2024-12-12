@@ -76,8 +76,8 @@ const AddAnswers: React.FC<{ tasksListData: TaskList; userData: UserData }> = ({
 
 
   // Processing of input data/Обработка вводных данных:
-  const handleChange = (taskId: number, field: 'answer' | 'photo', e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = field === 'photo' ? e.target.files?.[0] || null : e.target.value;
+  const handleChange = (taskId: number, field: 'answer' | 'photo_to_the_answer', e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = field === 'photo_to_the_answer' ? e.target.files?.[0] || null : e.target.value;
     setAnswers(prevAnswers => prevAnswers.map(answerObj => ({
       ...answerObj,
       answers: answerObj.answers.map(answer =>
@@ -210,7 +210,7 @@ const AddAnswers: React.FC<{ tasksListData: TaskList; userData: UserData }> = ({
                 className="form-control"
                 style={{ marginTop: '5px' }}
                 accept="image/png, image/jpeg"
-                onChange={(e) => handleChange(task.id, 'photo', e)}
+                onChange={(e) => handleChange(task.id, 'photo_to_the_answer', e)}
               />
             )}
           </div>
