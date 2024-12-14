@@ -5,6 +5,7 @@ import { BASE_URL, CLASSES } from '../../constants';
 import { Task, UserData } from '../../types';
 
 import './CSS/add-task.css';
+import '../../App.css';
 
 
 const CheckAnswersHub: React.FC<{ userData: UserData }> = ({ userData }) => {
@@ -36,57 +37,59 @@ const CheckAnswersHub: React.FC<{ userData: UserData }> = ({ userData }) => {
     };
 
     return (
-        <div className="form-container">
-            {userData.is_staff ? (
-                <>
-                    {errorMessage && <h2 className="error-message">{errorMessage}</h2>}
-                    <form onSubmit={getTasks}>
-                        <select
-                            className="form-control"
-                            id="task_for"
-                            name="task_for"
-                            value={school_class}
-                            onChange={(e) => setSchoolClass(e.target.value)}
-                            required
-                        >
-                            <option value="">Выберите класс</option>
-                            {CLASSES.map((option) => (
-                                <option key={option} value={option}>
-                                    {option}
-                                </option>
-                            ))}
-                        </select>
+        <div className="form-tasks-and-answers">
+            <div className="form-container">
+                {userData.is_staff ? (
+                    <>
+                        {errorMessage && <h2 className="error-message">{errorMessage}</h2>}
+                        <form onSubmit={getTasks}>
+                            <select
+                                className="form-control"
+                                id="task_for"
+                                name="task_for"
+                                value={school_class}
+                                onChange={(e) => setSchoolClass(e.target.value)}
+                                required
+                            >
+                                <option value="">Выберите класс</option>
+                                {CLASSES.map((option) => (
+                                    <option key={option} value={option}>
+                                        {option}
+                                    </option>
+                                ))}
+                            </select>
 
-                        <button type="submit" className="btn-primary" style={{ marginTop: '10px' }}>Получить задачи</button>
-                    </form>
+                            <button type="submit" className="btn-primary" style={{ marginTop: '10px' }}>Получить задачи</button>
+                        </form>
 
-                    {school_class && getTasksCompleted ? (
-                        <div>
-                            <h2 style={{ textAlign: 'center' }}>Задачи для {school_class} класса:</h2>
-                            {data.task_list.length > 0 ? (
-                                data.task_list.map((option: Task, index: number) => (
-                                    <Link
-                                        key={index}
-                                        className="btn-primary"
-                                        style={{ width: '300px', marginBottom: '10px', display: 'block' }}
-                                        to={`/check-answers/${school_class}/${option.id}`}
-                                    >
-                                        Проверить задачу {option.title}
-                                    </Link>
-                                ))
-                            ) : (
-                                <h2 className="error-message">У этого класса нет задач.</h2>
-                            )}
-                        </div>
-                    ) : (
-                        <div></div>
-                    )
-                    }
+                        {school_class && getTasksCompleted ? (
+                            <div>
+                                <h2 style={{ textAlign: 'center' }}>Задачи для {school_class} класса:</h2>
+                                {data.task_list.length > 0 ? (
+                                    data.task_list.map((option: Task, index: number) => (
+                                        <Link
+                                            key={index}
+                                            className="btn-primary"
+                                            style={{ width: '300px', marginBottom: '10px', display: 'block' }}
+                                            to={`/check-answers/${school_class}/${option.id}`}
+                                        >
+                                            Проверить задачу {option.title}
+                                        </Link>
+                                    ))
+                                ) : (
+                                    <h2 className="error-message">У этого класса нет задач.</h2>
+                                )}
+                            </div>
+                        ) : (
+                            <div></div>
+                        )
+                        }
 
-                </>
-            ) : (
-                <h2 className="error-message">У вас нет на это прав.</h2>
-            )}
+                    </>
+                ) : (
+                    <h2 className="error-message">У вас нет на это прав.</h2>
+                )}
+            </div>
         </div>
     );
 }

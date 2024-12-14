@@ -3,13 +3,13 @@ import React from "react";
 
 import { UserData } from '../../types';
 
-
 import './CSS/profile.css';
+import './../../App.css';
 
 
 const ProfileTeacher = (props: { userData: UserData }) => {
     return (
-        <div>
+        <div className="profile">
             {props.userData.is_staff ? (
                 <div className="form-container">
                     <Link to="/register-students" className="btn-primary" style={{ width: '250px', textAlign: 'center' }}>Зарегистрировать учеников</Link>

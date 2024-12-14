@@ -6,61 +6,60 @@
     align-items: center;
     border-radius: 8px;
     max-width: 350px;
+    padding: 30px;
     display: flex;
     margin: auto;
-    padding: 30px;
 }
 
-.form-container .form-container .form-container {
+.form-container-no-shadow {
     box-shadow: none; 
     border: none; 
 }
 
 @media (max-width: 300px) {
-    .form-container {
-        padding: 1rem; 
+    .form-container { 
         box-shadow: none; 
+        padding: 1rem;
         border: none; 
     }
 }
 
-
 .hub-container {
-    display: flex;
     flex-direction: column;
     list-style-type: none;
+    display: flex;
     padding: 0;
 }
 
+
 .hub-link {
+    transition: color 0.3s ease;
     text-decoration: none;
-    color: #333;
     font-size: 1.1rem;
     font-weight: 500;
-    transition: color 0.3s ease;
+    color: #333;
 }
-
 .hub-link:hover {
     color: #007bff;
 }
 
 
 h1 {
-    text-align: center;
     margin-bottom: 20px;
+    text-align: center;
     color: #333;
 }
 
 .error-message {
     color: rgb(212, 20, 20);
-    text-align: center;
     margin-bottom: 10px;
+    text-align: center;
 }
 
 form {
-    display: flex;
-    flex-direction: column;
     justify-content: center;
+    flex-direction: column;
+    display: flex;
     width: 70%;
 }
 
@@ -69,34 +68,33 @@ form {
 }
 
 .form-group label {
-    display: block;
     margin-bottom: 5px;
     font-weight: bold;
+    display: block;
 }
 
 .form-control {
-    display: flex;
-    padding: 10px;
     border: 1px solid #ccc;
     border-radius: 8px;
     font-size: 16px;
+    display: flex;
+    padding: 10px;
     width: 100%;
 }
 
 .btn-primary {
+    transition: background-color 0.5s ease;
     background-color: #000000;
     border-color: #ccc;
-    color: #fff;
     border-radius: 8px;
     padding: 10px 20px;
     font-size: 18px;
-    transition: background-color 0.5s ease;
+    color: #fff;
 }
-
+.btn-primary.focus {
+    box-shadow: 0 0 0 0.2rem #2840ad;
+}
 .btn-primary:hover {
     background-color: #2840ad;
 }
 
-.btn-primary.focus {
-    box-shadow: 0 0 0 0.2rem #2840ad;
-}

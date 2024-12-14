@@ -9,15 +9,17 @@ import LoginStudent from './components/authorization/login/LoginStudent';
 import LoginTeacher from './components/authorization/login/LoginTeacher';
 import LoginHub from './components/authorization/login/LoginHub';
 
+import ProfileTeacher from './components/profile/ProfileTeacher';
+import ProfileStudent from './components/profile/ProfileStudent';
+
 import CheckAnswersHub from './components/tasks-and-answers/CheckAnswersHub';
 import CheckAnswers from './components/tasks-and-answers/CheckAnswers';
 import AddAnswers from './components/tasks-and-answers/AddAnswers';
 import AddTasks from './components/tasks-and-answers/AddTasks';
 
-import ProfileTeacher from './components/profile/ProfileTeacher';
-import ProfileStudent from './components/profile/ProfileStudent';
-
 import Nav from './components/navigation/Nav';
+
+import Home from './components/home/Home'
 
 
 import { BASE_URL } from './constants';
@@ -75,7 +77,7 @@ const App = () => {
                     const tasksListData = await tasksGetResponse.json();
                     setTasksListData(tasksListData);
                 }
-            } catch (error) {}
+            } catch (error) { }
         };
 
         fetchData();
@@ -89,34 +91,27 @@ const App = () => {
                 <Nav userData={userData} setName={setName} />
                 <div className="content">
                     <main className="main-content">
-                        <div className="form-tasks-and-answers">
-                            <Routes>
-                                <Route path="/add-answers/:taskListId" element={<AddAnswers tasksListData={tasksListData} userData={userData} />} />
-                                <Route path="/add-tasks" element={<AddTasks userData={userData} />} />
+                        <Routes>
 
-                                <Route path="/check-answers/:schoolClass/:taskListId" element={<CheckAnswers userData={userData} />} />
-                                <Route path="/check-answers-hub" element={<CheckAnswersHub userData={userData} />} />
-                            </Routes>
-                        </div>
+                            <Route path="/add-answers/:taskListId" element={<AddAnswers tasksListData={tasksListData} userData={userData} />} />
+                            <Route path="/check-answers/:schoolClass/:taskListId" element={<CheckAnswers userData={userData} />} />
+                            <Route path="/check-answers-hub" element={<CheckAnswersHub userData={userData} />} />
+                            <Route path="/add-tasks" element={<AddTasks userData={userData} />} />
 
-                        <div className="form-login-and-register">
-                            <Routes>
-                                <Route path="/register-students" element={<RegisterStudents userData={userData} />} />
-                                <Route path="/register-teacher" element={<RegisterTeacher />} />
-                                <Route path="/register-hub" element={<RegisterHub />} />
+                            <Route path="/profile-student" element={<ProfileStudent tasksListData={tasksListData} userData={userData} />} />
+                            <Route path="/profile-teacher" element={<ProfileTeacher userData={userData} />} />
 
-                                <Route path="/login-student" element={<LoginStudent />} />
-                                <Route path="/login-teacher" element={<LoginTeacher />} />
-                                <Route path="/login-hub" element={<LoginHub />} />
-                            </Routes>
-                        </div>
+                            <Route path="/register-students" element={<RegisterStudents userData={userData} />} />
+                            <Route path="/register-teacher" element={<RegisterTeacher />} />
+                            <Route path="/register-hub" element={<RegisterHub />} />
 
-                        <div className="profile">
-                            <Routes>
-                                <Route path="/profile-student" element={<ProfileStudent tasksListData={tasksListData} userData={userData} />} />
-                                <Route path="/profile-teacher" element={<ProfileTeacher userData={userData} />} />
-                            </Routes>
-                        </div>
+                            <Route path="/login-student" element={<LoginStudent />} />
+                            <Route path="/login-teacher" element={<LoginTeacher />} />
+                            <Route path="/login-hub" element={<LoginHub />} />
+{/* 
+                            <Route path="/" element={<Home />} /> */}
+
+                        </Routes>
                     </main>
                 </div>
             </BrowserRouter>

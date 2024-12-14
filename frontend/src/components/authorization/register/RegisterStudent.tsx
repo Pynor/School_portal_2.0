@@ -5,7 +5,8 @@ import { BASE_URL, CLASSES } from '../../../constants';
 import { UserData, StudentForRegister } from '../../../types';
 import { getCookie } from '../../../functions';
 
-import '../CSS/form-signing.css'
+import '../CSS/form-signing.css';
+import './../../../App.css';
 
 
 
@@ -98,7 +99,7 @@ const RegisterStudents = (props: { userData: UserData }) => {
   }
 
   return (
-    <div>
+    <div className='form-login-and-register'>
       {props.userData.is_staff ? (
         !message ? (
           <div className="form-container">

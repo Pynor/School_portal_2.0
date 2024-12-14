@@ -5,6 +5,7 @@ import { UserData, Task, TaskListForAddTasks } from '../../types';
 import { getCookie } from '../../functions';
 
 import './CSS/add-task.css';
+import '../../App.css';
 
 
 const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
@@ -120,112 +121,113 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
   };
 
   return (
-    <nav className="form-container">
-      {message && message}
-      {userData.is_staff ? (
-        <form onSubmit={addTasks} >
-          <div className="form-group">
-            <div className="form-container">
-              <div className="form-group">
-
-                <div className="form-group">
-                  <input className="form-control" style={{ width: '91.9%' }} type="text" name="title" placeholder="Название теста" value={formData.title} onChange={handleChange} required />
-                </div>
-
-                <div className="form-group">
-                  <select className="form-control" style={{ marginBottom: '20px' }} id="task_for" name="task_for" value={formData.task_for} onChange={handleChange} required>
-                    <option value="">Выберите класс</option>
-                    {CLASSES.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div className='form-group-time'>
-                  <div className='form-time-div'>Время на выполнение:</div>
-                  <input
-                    className="form-control"
-                    type="text"
-                    name="time_to_tasks"
-                    value={formData.time_to_tasks}
-                    onChange={handleChange}
-                    placeholder="мин:сек"
-                    style={{ width: '31%' }}
-                  />
-                </div>
-                <div className="form-group">
-                  <input className="form-control" style={{ width: '91.9%' }} type="number" name="count_task" placeholder="Кол-во задач" value={formData.count_task} onChange={handleChange} min={1} required />
-                </div>
-
-              </div>
-
-              <button className="btn-primary" type="button" onClick={addTask}>
-                Добавить задачу
-              </button>
-            </div>
-          </div>
-
-          {formData.tasks.map((task, index) => (
-            <div key={index}>
+    <div className="form-tasks-and-answers">
+      <nav className="form-container">
+        {message && message}
+        {userData.is_staff ? (
+          <form onSubmit={addTasks} >
+            <div className="form-group">
               <div className="form-container">
                 <div className="form-group">
 
                   <div className="form-group">
-                    <input className="form-control" type="text" name="title" placeholder="Название задачи" value={task.title}
-                      onChange={(e) => handleTaskChange(index, e)} required />
+                    <input className="form-control" style={{ width: '91.9%' }} type="text" name="title" placeholder="Название теста" value={formData.title} onChange={handleChange} required />
                   </div>
 
                   <div className="form-group">
-                    <textarea className="form-control" name="description" value={task.description} placeholder="Описание задачи"
-                      onChange={(e) => handleTaskChange(index, e)} required />
-                  </div>
-
-                  <div className="form-group">
-                    <input className="form-control" type="text" name="answer_to_the_task" placeholder="Ответ на задачу" value={task.answer_to_the_task}
-                      onChange={(e) => handleTaskChange(index, e)} />
-                  </div>
-                  <div className="form-group">
-                    <input className="form-control" type="url" name="link_to_article" placeholder="Ссылка на статью" value={task.link_to_article}
-                      onChange={(e) => handleTaskChange(index, e)} />
-                  </div>
-
-                  <div className="form-group">
-                    <select className="form-control" id="additional_condition" name="additional_condition" value={task.additional_condition}
-                      onChange={(e) => handleTaskChange(index, e)} required>
-                      <option value="None">Без доп. условий</option>
-                      <option value="Photo">Сделать фото решения</option>
+                    <select className="form-control" style={{ marginBottom: '20px' }} id="task_for" name="task_for" value={formData.task_for} onChange={handleChange} required>
+                      <option value="">Выберите класс</option>
+                      {CLASSES.map((option) => (
+                        <option key={option} value={option}>
+                          {option}
+                        </option>
+                      ))}
                     </select>
                   </div>
-                  <h3 className="normal-message">Нежелательно отправлять более 1 файла.</h3>
-                  <div className='form-group'>
-                    <div className='form-file-div'>DOCX файл:</div>
-                    <input className="form-control" type="file" name="docx_file" accept=".docx, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                      onChange={(e) => handleFileChange(index, 'docx_file', e)} />
+
+                  <div className='form-group-time'>
+                    <div className='form-time-div'>Время на выполнение:</div>
+                    <input
+                      className="form-control"
+                      type="text"
+                      name="time_to_tasks"
+                      value={formData.time_to_tasks}
+                      onChange={handleChange}
+                      placeholder="мин:сек"
+                      style={{ width: '31%' }}
+                    />
                   </div>
-                  <div className='form-group'>
-                    <div className='form-file-div'>Фото файл:</div>
-                    <input className="form-control" type="file" name="photo_file" accept="image/png, image/jpeg"
-                      onChange={(e) => handleFileChange(index, 'photo_file', e)} />
+                  <div className="form-group">
+                    <input className="form-control" style={{ width: '91.9%' }} type="number" name="count_task" placeholder="Кол-во задач" value={formData.count_task} onChange={handleChange} min={1} required />
                   </div>
-                  <div className='form-group'>
-                    <div className='form-file-div'>Видео файл:</div>
-                    <input className="form-control" type="file" name="video_file" accept="video/mp4, video/x-m4v, video/*"
-                      onChange={(e) => handleFileChange(index, 'video_file', e)} />
+
+                </div>
+
+                <button className="btn-primary" type="button" onClick={addTask}>
+                  Добавить задачу
+                </button>
+              </div>
+            </div>
+
+            {formData.tasks.map((task, index) => (
+              <div key={index}>
+                <div className="form-container">
+                  <div className="form-group">
+
+                    <div className="form-group">
+                      <input className="form-control" type="text" name="title" placeholder="Название задачи" value={task.title}
+                        onChange={(e) => handleTaskChange(index, e)} required />
+                    </div>
+
+                    <div className="form-group">
+                      <textarea className="form-control" name="description" value={task.description} placeholder="Описание задачи"
+                        onChange={(e) => handleTaskChange(index, e)} required />
+                    </div>
+
+                    <div className="form-group">
+                      <input className="form-control" type="text" name="answer_to_the_task" placeholder="Ответ на задачу" value={task.answer_to_the_task}
+                        onChange={(e) => handleTaskChange(index, e)} />
+                    </div>
+                    <div className="form-group">
+                      <input className="form-control" type="url" name="link_to_article" placeholder="Ссылка на статью" value={task.link_to_article}
+                        onChange={(e) => handleTaskChange(index, e)} />
+                    </div>
+
+                    <div className="form-group">
+                      <select className="form-control" id="additional_condition" name="additional_condition" value={task.additional_condition}
+                        onChange={(e) => handleTaskChange(index, e)} required>
+                        <option value="None">Без доп. условий</option>
+                        <option value="Photo">Сделать фото решения</option>
+                      </select>
+                    </div>
+                    <h3 className="normal-message">Нежелательно отправлять более 1 файла.</h3>
+                    <div className='form-group'>
+                      <div className='form-file-div'>DOCX файл:</div>
+                      <input className="form-control" type="file" name="docx_file" accept=".docx, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                        onChange={(e) => handleFileChange(index, 'docx_file', e)} />
+                    </div>
+                    <div className='form-group'>
+                      <div className='form-file-div'>Фото файл:</div>
+                      <input className="form-control" type="file" name="photo_file" accept="image/png, image/jpeg"
+                        onChange={(e) => handleFileChange(index, 'photo_file', e)} />
+                    </div>
+                    <div className='form-group'>
+                      <div className='form-file-div'>Видео файл:</div>
+                      <input className="form-control" type="file" name="video_file" accept="video/mp4, video/x-m4v, video/*"
+                        onChange={(e) => handleFileChange(index, 'video_file', e)} />
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            ))}
 
-          <button className="btn-primary" type="submit">
-            Создать тест
-          </button>
+            <button className="btn-primary" type="submit">
+              Создать тест
+            </button>
 
-        </form>) : (<h2 className="error-message">У вас нет на это прав.</h2>)}
-    </nav>
-
+          </form>) : (<h2 className="error-message">У вас нет на это прав.</h2>)}
+      </nav>
+    </div>
   );
 };
 

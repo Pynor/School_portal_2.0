@@ -4,7 +4,8 @@ import { Navigate } from "react-router-dom";
 import { BASE_URL, CLASSES } from '../../../constants';
 import { getCookie } from '../../../functions';
 
-import '../CSS/form-signing.css'
+import '../CSS/form-signing.css';
+import './../../../App.css';
 
 
 const LoginStudent = () => {
@@ -58,37 +59,39 @@ const LoginStudent = () => {
     }
 
     return (
-        <div className="form-container">
-            <form onSubmit={login}>
-                <h1 className="h1">Авторизация</h1>
-                {error && <h3 className="error-message">{error}</h3>}
-                <div className="form-group">
-                    <input type="text" className="form-control" id="first_name" placeholder="Имя" required
-                        onChange={e => setFirstName(e.target.value)}
-                    />
-                </div>
-                <div className="form-group">
-                    <input type="text" className="form-control" id="last_name" placeholder="Фамилия" required
-                        onChange={e => setLastName(e.target.value)}
-                    />
-                </div>
-                <div className="form-group">
-                    <select className="form-control" id="school_class" name="school_class" onChange={e => setSchoolClass(e.target.value)} required>
-                        <option value="">Выберите свой класс</option>
-                        {CLASSES.map((option) => (
-                            <option key={option} value={option}>
-                                {option}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-                <div className="form-group">
-                    <input type="password" className="form-control" id="password" placeholder="Пароль" required
-                        onChange={e => setPassword(e.target.value)}
-                    />
-                </div>
-                <button className="btn-primary" type="submit">Авторизоваться</button>
-            </form>
+        <div className="form-login-and-register">
+            <div className="form-container">
+                <form onSubmit={login}>
+                    <h1 className="h1">Авторизация</h1>
+                    {error && <h3 className="error-message">{error}</h3>}
+                    <div className="form-group">
+                        <input type="text" className="form-control" id="first_name" placeholder="Имя" required
+                            onChange={e => setFirstName(e.target.value)}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <input type="text" className="form-control" id="last_name" placeholder="Фамилия" required
+                            onChange={e => setLastName(e.target.value)}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <select className="form-control" id="school_class" name="school_class" onChange={e => setSchoolClass(e.target.value)} required>
+                            <option value="">Выберите свой класс</option>
+                            {CLASSES.map((option) => (
+                                <option key={option} value={option}>
+                                    {option}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
+                    <div className="form-group">
+                        <input type="password" className="form-control" id="password" placeholder="Пароль" required
+                            onChange={e => setPassword(e.target.value)}
+                        />
+                    </div>
+                    <button className="btn-primary" type="submit">Авторизоваться</button>
+                </form>
+            </div>
         </div>
     );
 };

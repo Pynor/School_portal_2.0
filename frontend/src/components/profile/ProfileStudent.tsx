@@ -1,10 +1,10 @@
 import { Link } from 'react-router-dom';
 
-
+import { TaskList, UserData } from '../../types';
 import { getCookie } from '../../functions';
-import { TaskList, UserData, Task } from '../../types';
 
 import './CSS/profile.css';
+import './../../App.css';
 
 
 const ComponentTaskList = ({ task_list }: { task_list: TaskList }) => {
@@ -17,7 +17,7 @@ const ComponentTaskList = ({ task_list }: { task_list: TaskList }) => {
                         Задание {option.title} сделано.
                     </h3>
                 ) : (
-                    <Link key={index} to={`/add-answers/${index}`} className="btn-primary" style={{ width: '300px' }}>
+                    <Link key={index} to={`/add-answers/${index}`} className="btn-primary" style={{ width: '300px', maxWidth: '100%' }}>
                         Задание {option.title}
                     </Link>
                 );
@@ -38,7 +38,7 @@ const ProfileStudent = ({ tasksListData, userData }: { tasksListData: TaskList; 
     const hasTasks = tasksListData && tasksListData.task_list.length > 0;
 
     return (
-        <div>
+        <div className="profile">
             <div className="form-container">
                 {!userData || !userData.username ? (
                     <NotRegisteredMessage />

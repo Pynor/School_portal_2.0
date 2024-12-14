@@ -8,6 +8,7 @@ import { BASE_URL } from '../../constants';
 import Modal from "./ModalWindows";
 
 import './CSS/add-answer.css';
+import '../../App.css';
 
 
 const AddAnswers: React.FC<{ tasksListData: TaskList; userData: UserData }> = ({ tasksListData, userData }) => {
@@ -134,94 +135,96 @@ const AddAnswers: React.FC<{ tasksListData: TaskList; userData: UserData }> = ({
   if (redirect) return <Navigate to="/profile" />;
 
   return (
-    <nav className="form-container">
-      {/* Form of sending/Форма отправки */}
-      <form onSubmit={handleSubmit}>
-        <h2 style={{ textAlign: 'center', color: getTimeColor() }}>
-          Оставшееся время: {new Date(timeLeft * 1000).toISOString().substr(11, 8)}
-        </h2>
+    <div className="form-tasks-and-answers">
+      <nav className="form-container">
+        {/* Form of sending/Форма отправки */}
+        <form onSubmit={handleSubmit}>
+          <h2 style={{ textAlign: 'center', color: getTimeColor() }}>
+            Оставшееся время: {new Date(timeLeft * 1000).toISOString().substr(11, 8)}
+          </h2>
 
-        {message && <p>{message}</p>}
+          {message && <p>{message}</p>}
 
-        {/* Task List/Список задач */}
-        {isTaskListValid && taskList.tasks.map(task => (
-          <div key={task.id} className="form-container no-select">
+          {/* Task List/Список задач */}
+          {isTaskListValid && taskList.tasks.map(task => (
+            <div key={task.id} className="form-container no-select">
 
-            {/* Task Criteria fields/Поля условий задачи */}
-            <h2>{`Задача ${task.sequence_number} (${task.title}):`}</h2>
+              {/* Task Criteria fields/Поля условий задачи */}
+              <h2>{`Задача ${task.sequence_number} (${task.title}):`}</h2>
 
-            <div className="description no-select">
-              {task.description.split(' ').map((word, index) => (
-                <span key={index} style={{ wordBreak: 'break-all' }}>{word} </span>
-              ))}
-            </div>
-
-            {task.photo_file && (
-              <div>
-                <h4>Изображение к заданию:</h4>
-                <img
-                  alt="Загруженное"
-                  onClick={() => setIsModalOpen(true)}
-                  src={`${BASE_URL}${task.photo_file}`}
-                  style={{ width: '290px', height: '200px', objectFit: 'cover' }}
-                />
+              <div className="description no-select">
+                {task.description.split(' ').map((word, index) => (
+                  <span key={index} style={{ wordBreak: 'break-all' }}>{word} </span>
+                ))}
               </div>
-            )}
 
-            {task.video_file && (
-              <div>
-                <h4>Видео к заданию:</h4>
-                <video controls style={{ width: '290px', height: '200px', objectFit: 'cover', margin: '10px' }}>
-                  <source src={`${BASE_URL}${task.video_file}`} type={task.video_file.type} />
-                  Ваш браузер не поддерживает видео.
-                </video>
-              </div>
-            )}
+              {task.photo_file && (
+                <div>
+                  <h4>Изображение к заданию:</h4>
+                  <img
+                    alt="Загруженное"
+                    onClick={() => setIsModalOpen(true)}
+                    src={`${BASE_URL}${task.photo_file}`}
+                    style={{ width: '290px', height: '200px', objectFit: 'cover' }}
+                  />
+                </div>
+              )}
 
-            {task.link_to_article && (
-              <a href={task.link_to_article} target="_blank" rel="noopener noreferrer" className="hub-link">
-                Ссылка на статью к задаче
-              </a>
-            )}
+              {task.video_file && (
+                <div>
+                  <h4>Видео к заданию:</h4>
+                  <video controls style={{ width: '290px', height: '200px', objectFit: 'cover', margin: '10px' }}>
+                    <source src={`${BASE_URL}${task.video_file}`} type={task.video_file.type} />
+                    Ваш браузер не поддерживает видео.
+                  </video>
+                </div>
+              )}
 
-            {task.docx_file && (
-              <a href={`${BASE_URL}${task.docx_file}`} download={task.docx_file.name} className="hub-link">
-                Скачать файл к задаче
-              </a>
-            )}
+              {task.link_to_article && (
+                <a href={task.link_to_article} target="_blank" rel="noopener noreferrer" className="hub-link">
+                  Ссылка на статью к задаче
+                </a>
+              )}
 
-            <Modal
-              isOpen={isModalOpen}
-              onClose={() => setIsModalOpen(false)}
-              imageSrc={`${BASE_URL}${task.photo_file}`}
-            />
+              {task.docx_file && (
+                <a href={`${BASE_URL}${task.docx_file}`} download={task.docx_file.name} className="hub-link">
+                  Скачать файл к задаче
+                </a>
+              )}
 
-            {/* Answer input fields/Поля ввода ответа */}
-            <input
-              type="text"
-              placeholder="Ответ:"
-              className="form-control"
-              style={{ marginTop: '25px' }}
-              onChange={(e) => handleChange(task.id, 'answer', e)}
-            />
-            {task.additional_condition === 'Photo' && (
-              <input
-                type="file"
-                className="form-control"
-                style={{ marginTop: '5px' }}
-                accept="image/png, image/jpeg"
-                onChange={(e) => handleChange(task.id, 'photo_to_the_answer', e)}
+              <Modal
+                isOpen={isModalOpen}
+                onClose={() => setIsModalOpen(false)}
+                imageSrc={`${BASE_URL}${task.photo_file}`}
               />
-            )}
-          </div>
-        ))}
 
-        {/* Кнопка отправки */}
-        <button className="btn-primary" type="submit">
-          Прислать ответ
-        </button>
-      </form>
-    </nav>
+              {/* Answer input fields/Поля ввода ответа */}
+              <input
+                type="text"
+                placeholder="Ответ:"
+                className="form-control"
+                style={{ marginTop: '25px' }}
+                onChange={(e) => handleChange(task.id, 'answer', e)}
+              />
+              {task.additional_condition === 'Photo' && (
+                <input
+                  type="file"
+                  className="form-control"
+                  style={{ marginTop: '5px' }}
+                  accept="image/png, image/jpeg"
+                  onChange={(e) => handleChange(task.id, 'photo_to_the_answer', e)}
+                />
+              )}
+            </div>
+          ))}
+
+          {/* Кнопка отправки */}
+          <button className="btn-primary" type="submit">
+            Прислать ответ
+          </button>
+        </form>
+      </nav>
+    </div>
   );
 };
 
