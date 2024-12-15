@@ -36,6 +36,7 @@ const NotRegisteredMessage = () => (
 
 const ProfileStudent = ({ tasksListData, userData }: { tasksListData: TaskList; userData: UserData }) => {
     const hasTasks = tasksListData && tasksListData.task_list.length > 0;
+    console.log(tasksListData.task_list.length)
 
     return (
         <div className="profile">

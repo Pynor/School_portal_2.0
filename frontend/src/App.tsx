@@ -108,8 +108,8 @@ const App = () => {
                             <Route path="/login-student" element={<LoginStudent />} />
                             <Route path="/login-teacher" element={<LoginTeacher />} />
                             <Route path="/login-hub" element={<LoginHub />} />
-{/* 
-                            <Route path="/" element={<Home />} /> */}
+
+                            <Route path="/" element={<Home />} />
 
                         </Routes>
                     </main>

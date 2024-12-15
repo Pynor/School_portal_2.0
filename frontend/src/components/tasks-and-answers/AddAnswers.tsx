@@ -75,6 +75,20 @@ const AddAnswers: React.FC<{ tasksListData: TaskList; userData: UserData }> = ({
     return () => clearInterval(interval);
   }, [totalSeconds, taskListId]);
 
+  const formatTimeToHHMMSS = (seconds: number): string => {
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const secs = seconds % 60;
+
+    // Форматируем с ведущими нулями
+    return [
+      String(hours).padStart(2, '0'),
+      String(minutes).padStart(2, '0'),
+      String(secs).padStart(2, '0'),
+    ].join(':');
+  };
+
+
 
   // Processing of input data/Обработка вводных данных:
   const handleChange = (taskId: number, field: 'answer' | 'photo_to_the_answer', e: React.ChangeEvent<HTMLInputElement>) => {
@@ -94,6 +108,7 @@ const AddAnswers: React.FC<{ tasksListData: TaskList; userData: UserData }> = ({
     answers.forEach(({ user, task_list, answers }) => {
       formData.append('user', user.toString());
       formData.append('task_list', task_list?.toString() || '');
+      formData.append('execution_time_answer', formatTimeToHHMMSS(totalSeconds - timeLeft));
       answers.forEach((answer, index) => {
         formData.append(`answers[${index}][answer]`, answer.answer);
         formData.append(`answers[${index}][task]`, answer.task.toString());
