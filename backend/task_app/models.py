@@ -71,7 +71,7 @@ class AnswerList(models.Model):
     reviewed = models.BooleanField(default=False, verbose_name="Answer reviewed")
     user = models.ForeignKey(to=User, on_delete=models.CASCADE, verbose_name="Student")
     task_list = models.ForeignKey(to=TaskList, on_delete=models.CASCADE, verbose_name="Task list")
-    execution_time = models.DateTimeField(default=None, null=True, verbose_name="Execution time")
+    execution_time_answer = models.DurationField(blank=True, null=True, verbose_name="Execution time answer")
 
     def __str__(self):
         return f"List of answer on ({self.task_list.title}) from: {self.user.first_name} {self.user.last_name}"

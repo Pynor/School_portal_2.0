@@ -36,6 +36,7 @@ class TaskListAPIService:
 class AnswerListAPIService:
     @staticmethod
     def create_answer_list(validated_data: dict) -> AnswerList:
+        execution_time_answer = validated_data.get("execution_time_answer")
         answers_data = validated_data.pop("answers")
         task_list = validated_data.get("task_list")
         user = validated_data.get("user")
@@ -43,7 +44,8 @@ class AnswerListAPIService:
         if AnswerList.objects.filter(task_list=task_list, user=user).exists():
             raise ValidationError({"details": "Ответ на эту задачу уже был получен."})
 
-        answer_list = AnswerList.objects.create(task_list=task_list, user=user)
+        answer_list = AnswerList.objects.create(execution_time_answer=execution_time_answer,
+                                                task_list=task_list, user=user)
 
         answers_to_create = [Answer(answer_list=answer_list, **answer_data) for answer_data in answers_data]
         Answer.objects.bulk_create(answers_to_create)

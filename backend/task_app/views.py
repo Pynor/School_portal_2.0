@@ -1,4 +1,4 @@
-from rest_framework import generics, permissions, status
+from rest_framework import generics, permissions
 from rest_framework.views import APIView
 
 from .serializers import *
@@ -24,6 +24,7 @@ class AnswerListCreateAPIView(generics.CreateAPIView):
             i += 1
 
         request._full_data = {
+            "execution_time_answer": request.data.get("execution_time_answer"),
             "task_list": request.data.get("task_list"),
             "user": request.data.get("user"),
             "answers": answers_data
