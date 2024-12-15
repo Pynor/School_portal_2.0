@@ -78,6 +78,7 @@ const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
                                             student_answer_and_task.tasks_and_answers.map((answer_and_task, index) => (
                                                 <div key={index} className="answer-container">
                                                     <h2>Задача: {answer_and_task.task.title}</h2>
+                                                    <h2>Время выполнения: {new Date(answer_and_task.execution_time_answer * 1000).toISOString().substr(11, 8)}</h2>
 
                                                     {answer_and_task.answer.photo_to_the_answer ? (
                                                         <div>

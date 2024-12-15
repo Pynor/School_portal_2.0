@@ -83,6 +83,7 @@ class AnswerListAPIService:
             tasks_and_answers = [
                 {
                     "answer": serialized_answers[i],
+                    "execution_time_answer": student_answers[i].answer_list.execution_time_answer,
                     "task": task_serializer(student_answers[i].task).data if student_answers[i].task else None
                 }
                 for i in range(len(student_answers))

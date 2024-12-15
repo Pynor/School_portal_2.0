@@ -80,6 +80,7 @@ export type AnswerList = {
 export type StudentAndAnswerForCheckAnswers = {
   student: Student;
   tasks_and_answers: Array<{
+    execution_time_answer: number;
     answer: Answer,
     task: Task
   }>;
