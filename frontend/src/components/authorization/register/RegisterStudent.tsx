@@ -70,23 +70,14 @@ const RegisterStudents = (props: { userData: UserData }) => {
 
     if (postResponse.ok) {
 
-      setMessage(
-        <div className="form-container">
-          <h2 className="success-message">Регистрация учеников прошла успешно.</h2>
-        </div>
-      );
-
+      setMessage(<h2 className="success-message">Регистрация учеников прошла успешно.</h2>);
       setTimeout(() => {
         setRedirect(true);
       }, 2000);
 
     } else {
-      setMessage(
-        <div className="form-container">
-          <h2 className="error-message">Что то пошло не так.</h2>
-        </div>
-      );
-      
+
+      setMessage(<h2 className="error-message">Что то пошло не так.</h2>);  
       setTimeout(() => {
         setRedirect(true);
       }, 2000);
@@ -173,7 +164,7 @@ const RegisterStudents = (props: { userData: UserData }) => {
               </form>
             )}
           </div>
-        ) : (message)
+        ) : (<div className="form-container">{message}</div>)
 
       ) : (
         <div className="form-container">
