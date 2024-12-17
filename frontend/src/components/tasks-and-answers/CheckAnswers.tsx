@@ -11,7 +11,7 @@ import '../../App.css';
 
 
 const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
-    // Assigning variables/Назначение переменных:
+    // ### Assigning variables/Назначение переменных ###
     const [data, setData] = useState<StudentAndAnswerForCheckAnswers[]>();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
@@ -19,7 +19,7 @@ const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
     const hasFetchedRef = useRef(false);
 
 
-    // Sending a GET request/Отправка GET запроса:
+    // ### Sending a GET request/Отправка GET запроса ###
     useEffect(() => {
         const getAnswerLists = async () => {
 
@@ -55,7 +55,7 @@ const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
     }, []);
 
 
-    // Rendering HTMLElement/Отрисовка HTMLElement:
+    // ### Rendering HTMLElement/Отрисовка HTMLElement ###
     return (
         <div className="form-tasks-and-answers">
             <div className="form-container" style={{ boxShadow: 'none' }}>

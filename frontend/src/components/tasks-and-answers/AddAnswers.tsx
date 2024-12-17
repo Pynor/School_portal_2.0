@@ -12,7 +12,7 @@ import '../../App.css';
 
 
 const AddAnswers: React.FC<{ tasksListData: TaskList; userData: UserData }> = ({ tasksListData, userData }) => {
-  // Assigning variables/Назначение переменных:
+  // ### Assigning variables/Назначение переменных ###
   const [message, setMessage] = useState<React.ReactNode>(null);
   const { taskListId } = useParams<{ taskListId: string }>();
   const taskListIdNumber = parseInt(taskListId as string, 10);
@@ -21,7 +21,7 @@ const AddAnswers: React.FC<{ tasksListData: TaskList; userData: UserData }> = ({
   const [timeLeft, setTimeLeft] = useState(0);
   const csrftoken = getCookie('csrftoken');
 
-  // Check if tasksListData and task_list exist/Проверка существования tasksListData и task_list:
+  // ### Check if tasksListData and task_list exist/Проверка существования tasksListData и task_list ###
   const taskList = tasksListData.task_list[taskListIdNumber];
   const isTaskListValid = taskList && taskList.tasks && taskList.tasks.length > 0;
 
@@ -38,7 +38,7 @@ const AddAnswers: React.FC<{ tasksListData: TaskList; userData: UserData }> = ({
   ]);
 
 
-  // Working with time/Работа со временем:
+  // ### Working with time/Работа со временем ###
   const totalSeconds = isTaskListValid ? taskList.time_to_tasks.split(':')
     .reduce((acc, time) => acc * 60 + parseInt(time, 10), 0) : 0;
 
@@ -80,7 +80,6 @@ const AddAnswers: React.FC<{ tasksListData: TaskList; userData: UserData }> = ({
     const minutes = Math.floor((seconds % 3600) / 60);
     const secs = seconds % 60;
 
-    // Форматируем с ведущими нулями
     return [
       String(hours).padStart(2, '0'),
       String(minutes).padStart(2, '0'),
@@ -90,7 +89,7 @@ const AddAnswers: React.FC<{ tasksListData: TaskList; userData: UserData }> = ({
 
 
 
-  // Processing of input data/Обработка вводных данных:
+  // ### Processing of input data/Обработка вводных данных ###
   const handleChange = (taskId: number, field: 'answer' | 'photo_to_the_answer', e: React.ChangeEvent<HTMLInputElement>) => {
     const value = field === 'photo_to_the_answer' ? e.target.files?.[0] || null : e.target.value;
     setAnswers(prevAnswers => prevAnswers.map(answerObj => ({
@@ -102,7 +101,7 @@ const AddAnswers: React.FC<{ tasksListData: TaskList; userData: UserData }> = ({
   };
 
 
-  // Generation data for POST request/Формирование данных для POST запроса:
+  // ### Generation data for POST request/Формирование данных для POST запроса ###
   const postResponse = async () => {
     const formData = new FormData();
     answers.forEach(({ user, task_list, answers }) => {
@@ -146,7 +145,7 @@ const AddAnswers: React.FC<{ tasksListData: TaskList; userData: UserData }> = ({
   };
 
 
-  // Rendering HTMLElement/Отрисовка HTMLElement:
+  // ### Rendering HTMLElement/Отрисовка HTMLElement ###
   if (redirect) return <Navigate to="/profile" />;
 
   return (
@@ -233,7 +232,7 @@ const AddAnswers: React.FC<{ tasksListData: TaskList; userData: UserData }> = ({
             </div>
           ))}
 
-          {/* Кнопка отправки */}
+          {/* Send button/Кнопка отправки */}
           <button className="btn-primary" type="submit">
             Прислать ответ
           </button>
