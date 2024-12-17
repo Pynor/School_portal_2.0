@@ -1,15 +1,18 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 
+import { TaskListForAddTasks, UserData, Task } from '../../types';
 import { BASE_URL, CLASSES } from '../../constants';
-import { UserData, Task, TaskListForAddTasks } from '../../types';
 import { getCookie } from '../../functions';
 
 import './CSS/add-task.css';
 import '../../App.css';
 
 
+
 const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
-  const [message, setMessage] = useState<React.ReactNode>(null);
+  // ### Assigning variables/Назначение переменных ###
+  const [message, setMessage] = useState<{ text: string; className: 'success-message' | 'error-message' } | null>(null);
+  const messageRef = useRef<HTMLDivElement | null>(null);
   const csrftoken = getCookie('csrftoken');
 
   const emptyTask: Omit<Task, 'sequence_number'> = {
@@ -31,6 +34,25 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
 
   const [formData, setFormData] = useState<TaskListForAddTasks>(initialFormData);
 
+
+  // ### Working with message/Работа с сообщениями ###
+  useEffect(() => {
+    if (message) {
+      // Scrolling to a message/Прокрутка к сообщению:
+      if (messageRef.current) {
+        messageRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+  
+      // Setting a timer to hide a message/Установка таймера для скрытия сообщения:
+      const timer = setTimeout(() => setMessage(null), 4000);
+      return () => clearTimeout(timer);
+    }
+  }, [message]);
+
+  
+  // ### Processing of input data/Обработка вводных данных ###
+
+  // Processing changes in the number of tasks/Обработка изменения количества задач:
   useEffect(() => {
     setFormData((prevFormData) => ({
       ...prevFormData,
@@ -41,6 +63,7 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
     }));
   }, [formData.count_task]);
 
+  // Processing changes in form fields/Обработка изменений в полях формы:
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prevFormData) => ({
@@ -49,6 +72,7 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
     }));
   };
 
+  // Processing changes in tasks/Обработка изменений в задачах:
   const handleTaskChange = (index: number, e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData((prevFormData) => {
@@ -58,6 +82,7 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
     });
   };
 
+  // Processing file downloads for tasks/Обработка загрузки файлов для задач:
   const handleFileChange = (index: number, fileType: string, e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0] || null;
     setFormData((prevFormData) => {
@@ -67,6 +92,7 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
     });
   };
 
+  // Adding a new task to the task array/Добавление новой задачи в массив задач:
   const addTask = () => {
     setFormData((prevFormData) => {
       const newTask = { sequence_number: prevFormData.count_task + 1, ...emptyTask };
@@ -78,6 +104,8 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
     });
   };
 
+
+  // ### Generation data for POST request/Формирование данных для POST запроса ###
   const addTasks = async (e: React.FormEvent) => {
     e.preventDefault();
 
@@ -98,7 +126,10 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
       });
     });
 
+
+    // ### Working with server/Работа с сервером ###
     try {
+      // Send request/Отправка запроса:
       const postResponse = await fetch(`${BASE_URL}/task_app/api/v1/api-task-list-create/`, {
         method: 'POST',
         headers: {
@@ -107,28 +138,39 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
         credentials: 'include',
         body: formToSend,
       });
-
+      
+      // Response processing/Обработка ответа:
       if (postResponse.ok) {
-        setMessage(<h2 className="success-message">Задача создана.</h2>);
+        setMessage({ text: 'Задача создана.', className: 'success-message' });
+        setFormData(initialFormData);
       } else {
-        setMessage(<h2 className="error-message">Произошла ошибка при создании задачи.</h2>);
+        const errorData = await postResponse.json();
+        const errorMessage = errorData.title ? errorData.title.join(', ') : 'Неизвестная ошибка';
+        setMessage({ text: `Произошла ошибка при создании задачи: ${errorMessage}`, className: 'error-message' });
       }
     } catch (error) {
-      setMessage(<h2 className="error-message">Произошла ошибка при отправке данных.</h2>);
+      setMessage({ text: 'Произошла ошибка при отправке данных.', className: 'error-message' });
     }
-
-    setFormData(initialFormData);
   };
 
+
+  // ### Rendering HTMLElement/Отрисовка HTMLElement ###
   return (
     <div className="form-tasks-and-answers">
       <nav className="form-container">
-        {message && message}
-        {userData.is_staff ? (
-          <form onSubmit={addTasks} >
+        {/* Displaying message/Отображение сообщения */}
+        {message && (
+          <div ref={messageRef} className={message.className}>
+            <h2>{message.text}</h2>
+          </div>
+        )}
+        {userData.is_staff ? ( // Checking rights/Проверка прав.
+          <form onSubmit={addTasks}>
             <div className="form-group">
               <div className="form-container">
                 <div className="form-group">
+
+                  {/* Field for entering general test information/Поле для ввода общей информации теста */}
 
                   <div className="form-group">
                     <input className="form-control" style={{ width: '91.9%' }} type="text" name="title" placeholder="Название теста" value={formData.title} onChange={handleChange} required />
@@ -157,23 +199,26 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
                       style={{ width: '31%' }}
                     />
                   </div>
+
                   <div className="form-group">
                     <input className="form-control" style={{ width: '91.9%' }} type="number" name="count_task" placeholder="Кол-во задач" value={formData.count_task} onChange={handleChange} min={1} required />
                   </div>
 
                 </div>
-
+                
+                {/* Button for adding tasks/Кнопка добавления задач */}
                 <button className="btn-primary" type="button" onClick={addTask}>
                   Добавить задачу
                 </button>
               </div>
             </div>
-
+            
+            {/* Формы добавления задач */}
             {formData.tasks.map((task, index) => (
               <div key={index}>
                 <div className="form-container">
                   <div className="form-group">
-
+                    {/* String imput fields/Строчные поля ввода */}
                     <div className="form-group">
                       <input className="form-control" type="text" name="title" placeholder="Название задачи" value={task.title}
                         onChange={(e) => handleTaskChange(index, e)} required />
@@ -200,27 +245,34 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
                         <option value="Photo">Сделать фото решения</option>
                       </select>
                     </div>
+
+                    {/* File input fields/Файловые поля ввода */}
                     <h3 className="normal-message">Нежелательно отправлять более 1 файла.</h3>
+
                     <div className='form-group'>
                       <div className='form-file-div'>DOCX файл:</div>
                       <input className="form-control" type="file" name="docx_file" accept=".docx, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
                         onChange={(e) => handleFileChange(index, 'docx_file', e)} />
                     </div>
+
                     <div className='form-group'>
                       <div className='form-file-div'>Фото файл:</div>
                       <input className="form-control" type="file" name="photo_file" accept="image/png, image/jpeg"
                         onChange={(e) => handleFileChange(index, 'photo_file', e)} />
                     </div>
+
                     <div className='form-group'>
                       <div className='form-file-div'>Видео файл:</div>
                       <input className="form-control" type="file" name="video_file" accept="video/mp4, video/x-m4v, video/*"
                         onChange={(e) => handleFileChange(index, 'video_file', e)} />
                     </div>
+
                   </div>
                 </div>
               </div>
             ))}
-
+            
+            {/* Send button/Кнопка отправки */}
             <button className="btn-primary" type="submit">
               Создать тест
             </button>
@@ -230,6 +282,5 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
     </div>
   );
 };
-
 
 export default AddTasks;
