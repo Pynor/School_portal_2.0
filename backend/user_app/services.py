@@ -1,6 +1,7 @@
 from __future__ import annotations
 
-from rest_framework.exceptions import AuthenticationFailed
+from rest_framework import serializers
+from rest_framework.exceptions import AuthenticationFailed, ValidationError
 from rest_framework.response import Response
 
 from django.contrib.auth.hashers import make_password
@@ -74,30 +75,34 @@ class TeacherRegisterAPIService:
 
 
 class StudentsRegisterListAPIService:
+
     @staticmethod
     def _create_users(data_list: list[dict]) -> list[User]:
-        users = []
+        users_to_create = []
+        usernames = set()
+
         for data in data_list:
             first_name = data["user"]["first_name"]
             last_name = data["user"]["last_name"]
             username = f"{first_name}{last_name}{data['school_class']}"
             password = f"{first_name[0]}{last_name[0]}"
-            users.append(User(
+
+            if username in usernames:
+                raise ValidationError("Пользователь/ли уже существуют.")
+            usernames.add(username)
+
+            users_to_create.append(User(
                 password=make_password(password),
                 first_name=first_name,
                 last_name=last_name,
-                username=username,
+                username=username
             ))
 
-        return User.objects.bulk_create(users)
+        return User.objects.bulk_create(users_to_create)
 
     @staticmethod
     def _get_school_classes(school_class_titles: list[str]) -> dict:
-        classes = {}
-        for title in school_class_titles:
-            if title not in classes:
-                classes[title] = SchoolClass.objects.get(title=title)
-        return classes
+        return {title: SchoolClass.objects.get(title=title) for title in set(school_class_titles)}
 
     @staticmethod
     @transaction.atomic
@@ -105,13 +110,15 @@ class StudentsRegisterListAPIService:
         school_class_titles = [data["school_class"] for data in validated_data]
         school_classes = StudentsRegisterListAPIService._get_school_classes(school_class_titles)
 
-        users = StudentsRegisterListAPIService._create_users(validated_data)
-        students = []
+        try:
+            users = StudentsRegisterListAPIService._create_users(validated_data)
+        except ValidationError as e:
+            raise serializers.ValidationError({"error": e})
 
-        for data, user in zip(validated_data, users):
-            school_class = school_classes[data["school_class"]]
-            student = Student(user=user, school_class=school_class)
-            students.append(student)
+        students = [
+            Student(user=user, school_class=school_classes[data["school_class"]])
+            for data, user in zip(validated_data, users)
+        ]
 
         return Student.objects.bulk_create(students)
 

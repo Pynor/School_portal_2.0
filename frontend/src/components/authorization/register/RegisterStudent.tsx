@@ -95,7 +95,7 @@ const RegisterStudents = (props: { userData: UserData }) => {
       
       // Response processing/Обработка ответа:
       if (postResponse.ok) {
-        setMessage({ text: 'Задача создана.', className: 'success-message' });
+        setMessage({ text: 'Ученики успешно зарегистрированы.', className: 'success-message' });
       } else {
         setMessage({ text: `Произошла ошибка при регистрации: Проверьте правильность введенных данных.`, className: 'error-message' });
       }
