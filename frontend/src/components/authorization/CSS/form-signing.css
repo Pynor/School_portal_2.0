@@ -12,15 +12,15 @@
 }
 
 .form-container-no-shadow {
-    box-shadow: none; 
-    border: none; 
+    box-shadow: none;
+    border: none;
 }
 
 @media (max-width: 300px) {
-    .form-container { 
-        box-shadow: none; 
+    .form-container {
+        box-shadow: none;
         padding: 1rem;
-        border: none; 
+        border: none;
     }
 }
 
@@ -39,6 +39,7 @@
     font-weight: 500;
     color: #333;
 }
+
 .hub-link:hover {
     color: #007bff;
 }
@@ -82,6 +83,16 @@ form {
     width: 100%;
 }
 
+.textarea-for-register-student {
+    border: 1px solid #ccc;
+    margin-bottom: 20px;
+    border-radius: 5px;
+    resize: 'vertical';
+    font-size: 16px;
+    max-width: 80%;
+    padding: 10px;
+}
+
 .btn-primary {
     transition: background-color 0.5s ease;
     background-color: #000000;
@@ -91,10 +102,11 @@ form {
     font-size: 18px;
     color: #fff;
 }
+
 .btn-primary.focus {
     box-shadow: 0 0 0 0.2rem #2840ad;
 }
+
 .btn-primary:hover {
     background-color: #2840ad;
 }
-
