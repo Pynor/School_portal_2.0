@@ -1,4 +1,4 @@
-from rest_framework import generics, permissions
+from rest_framework import permissions, generics
 from rest_framework.views import APIView
 
 from .serializers import *
@@ -73,6 +73,8 @@ class StudentAndAnswerListAPIView(APIView):
 
 
 class TaskListAPIView(APIView):
-    def get(self, request, *args, **kwargs):
-        return TaskListSerializer.get_task_list(kwargs=kwargs)
+    def get(self, request, school_class, user_id=None):
+        if user_id:
+            return TaskListSerializer.get_unfinished_task_list(school_class=school_class, user_id=user_id)
+        return TaskListSerializer.get_all_task_list(school_class=school_class)
 

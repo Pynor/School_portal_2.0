@@ -1,4 +1,4 @@
-from django.db.models import Prefetch
+from django.db.models import Prefetch, Q
 
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
@@ -28,8 +28,15 @@ class TaskListAPIService:
         return task_list
 
     @staticmethod
-    def get_task_list(kwargs) -> list[TaskList]:
-        task_list = TaskList.objects.select_related('task_for').filter(task_for__title=kwargs["school_class"])
+    def get_all_task_list(school_class: str) -> list[TaskList]:
+        task_list = TaskList.objects.select_related('task_for').filter(task_for__title=school_class)
+        return task_list
+
+    @staticmethod
+    def get_unfinished_task_list(school_class: str, user_id: int) -> list[TaskList]:
+        task_list = TaskList.objects.select_related('task_for').filter(task_for__title=school_class).exclude(
+            Q(answerlist__user_id=user_id)
+        )
         return task_list
 
 
