@@ -1,5 +1,5 @@
-import React, { useEffect, useRef, useState } from 'react';
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import React, { useEffect, useRef, useState } from 'react';
 
 import RegisterStudents from './components/authorization/register/RegisterStudent';
 import RegisterTeacher from './components/authorization/register/RegisterTeacher';
@@ -61,7 +61,7 @@ const App = () => {
                 setUserData(userData);
 
                 if (!userData.is_staff && userData.student) {
-                    const tasksGetResponse = await fetch(`${BASE_URL}/task_app/api/v1/api-task-list-get/${userData.student.school_class}`, {
+                    const tasksGetResponse = await fetch(`${BASE_URL}/task_app/api/v1/api-task-list-get/${userData.student.school_class}/${userData.id}`, {
                         headers: {
                             'Access-Control-Request-Headers': 'Content-Type',
                             'Content-Type': 'application/json',
