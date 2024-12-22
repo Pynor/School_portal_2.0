@@ -5,9 +5,9 @@ from rest_framework.exceptions import AuthenticationFailed, ValidationError
 from rest_framework.response import Response
 
 from django.contrib.auth.hashers import make_password
+from django.db import transaction, IntegrityError
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import login
-from django.db import transaction
 
 import datetime
 import jwt
@@ -79,17 +79,12 @@ class StudentsRegisterListAPIService:
     @staticmethod
     def _create_users(data_list: list[dict]) -> list[User]:
         users_to_create = []
-        usernames = set()
 
         for data in data_list:
             first_name = data["user"]["first_name"]
             last_name = data["user"]["last_name"]
             username = f"{first_name}{last_name}{data['school_class']}"
             password = f"{first_name[0]}{last_name[0]}"
-
-            if username in usernames:
-                raise ValidationError("Пользователь/ли уже существуют.")
-            usernames.add(username)
 
             users_to_create.append(User(
                 password=make_password(password),
@@ -98,22 +93,22 @@ class StudentsRegisterListAPIService:
                 username=username
             ))
 
-        return User.objects.bulk_create(users_to_create)
+        try:
+            return User.objects.bulk_create(users_to_create)
+        except IntegrityError:
+            raise serializers.ValidationError({"error": "Присутствуют уже зарегистрированные ученики."})
 
     @staticmethod
-    def _get_school_classes(school_class_titles: list[str]) -> dict:
-        return {title: SchoolClass.objects.get(title=title) for title in set(school_class_titles)}
+    def _get_school_classes(school_class_titles: set) -> dict:
+        school_classes = SchoolClass.objects.filter(title__in=school_class_titles)
+        return {school_class.title: school_class for school_class in school_classes}
 
     @staticmethod
     @transaction.atomic
     def create_students(validated_data: list[dict[str, str]]) -> list[Student]:
-        school_class_titles = [data["school_class"] for data in validated_data]
+        school_class_titles = {data["school_class"] for data in validated_data}
         school_classes = StudentsRegisterListAPIService._get_school_classes(school_class_titles)
-
-        try:
-            users = StudentsRegisterListAPIService._create_users(validated_data)
-        except ValidationError as e:
-            raise serializers.ValidationError({"error": e})
+        users = StudentsRegisterListAPIService._create_users(validated_data)
 
         students = [
             Student(user=user, school_class=school_classes[data["school_class"]])

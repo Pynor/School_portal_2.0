@@ -19,7 +19,7 @@ import AddTasks from './components/tasks-and-answers/AddTasks';
 
 import Nav from './components/navigation/Nav';
 
-import Home from './components/home/Home'
+import Home from './components/home/Home';
 
 
 import { BASE_URL } from './constants';

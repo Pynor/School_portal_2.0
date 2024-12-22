@@ -97,7 +97,8 @@ const RegisterStudents = (props: { userData: UserData }) => {
       if (postResponse.ok) {
         setMessage({ text: 'Ученики успешно зарегистрированы.', className: 'success-message' });
       } else {
-        setMessage({ text: `Произошла ошибка при регистрации: Проверьте правильность введенных данных.`, className: 'error-message' });
+        const responseData = await postResponse.json();
+        setMessage({ text: `Произошла ошибка при регистрации: ${responseData.error}`, className: 'error-message' });
       }
     } catch {
       setMessage({ text: 'Произошла ошибка при получении данных', className: 'error-message' });
