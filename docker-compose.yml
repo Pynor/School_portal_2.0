@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+  db:
+    image: postgres:13
+    environment:
+      POSTGRES_DB: school_portal_db
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: 123
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
+
+  backend:
+    build:
+      context: ./backend
+
+    volumes:
+      - ./backend:/app
+
+    ports:
+      - "8000:8000"
+
+    tty: true
+
+    environment:
+      - DATABASE_URL=postgres://postgres:123@localhost:5432/school_portal_db
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: ./frontend
+    volumes:
+      - ./frontend:/app
+    ports:
+      - "3000:3000"
+
+volumes:
+  postgres_data:

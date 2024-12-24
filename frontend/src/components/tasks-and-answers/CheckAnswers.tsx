@@ -101,7 +101,7 @@ const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
                                                             />
                                                         </div>
                                                     ) : (
-                                                        answer_and_task.task.additional_condition == "Photo" ? (
+                                                        answer_and_task.task.additional_condition === "Photo" ? (
                                                             <h3 className="error-message">Ученик не прикрепил фотографию</h3>
                                                         ) : (null)
                                                     )}
