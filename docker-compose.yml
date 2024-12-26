@@ -13,19 +13,15 @@ services:
       - "5432:5432"
 
   backend:
+    tty: true
     build:
       context: ./backend
-
     volumes:
       - ./backend:/app
-
+    environment:
+      DATABASE_URL: postgres://postgres:123@db:5432/school_portal_db
     ports:
       - "8000:8000"
-
-    tty: true
-
-    environment:
-      - DATABASE_URL=postgres://postgres:123@localhost:5432/school_portal_db
     depends_on:
       - db
 
