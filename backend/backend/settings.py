@@ -15,7 +15,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 
 AUTH_USER_MODEL = 'user_app.User'
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1']
 
 DEBUG = True
 
