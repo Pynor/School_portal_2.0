@@ -8,9 +8,10 @@ import './../../App.css';
 
 
 const ProfileTeacher = (props: { userData: UserData }) => {
+    // ### Rendering HTMLElement/Отрисовка HTMLElement ###
     return (
         <div className="profile">
-            {props.userData.is_staff ? (
+            {props.userData.is_staff ? ( // Checking rights/Проверка прав.
                 <div className="form-container">
                     <Link to="/register-students" className="btn-primary" style={{ width: '250px', textAlign: 'center' }}>Зарегистрировать учеников</Link>
                     <Link to="/check-answers-hub" className="btn-primary" style={{ width: '250px', textAlign: 'center' }}>Проверить ответы учеников</Link>

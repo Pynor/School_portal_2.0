@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
 import { StudentAndAnswerForCheckAnswers, UserData } from '../../types';
@@ -6,7 +6,7 @@ import { BASE_URL } from '../../constants';
 
 import Modal from './ModalWindows';
 
-import './CSS/check-answers.css'
+import './CSS/check-answers.css';
 import '../../App.css';
 
 
@@ -60,9 +60,11 @@ const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
         <div className="form-tasks-and-answers">
             <div className="form-container" style={{ boxShadow: 'none' }}>
                 <Link to="/check-answers-hub" className="btn-primary" style={{ alignSelf: "flex-start" }}>Вернуться</Link>
+
+                {/* Displaying message/Отображение сообщения */}
                 {errorMessage && <h2 className="error-message">{errorMessage}</h2>}
 
-                {userData.is_staff ? (
+                {userData.is_staff ? ( // Checking rights/Проверка прав.
                     <div>
                         <h1>Ответы учеников {schoolClass} класса.</h1>
 

@@ -9,15 +9,18 @@ import '../../App.css';
 
 
 const CheckAnswersHub: React.FC<{ userData: UserData }> = ({ userData }) => {
-
+    // ### Assigning variables/Назначение переменных ###
     const [data, setData] = useState<{ task_list: Task[] }>({ task_list: [] });
     const [getTasksCompleted, setGetTasksCompleted] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [school_class, setSchoolClass] = useState('');
 
+
+    // ### Sending a GET request/Отправка GET запроса ###
     const getTasks = async (e: React.FormEvent) => {
         e.preventDefault();
 
+        // Send request/Отправка запроса:
         const getResponse = await fetch(`${BASE_URL}/task_app/api/v1/api-task-list-get/${school_class}`, {
             headers: {
                 'Access-Control-Request-Headers': 'Content-Type',
@@ -27,6 +30,7 @@ const CheckAnswersHub: React.FC<{ userData: UserData }> = ({ userData }) => {
             method: 'GET'
         });
 
+        // Response processing/Обработка ответа:
         if (getResponse.ok) {
             const responseData = await getResponse.json();
             setData(responseData);
@@ -36,12 +40,17 @@ const CheckAnswersHub: React.FC<{ userData: UserData }> = ({ userData }) => {
         }
     };
 
+
+    // ### Rendering HTMLElement/Отрисовка HTMLElement ###
     return (
         <div className="form-tasks-and-answers">
             <div className="form-container">
-                {userData.is_staff ? (
-                    <>
+                {userData.is_staff ? ( // Checking rights/Проверка прав.
+                    <>  
+                        {/* Displaying message/Отображение сообщения */}
                         {errorMessage && <h2 className="error-message">{errorMessage}</h2>}
+
+                        {/* Form of sending/Форма отправки */}
                         <form onSubmit={getTasks}>
                             <select
                                 className="form-control"
@@ -58,14 +67,16 @@ const CheckAnswersHub: React.FC<{ userData: UserData }> = ({ userData }) => {
                                     </option>
                                 ))}
                             </select>
-
+                            
+                            {/* Send button/Кнопка отправки */}
                             <button type="submit" className="btn-primary" style={{ marginTop: '10px' }}>Получить задачи</button>
                         </form>
-
+                        
+                        {/* Displaying tasks for a class/Отображение задач для класса */}
                         {school_class && getTasksCompleted ? (
                             <div>
                                 <h2 style={{ textAlign: 'center' }}>Задачи для {school_class} класса:</h2>
-                                {data.task_list.length > 0 ? (
+                                {data.task_list.length > 0 ? ( // Checking existence tasks/Проверка существования задач.
                                     data.task_list.map((option: Task, index: number) => (
                                         <Link
                                             key={index}

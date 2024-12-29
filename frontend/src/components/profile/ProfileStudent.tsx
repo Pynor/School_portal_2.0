@@ -7,10 +7,33 @@ import './CSS/profile.css';
 import './../../App.css';
 
 
+const ProfileStudent = ({ tasksListData, userData }: { tasksListData: TaskList; userData: UserData }) => {
+    const hasTasks = tasksListData && tasksListData.task_list.length > 0;
+
+
+    // ### Rendering HTMLElement/Отрисовка HTMLElement ###
+    return (
+        <div className="profile">
+            <div className="form-container">
+                {!userData || !userData.username ? (
+                    <NotRegisteredMessage />
+                ) : hasTasks ? (
+                    <ComponentTaskList task_list={tasksListData} />
+                ) : (
+                    <NoTasksMessage />
+                )}
+            </div>
+        </div>
+    );
+};
+
+
+// ### HTMLElements for ProfileStudent ###
 const ComponentTaskList = ({ task_list }: { task_list: TaskList }) => {
     return (
         <>
             {task_list.task_list.map((option, index) => {
+                // Checking the status of tasks/Проверка статуса заданий.
                 const isCompleted = getCookie(`completedTask(${index})`) === `${index}`;
                 return isCompleted ? (
                     <h3 key={index} className="success-message" style={{ width: '300px' }}>
@@ -34,23 +57,5 @@ const NotRegisteredMessage = () => (
     <h2 className="error-message">Вы не авторизованы.</h2>
 );
 
-const ProfileStudent = ({ tasksListData, userData }: { tasksListData: TaskList; userData: UserData }) => {
-    const hasTasks = tasksListData && tasksListData.task_list.length > 0;
-    console.log(tasksListData.task_list.length)
-
-    return (
-        <div className="profile">
-            <div className="form-container">
-                {!userData || !userData.username ? (
-                    <NotRegisteredMessage />
-                ) : hasTasks ? (
-                    <ComponentTaskList task_list={tasksListData} />
-                ) : (
-                    <NoTasksMessage />
-                )}
-            </div>
-        </div>
-    );
-};
 
 export default ProfileStudent;
