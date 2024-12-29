@@ -16,7 +16,7 @@ const RegisterTeacher = () => {
     const csrftoken = getCookie('csrftoken');
     const [error, setError] = useState('');
 
-    // ### Assignment registration variables/Назначение  переменных регистрации ###
+    // ### Assignment registration variables/Назначение переменных регистрации ###
     const [first_name, setFirstName] = useState('');
     const [secret_key, setSecretKey] = useState('');
     const [last_name, setLastName] = useState('');
