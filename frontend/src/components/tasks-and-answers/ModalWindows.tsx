@@ -9,7 +9,9 @@ import '../../App.css';
 const Modal: React.FC<ModalProps> = ({ isOpen, onClose, imageSrc }) => {
     if (!isOpen) return null;
 
+    // ### Rendering HTMLElement/Отрисовка HTMLElement ###
     return (
+        // Displaying modal windows
         <div className="form-tasks-and-answers">
             <div className="modal-overlay" onClick={onClose}>
                 <div className="modal-content" onClick={(e) => e.stopPropagation()}>

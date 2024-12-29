@@ -1,24 +1,26 @@
 import React, { useState } from 'react';
 import { Link } from "react-router-dom";
 
+import { getCookie } from '../../functions';
 import { BASE_URL } from '../../constants';
 import { UserData } from '../../types';
-import { getCookie } from '../../functions';
-
 
 import './CSS/nav.css'
 
 
 const Nav = (props: { userData: UserData, setName: (name: string) => void }) => {
+  // ### Assigning variables/Назначение переменных ###
   const [message, setMessage] = useState<React.ReactNode>(null);
   const [showMessage, setShowMessage] = useState(false);
 
   const csrftoken = getCookie('csrftoken');
 
 
+  // ### Working with server/Работа с сервером ###
   const logout = async () => {
     try {
-      await fetch(`${BASE_URL}/user_app/api/v1/api-user-logout/`, {
+      // Send request/Отправка запроса:
+      const postResponse = await fetch(`${BASE_URL}/user_app/api/v1/api-user-logout/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -27,15 +29,15 @@ const Nav = (props: { userData: UserData, setName: (name: string) => void }) => 
         credentials: 'include',
       });
 
-      props.setName('');
-      setShowMessage(true);
-      setMessage(
-        <div className="nav-container">
-          <div className="form-container">
-            <h2 className="success-message">Вы успешно вышли.</h2>
-          </div>
-        </div>
-      );
+      // Response processing/Обработка ответа:
+      if (postResponse.ok) {
+        props.setName('');
+        setShowMessage(true);
+        setMessage(<h2 className="success-message">Вы успешно вышли.</h2>);
+      } else {
+        setShowMessage(true);
+        setMessage(<h2 className="error-message">Ошибка при выходе.</h2>);
+      }
 
       setTimeout(() => {
         window.location.reload();
@@ -43,16 +45,12 @@ const Nav = (props: { userData: UserData, setName: (name: string) => void }) => 
 
     } catch (error) {
       setShowMessage(true);
-      setMessage(
-        <div className="nav-container">
-          <div className="form-container">
-            <h2 className="error-message">Ошибка при выходе.</h2>
-          </div>
-        </div>
-      );
+      setMessage(<h2 className="error-message">Ошибка при выходе.</h2>);
     }
   };
 
+
+  // ### Preparing data for rendering Menu/Подготовка данных для отрисовки Menu ###
   const menu = props.userData.username === "" ? (
     <ul className="navbar-nav">
       <li className="nav-item">
@@ -80,16 +78,29 @@ const Nav = (props: { userData: UserData, setName: (name: string) => void }) => 
     </ul>
   );
 
+  // ### Rendering HTMLElement/Отрисовка HTMLElement ###
   return (
     <nav className="navbar navbar-expand-lg navbar-light bg-light navbar-home">
       <div className="container-fluid">
+
         <Link to="/" className="nav-link btn btn-primary">Главная</Link>
 
+        {/* Displaying Menu/Отображение Menu */}
         <div className="navbar-menu">
           {menu}
         </div>
+
       </div>
-      {showMessage && message}
+
+      {/* Displaying message/Отображение сообщения */}
+      {message && (
+        <div className="nav-container">
+          <div className="form-container">
+            {showMessage && message}
+          </div>
+        </div>
+      )}
+
     </nav>
   );
 };

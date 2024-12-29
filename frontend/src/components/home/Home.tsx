@@ -4,11 +4,10 @@ import './CSS/home.css';
 import '../../App.css';
 
 
-
 const Home = () => {
     return (
         <div className="form-home">
-            {/* Not implemented/Не реализовано  */}
+            {/* Not implemented/Не реализовано */}
         </div>
     );
 };

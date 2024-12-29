@@ -1,5 +1,5 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 
 import RegisterStudents from './components/authorization/register/RegisterStudent';
 import RegisterTeacher from './components/authorization/register/RegisterTeacher';
@@ -29,6 +29,7 @@ import './App.css';
 
 
 const App = () => {
+    // ### Assigning variables/Назначение переменных ###
     const { defaultTasksListData, defaultUserData } = useDefaultState();
 
     const [tasksListData, setTasksListData] = useState(defaultTasksListData);
@@ -84,7 +85,7 @@ const App = () => {
     }, []);
 
 
-
+    // ### Rendering HTMLElement/Отрисовка HTMLElement ###
     return (
         <div className="App">
             <BrowserRouter>
