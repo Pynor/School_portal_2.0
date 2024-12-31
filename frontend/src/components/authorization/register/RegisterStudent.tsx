@@ -47,6 +47,7 @@ const RegisterStudents = (props: { userData: UserData }) => {
 
   const handleSchoolClassChange = (value: string) => {
     setSchoolClass(value);
+    setStudentsData(prevData => prevData.map(student => ({ ...student, school_class: value })));
   };
 
   const handleNumStudentsChange = (value: number) => {
