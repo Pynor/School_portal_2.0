@@ -1,43 +1,65 @@
 .description {
-    white-space: normal; 
-    overflow-wrap: break-word;
-    max-height: 200px; 
-    overflow: auto; 
-    font-size: 1.2em; 
-    padding: 10px; 
+  overflow-wrap: break-word;
+  white-space: normal;
+  max-height: 200px;
+  font-size: 1.2em;
+  overflow: auto;
+  padding: 10px;
+}
+
+.student-container {
+  background-color: #ffffff;
+  border: 1px solid #474747;
+  margin-bottom: 20px;
+  border-radius: 5px;
+  padding: 15px;
+}
+
+.divider {
+  border: 1px solid #c0bfbf;
+  margin: 15px 0;
+}
+
+.check-container {
+  max-width: 1200px;
+  box-shadow: none;
+  margin: 0 auto;
+  width: 80%;
+}
+
+.check-answers-hub-link {
+  align-self: flex-start;
+}
+
+.sort-list {
+  flex-direction: column;
+  flex-shrink: 0;
+  display: flex;
+}
+
+.sort-button {
+  display: block;
+  margin: 5px 0;
+}
+
+.answer-container {
+  margin-bottom: 20px;
+}
+
+@media (max-width: 600px) {
+  h4 {
+    font-size: 1.5rem;
   }
 
-  .student-container {
-    margin-bottom: 20px; 
-    padding: 15px; 
-    border: 1px solid #474747; 
-    border-radius: 5px; 
-    background-color: #ffffff; 
+  .hub-link {
+    font-size: 1rem;
   }
-  
-  .answer-container {
-    margin-bottom: 20px; 
+
+  .form-control {
+    font-size: 1rem;
   }
-  
-  .divider {
-    margin: 15px 0; 
-    border: 1px solid #c0bfbf; 
+
+  .description {
+    font-size: 1.2em;
   }
-  
-  @media (max-width: 600px) {
-    h4 {
-        font-size: 1.5rem; 
-    }
-    
-    .hub-link {
-        font-size: 1rem; 
-    }
-  
-    .form-control {
-        font-size: 1rem; 
-    }
-  
-    .description {
-        font-size: 1.2em; 
-    }
-  }
+}

@@ -33,6 +33,11 @@
   margin: auto;
 }
 
+.form-check-answers  {
+  max-width: 750px;
+  display: flex;
+}
+
 .form-login-and-register {
   max-width: 600px;
   padding: 15px;
