@@ -51,7 +51,11 @@ class TaskSerializer(serializers.ModelSerializer):
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)
-        representation.pop("answer_to_the_task", None)
+        include_answer = self.context.get('include_answer', False)
+
+        if not include_answer:
+            representation.pop("answer_to_the_task", None)
+
         return representation
 
 
