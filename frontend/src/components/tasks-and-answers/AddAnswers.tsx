@@ -52,7 +52,7 @@ const AddAnswers: React.FC<{ tasksListData: TaskList; userData: UserData }> = ({
   };
 
   useEffect(() => {
-    const savedTime = localStorage.getItem(`timeLeft_${taskListId}`);
+    const savedTime = localStorage.getItem(`timeLeft_${taskList.id}`);
     if (savedTime) {
       setTimeLeft(parseInt(savedTime, 10));
     } else {
@@ -67,13 +67,14 @@ const AddAnswers: React.FC<{ tasksListData: TaskList; userData: UserData }> = ({
           return 0;
         }
         const newTime = prev - 1;
-        localStorage.setItem(`timeLeft_${taskListId}`, newTime.toString());
+        console.log(localStorage)
+        localStorage.setItem(`timeLeft_${taskList.id}`, newTime.toString());
         return newTime;
       });
     }, 1000);
 
     return () => clearInterval(interval);
-  }, [totalSeconds, taskListId]);
+  });
 
   const formatTimeToHHMMSS = (seconds: number): string => {
     const hours = Math.floor(seconds / 3600);
@@ -129,7 +130,7 @@ const AddAnswers: React.FC<{ tasksListData: TaskList; userData: UserData }> = ({
     // Response processing/Обработка ответа:
     if (postResponse.ok) {
       setMessage(<h2 className="success-message">Ответ получен.</h2>);
-      setCookie(`completedTask(${taskListId})`, `${taskListId}`);
+      setCookie(`completedTask(${taskList.id})`, 'true', 0, 'Strict', true);
       setTimeout(() => setRedirect(true), 1000);
     } else {
       const responseData = await postResponse.json();
@@ -146,7 +147,7 @@ const AddAnswers: React.FC<{ tasksListData: TaskList; userData: UserData }> = ({
 
 
   // ### Rendering HTMLElement/Отрисовка HTMLElement ###
-  if (redirect) return <Navigate to="/profile" />;
+  if (redirect) return <Navigate to="/profile-student" />;
 
   return (
     <div className="form-tasks-and-answers">
@@ -157,7 +158,7 @@ const AddAnswers: React.FC<{ tasksListData: TaskList; userData: UserData }> = ({
             Оставшееся время: {new Date(timeLeft * 1000).toISOString().substr(11, 8)}
           </h2>
 
-          {message && <p>{message}</p>}
+          {message && <>{message}</>}
 
           {/* Task List/Список задач */}
           {isTaskListValid && taskList.tasks.map(task => (

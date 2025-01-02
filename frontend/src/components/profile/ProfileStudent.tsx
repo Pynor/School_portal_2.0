@@ -9,6 +9,7 @@ import './../../App.css';
 
 const ProfileStudent = ({ tasksListData, userData }: { tasksListData: TaskList; userData: UserData }) => {
     const hasTasks = tasksListData && tasksListData.task_list.length > 0;
+    console.log(localStorage)
 
 
     // ### Rendering HTMLElement/Отрисовка HTMLElement ###
@@ -34,7 +35,7 @@ const ComponentTaskList = ({ task_list }: { task_list: TaskList }) => {
         <>
             {task_list.task_list.map((option, index) => {
                 // Checking the status of tasks/Проверка статуса заданий.
-                const isCompleted = getCookie(`completedTask(${index})`) === `${index}`;
+                const isCompleted = getCookie(`completedTask(${option.id})`) === 'true';
                 return isCompleted ? (
                     <h3 key={index} className="success-message" style={{ width: '300px' }}>
                         Задание {option.title} сделано.

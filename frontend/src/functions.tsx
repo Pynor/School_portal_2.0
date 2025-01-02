@@ -8,7 +8,12 @@ export function getCookie(name: string) {
     return '';
 };
 
-export function setCookie( name: string, value: string, days: number = 0) {
+export function setCookie(name: string, value: string, days: number = 0, sameSite: 'Lax' | 'Strict' | 'None' = 'Lax', secure: boolean = false) {
+  
   const expires = days ? `expires=${new Date(Date.now() + days * 24 * 60 * 60 * 1000).toUTCString()}` : '';
-  document.cookie = `${name}=${value};${expires};path=/`;
+  const secureFlag = secure ? 'Secure' : '';
+  const sameSiteFlag = `SameSite=${sameSite}`;
+
+  document.cookie = `${name}=${value}; ${expires}; path=/; ${sameSiteFlag}; ${secureFlag}`.trim();
 }
+
