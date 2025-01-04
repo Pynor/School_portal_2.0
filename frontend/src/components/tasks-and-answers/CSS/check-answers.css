@@ -30,11 +30,20 @@
 .check-answers-hub-link {
   align-self: flex-start;
 }
+.check {
+  width: 850px;
+}
 
 .sort-list {
   flex-direction: column;
   flex-shrink: 0;
   display: flex;
+}
+
+.search-input {
+  margin-top: 29px;
+  margin-bottom: 5px;
+  width: 200px;
 }
 
 .sort-button {
