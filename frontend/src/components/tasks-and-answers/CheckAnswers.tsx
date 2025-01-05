@@ -1,7 +1,8 @@
+import { useParams, Navigate, Link } from 'react-router-dom';
 import React, { useEffect, useState, useRef } from 'react';
-import { Link, useParams } from 'react-router-dom';
 
 import { StudentAndAnswerForCheckAnswers, UserData } from '../../types';
+import { getCookie } from '../../functions';
 import { BASE_URL } from '../../constants';
 
 import Modal from './ModalWindows';
@@ -18,6 +19,8 @@ const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
     const [errorMessage, setErrorMessage] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
     const { schoolClass, taskListId } = useParams();
+    const [redirect, setRedirect] = useState(false);
+    const csrftoken = getCookie('csrftoken');
     const hasFetchedRef = useRef(false);
 
 
@@ -53,6 +56,32 @@ const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
 
         getAnswerLists();
     }, []);
+
+
+    // ### Sending a DELETE request/Отправка DELETE запроса ###
+    const deleteTaskList = async () => {
+        try {
+            // Send request/Отправка запроса:
+            const postResponse = await fetch(`${BASE_URL}/task_app/api/v1/api-task-list-delete/${taskListId}`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                },
+                credentials: 'include',
+                method: 'DELETE'
+            });
+
+            // Response processing/Обработка ответа:
+            if (postResponse.ok) {
+                setRedirect(true)
+            } else {
+                setErrorMessage('Произошла ошибка при завершении теста.')
+            }
+
+        } catch (error) {
+            setErrorMessage('Произошла ошибка.')
+        }
+    };
 
 
     // ### Function for sorting data/Функция для сортировки данных ###
@@ -129,6 +158,8 @@ const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
 
 
     // ### Rendering HTMLElement/Отрисовка HTMLElement ###
+    if (redirect) return <Navigate to="/check-answers-hub" />;
+
     return (
         <div className='form-container check'>
             {userData.is_staff ? ( // Checking rights/Проверка прав.
@@ -154,6 +185,10 @@ const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
                             <button className="btn-primary sort-button" onClick={() => setSortCriteria('correct')}>правильности</button>
                             <button className="btn-primary sort-button" onClick={() => setSortCriteria('alphabet')}>алфавиту</button>
                             <button className="btn-primary sort-button" onClick={() => setSortCriteria('time')}>времени</button>
+
+                            <hr className="divider" />
+
+                            <button className="btn-primary del-button" onClick={deleteTaskList}>Завершить тест</button>
                         </div>
 
                         {/* Основное содержимое */}
@@ -165,7 +200,7 @@ const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
 
                             <div>
                                 {filteredData().length === 0 ? (
-                                    <h2 style={{marginLeft: '170px', marginRight: '70px'}}>Таких учеников нет</h2>
+                                    <h2 style={{ marginLeft: '170px', marginRight: '70px' }}>Таких учеников нет</h2>
                                 ) : (
                                     filteredData().map((student_answer_and_task, index) => (
                                         <div key={index} className="student-container">

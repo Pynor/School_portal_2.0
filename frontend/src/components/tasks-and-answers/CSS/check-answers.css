@@ -38,6 +38,10 @@
   margin: 5px 0;
 }
 
+.del-button {
+  margin-top: 10px;
+}
+
 
 .search-input {
   border: 1px solid #474747;
