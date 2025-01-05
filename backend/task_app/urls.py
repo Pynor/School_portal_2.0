@@ -4,6 +4,8 @@ from .views import *
 
 
 urlpatterns = [
+    path("api/v1/api-task-list-delete/<int:task_id>", TaskListAPIView.as_view(), name='task-list-delete'),
+
     path("api/v1/api-answer-list-create/", AnswerListCreateAPIView.as_view(), name='answer-list-create'),
     path("api/v1/api-task-list-create/", TaskListCreateAPIView.as_view(), name='task-list-create'),
 

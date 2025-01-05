@@ -78,3 +78,5 @@ class TaskListAPIView(APIView):
             return TaskListSerializer.get_unfinished_task_list(school_class=school_class, user_id=user_id)
         return TaskListSerializer.get_all_task_list(school_class=school_class)
 
+    def delete(self, request, task_id):
+        return TaskListSerializer.delete_task_list_by_id(task_id=task_id)

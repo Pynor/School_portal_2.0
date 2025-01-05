@@ -1,4 +1,5 @@
 from django.db.models import Prefetch, Q
+from rest_framework import status
 
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
@@ -38,6 +39,15 @@ class TaskListAPIService:
             Q(answerlist__user_id=user_id)
         )
         return task_list
+
+    @staticmethod
+    def delete_task_list_by_id(task_id: int) -> Response:
+        deleted_count, _ = TaskList.objects.filter(id=task_id).delete()
+
+        if deleted_count == 0:
+            return Response({"detail": "Задачи не существует."}, status=status.HTTP_404_NOT_FOUND)
+
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class AnswerListAPIService:

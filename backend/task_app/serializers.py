@@ -84,3 +84,7 @@ class TaskListSerializer(serializers.ModelSerializer):
 
     def create(self, validated_data: dict[str]) -> TaskList:
         return TaskListAPIService.create_task_list(validated_data)
+
+    @staticmethod
+    def delete_task_list_by_id(task_id):
+        return TaskListAPIService.delete_task_list_by_id(task_id=task_id)
