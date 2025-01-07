@@ -1,3 +1,11 @@
+.container {
+  grid-template-columns: 30% 70%;
+  justify-content: space-between;
+  flex-direction: row;
+  display: flex;
+  width: 90%;
+}
+
 .main-content {
   margin-left: 20px;
 }
@@ -6,26 +14,24 @@
   font-weight: 400;
 }
 
-.form-login-and-register .form-control {
-  position: center;
-  box-sizing: border-box;
-  height: auto;
-  padding: 10px;
-  font-size: 16px;
-}
 
 .form-login-and-register .form-control:focus {
   z-index: 2;
 }
 
-.container {
-  width: 90%;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  display: grid;
-  grid-template-columns: 30% 70%;
+.form-login-and-register .form-control {
+  box-sizing: border-box;
+  font-size: 16px;
+  padding: 10px;
+  height: auto;
 }
+
+.form-login-and-register {
+  max-width: 600px;
+  padding: 15px;
+  margin: auto;
+}
+
 
 .form-tasks-and-answers  {
   max-width: 600px;
@@ -38,19 +44,13 @@
   display: flex;
 }
 
-.form-login-and-register {
-  max-width: 600px;
-  padding: 15px;
-  margin: auto;
+.Sidebar {
+  padding-left: 20px;
+  width: 20%;
 }
 
 .profile {
   max-width: 600px;
   padding: 15px;
   margin: auto;
-}
-
-.Sidebar {
-  padding-left: 20px;
-  width: 20%;
 }
