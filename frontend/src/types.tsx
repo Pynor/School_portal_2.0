@@ -92,6 +92,8 @@ export type Answer = {
   answer: string;
 };
 
+export type SortCriteria = "correct" | "alphabet" | "time" | "photo";
+
 const useDefaultState = () => {
   const defaultTasksListData: TaskList = useMemo(
     () => ({

@@ -1,7 +1,7 @@
 import { useParams, Navigate, Link } from 'react-router-dom';
 import React, { useEffect, useState, useRef } from 'react';
 
-import { StudentAndAnswerForCheckAnswers, UserData } from '../../types';
+import { StudentAndAnswerForCheckAnswers, SortCriteria, UserData } from '../../types';
 import { getCookie } from '../../functions';
 import { BASE_URL } from '../../constants';
 
@@ -13,8 +13,10 @@ import '../../App.css';
 
 const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
     // ### Assigning variables/Назначение переменных ###
-    const [sortCriteria, setSortCriteria] = useState<'correct' | 'alphabet' | 'time' | 'photo'>('correct');
+    const criteriaOptions: SortCriteria[] = ['correct', 'alphabet', 'time', 'photo'];
+    const [sortCriteria, setSortCriteria] = useState<SortCriteria>('correct');
     const [data, setData] = useState<StudentAndAnswerForCheckAnswers[]>();
+    const [redirectMessage, setRedirectMessage] = useState<React.ReactNode>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [errorMessage, setErrorMessage] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
@@ -73,7 +75,8 @@ const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
 
             // Response processing/Обработка ответа:
             if (postResponse.ok) {
-                setRedirect(true)
+                setRedirectMessage(<h2 className="success-message">Тест завершен.</h2>);
+                setTimeout(() => setRedirect(true), 1000);
             } else {
                 setErrorMessage('Произошла ошибка при завершении теста.')
             }
@@ -158,132 +161,130 @@ const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
 
 
     // ### Rendering HTMLElement/Отрисовка HTMLElement ###
-    if (redirect) return <Navigate to="/check-answers-hub" />;
+    if (redirect) return <Navigate to='/check-answers-hub' />;
 
     return (
-        <div className='form-container check'>
-            {userData.is_staff ? ( // Checking rights/Проверка прав.
-                <>
-                    <Link to="/check-answers-hub" className="btn-primary check-answers-hub-link">Вернуться</Link>
-                    <h1>Ответы учеников {schoolClass} класса.</h1>
+        <div>
+            {!redirectMessage ? (
+                <div className='form-container check'>
+                    {userData.is_staff ? (
+                        <>
+                            <Link to='/check-answers-hub' className='btn-primary check-answers-hub-link'>Вернуться</Link>
+                            <h1>Ответы учеников {schoolClass} класса.</h1>
 
-                    <div className="form-tasks-and-answers form-check-answers">
-
-                        {/* Контейнер для элементов управления сортировкой */}
-                        <div className='sort-list'>
-
-                            <input
-                                type="text"
-                                placeholder="Поиск ученика..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
-                                className="search-input form-control"
-                            />
-
-                            <h2>Сортировать по:</h2>
-                            <button className="btn-primary sort-button" onClick={() => setSortCriteria('photo')}>наличию фотографии</button>
-                            <button className="btn-primary sort-button" onClick={() => setSortCriteria('correct')}>правильности</button>
-                            <button className="btn-primary sort-button" onClick={() => setSortCriteria('alphabet')}>алфавиту</button>
-                            <button className="btn-primary sort-button" onClick={() => setSortCriteria('time')}>времени</button>
-
-                            <hr className="divider" />
-
-                            <button className="btn-primary del-button" onClick={deleteTaskList}>Завершить тест</button>
-                        </div>
-
-                        {/* Основное содержимое */}
-                        <div className="form-container check-container">
-
-
-                            {/* Displaying message/Отображение сообщения */}
-                            {errorMessage && <h2 className="error-message">{errorMessage}</h2>}
-
-                            <div>
-                                {filteredData().length === 0 ? (
-                                    <h2 style={{ marginLeft: '170px', marginRight: '70px' }}>Таких учеников нет</h2>
-                                ) : (
-                                    filteredData().map((student_answer_and_task, index) => (
-                                        <div key={index} className="student-container">
-                                            <h1>{student_answer_and_task.student.first_name} {student_answer_and_task.student.last_name}</h1>
-
-                                            {/* Displaying the time taken to answer/Отображение времени затраченного на ответ */}
-                                            {student_answer_and_task.tasks_and_answers.length > 0 && (
-                                                <h1>
-                                                    {new Date(student_answer_and_task.tasks_and_answers[0].execution_time_answer * 1000)
-                                                        .toISOString()
-                                                        .substr(11, 8)}
-                                                </h1>
-                                            )}
-
-                                            <hr className="divider" />
-
-                                            <div>
-                                                {student_answer_and_task.student.authorized ? (
-                                                    student_answer_and_task.tasks_and_answers.length === 0 ? (
-                                                        <h2 className="normal-message">Ученик еще не дал ответа.</h2>
-                                                    ) : (
-                                                        student_answer_and_task.tasks_and_answers.map((answer_and_task, index) => (
-                                                            <div key={index} className="answer-container">
-                                                                <h2>Задача: {answer_and_task.task.title}</h2>
-
-                                                                {/* Checking for photo/Проверка наличия фото */}
-                                                                {answer_and_task.answer.photo_to_the_answer ? (
-                                                                    <div>
-                                                                        <img
-                                                                            alt="Загруженное"
-                                                                            onClick={() => setIsModalOpen(true)}
-                                                                            src={`${BASE_URL}${answer_and_task.answer.photo_to_the_answer}`}
-                                                                            style={{ maxWidth: '100%', height: 'auto', objectFit: 'cover' }}
-                                                                        />
-                                                                        <Modal
-                                                                            isOpen={isModalOpen}
-                                                                            onClose={() => setIsModalOpen(false)}
-                                                                            imageSrc={`${BASE_URL}${answer_and_task.answer.photo_to_the_answer}`}
-                                                                        />
-                                                                    </div>
-                                                                ) : (
-                                                                    answer_and_task.task.additional_condition === "Photo" ? (
-                                                                        <h3 className="error-message">Ученик не прикрепил фотографию</h3>
-                                                                    ) : null
-                                                                )}
-
-                                                                {/* Checking the student answer/Проверка ответа ученика */}
-                                                                {answer_and_task.answer.answer ? (
-                                                                    answer_and_task.answer.answer === answer_and_task.task.answer_to_the_task ? (
-                                                                        <h3>
-                                                                            Ответ: {answer_and_task.answer.answer}
-                                                                            <span className="success-message"> верно.</span>
-                                                                        </h3>
-                                                                    ) : (
-                                                                        <h3>
-                                                                            Ответ: {answer_and_task.answer.answer}
-                                                                            <span className="error-message"> неверно.</span>
-                                                                        </h3>
-                                                                    )
-                                                                ) : (
-                                                                    <h3>Ответ: <span className="error-message"> отсутствует.</span></h3>
-                                                                )}
-
-                                                                <hr className="divider" />
-                                                            </div>
-                                                        ))
-                                                    )
-                                                ) : (
-                                                    <h2 className="error-message">Ученик еще не зарегистрировался.</h2>
-                                                )}
-                                            </div>
-                                        </div>
-                                    )
+                            <div className='form-tasks-and-answers form-check-answers'>
+                                {/* Контейнер для элементов управления сортировкой */}
+                                <div className='sort-list'>
+                                    <input
+                                        type='text'
+                                        placeholder='Поиск ученика...'
+                                        value={searchTerm}
+                                        onChange={(e) => setSearchTerm(e.target.value)}
+                                        className='search-input form-control'
+                                    />
+                                    <h2>Сортировать по:</h2>
+                                    {criteriaOptions.map((criteria) => (
+                                        <button
+                                            key={criteria}
+                                            className={`btn-primary sort-button ${sortCriteria === criteria ? 'active' : ''}`}
+                                            onClick={() => setSortCriteria(criteria)}>
+                                            {criteria === 'photo' ? 'наличию фотографии' :
+                                                criteria === 'correct' ? 'правильности' :
+                                                    criteria === 'alphabet' ? 'алфавиту' :
+                                                        'времени'}
+                                        </button>
                                     ))}
+                                    <hr className='divider' />
+                                    <button className='btn-primary del-button' onClick={deleteTaskList}>Завершить тест</button>
+                                </div>
+
+                                {/* Основное содержимое */}
+                                <div>
+                                    {errorMessage && <h2 className='error-message'>{errorMessage}</h2>}
+
+                                    <div className='students-container'>
+                                        {filteredData().length === 0 ? (
+                                            <h2 className='student-container'>Таких учеников нет</h2>
+                                        ) : (
+                                            filteredData().map((student_answer_and_task, index) => (
+                                                <div key={index} className='student-container'>
+                                                    <h1>{student_answer_and_task.student.first_name} {student_answer_and_task.student.last_name}</h1>
+
+                                                    {student_answer_and_task.tasks_and_answers.length > 0 && (
+                                                        <h1>
+                                                            {new Date(student_answer_and_task.tasks_and_answers[0].execution_time_answer * 1000)
+                                                                .toISOString()
+                                                                .substr(11, 8)}
+                                                        </h1>
+                                                    )}
+
+                                                    <hr className='divider' />
+
+                                                    <div>
+                                                        {student_answer_and_task.student.authorized ? (
+                                                            student_answer_and_task.tasks_and_answers.length === 0 ? (
+                                                                <h2 className='normal-message'>Ученик еще не дал ответа.</h2>
+                                                            ) : (
+                                                                student_answer_and_task.tasks_and_answers.map((answer_and_task, index) => (
+                                                                    <div key={index} className='answer-container'>
+                                                                        <h2>Задача: {answer_and_task.task.title}</h2>
+
+                                                                        {answer_and_task.answer.photo_to_the_answer ? (
+                                                                            <div>
+                                                                                <img
+                                                                                    alt='Загруженное'
+                                                                                    className='answer-image'
+                                                                                    onClick={() => setIsModalOpen(true)}
+                                                                                    src={`${BASE_URL}${answer_and_task.answer.photo_to_the_answer}`}
+                                                                                />
+                                                                                <Modal
+                                                                                    isOpen={isModalOpen}
+                                                                                    onClose={() => setIsModalOpen(false)}
+                                                                                    imageSrc={`${BASE_URL}${answer_and_task.answer.photo_to_the_answer}`}
+                                                                                />
+                                                                            </div>
+                                                                        ) : (
+                                                                            answer_and_task.task.additional_condition === 'Photo' ? (
+                                                                                <h3 className='error-message'>Ученик не прикрепил фотографию</h3>
+                                                                            ) : null
+                                                                        )}
+
+                                                                        {answer_and_task.answer.answer ? (
+                                                                            <h3>
+                                                                                Ответ: {answer_and_task.answer.answer}
+                                                                                <span className={answer_and_task.answer.answer === answer_and_task.task.answer_to_the_task ? 'success-message' : 'error-message'}>
+                                                                                    {answer_and_task.answer.answer === answer_and_task.task.answer_to_the_task ? ' верно.' : ' неверно.'}
+                                                                                </span>
+                                                                            </h3>
+                                                                        ) : (
+                                                                            <h3>Ответ: <span className='error-message'> отсутствует.</span></h3>
+                                                                        )}
+
+                                                                        <hr className='divider' />
+                                                                    </div>
+                                                                ))
+                                                            )
+                                                        ) : (
+                                                            <h2 className='error-message'>Ученик еще не зарегистрировался.</h2>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            ))
+                                        )}
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-                    </div>
-                </>
+                        </>
+                    ) : (
+                        <h2 className='error-message'>У вас нет на это прав.</h2>
+                    )}
+                </div >
             ) : (
-                <h2 className="error-message">У вас нет на это прав.</h2>
+                <div className='form-container' style={{width: '450px'}}>{redirectMessage}</div>
             )}
         </div>
     );
+
 }
 
 

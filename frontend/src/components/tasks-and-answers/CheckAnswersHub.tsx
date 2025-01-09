@@ -43,24 +43,24 @@ const CheckAnswersHub: React.FC<{ userData: UserData }> = ({ userData }) => {
 
     // ### Rendering HTMLElement/Отрисовка HTMLElement ###
     return (
-        <div className="form-tasks-and-answers">
-            <div className="form-container">
+        <div className='form-tasks-and-answers'>
+            <div className='form-container'>
                 {userData.is_staff ? ( // Checking rights/Проверка прав.
                     <>  
                         {/* Displaying message/Отображение сообщения */}
-                        {errorMessage && <h2 className="error-message">{errorMessage}</h2>}
+                        {errorMessage && <h2 className='error-message'>{errorMessage}</h2>}
 
                         {/* Form of sending/Форма отправки */}
                         <form onSubmit={getTasks}>
                             <select
-                                className="form-control"
-                                id="task_for"
-                                name="task_for"
+                                className='form-control'
+                                id='task_for'
+                                name='task_for'
                                 value={school_class}
                                 onChange={(e) => setSchoolClass(e.target.value)}
                                 required
                             >
-                                <option value="">Выберите класс</option>
+                                <option value=''>Выберите класс</option>
                                 {CLASSES.map((option) => (
                                     <option key={option} value={option}>
                                         {option}
@@ -69,7 +69,7 @@ const CheckAnswersHub: React.FC<{ userData: UserData }> = ({ userData }) => {
                             </select>
                             
                             {/* Send button/Кнопка отправки */}
-                            <button type="submit" className="btn-primary" style={{ marginTop: '10px' }}>Получить задачи</button>
+                            <button type='submit' className='btn-primary' style={{ marginTop: '10px' }}>Получить задачи</button>
                         </form>
                         
                         {/* Displaying tasks for a class/Отображение задач для класса */}
@@ -80,7 +80,7 @@ const CheckAnswersHub: React.FC<{ userData: UserData }> = ({ userData }) => {
                                     data.task_list.map((option: Task, index: number) => (
                                         <Link
                                             key={index}
-                                            className="btn-primary"
+                                            className='btn-primary'
                                             style={{ width: '300px', marginBottom: '10px', display: 'block' }}
                                             to={`/check-answers/${school_class}/${option.id}`}
                                         >
@@ -88,7 +88,7 @@ const CheckAnswersHub: React.FC<{ userData: UserData }> = ({ userData }) => {
                                         </Link>
                                     ))
                                 ) : (
-                                    <h2 className="error-message">У этого класса нет задач.</h2>
+                                    <h2 className='error-message'>У этого класса нет задач.</h2>
                                 )}
                             </div>
                         ) : (
@@ -98,7 +98,7 @@ const CheckAnswersHub: React.FC<{ userData: UserData }> = ({ userData }) => {
 
                     </>
                 ) : (
-                    <h2 className="error-message">У вас нет на это прав.</h2>
+                    <h2 className='error-message'>У вас нет на это прав.</h2>
                 )}
             </div>
         </div>
