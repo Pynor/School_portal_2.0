@@ -1,3 +1,7 @@
+.main-content {
+  margin-left: 20px;
+}
+
 .container {
   grid-template-columns: 30% 70%;
   justify-content: space-between;
@@ -6,12 +10,27 @@
   width: 90%;
 }
 
-.main-content {
-  margin-left: 20px;
-}
-
 .form-signin .checkbox {
   font-weight: 400;
+}
+
+
+.error-message {
+  color: rgb(212, 20, 20);
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.normal-message {
+  color: rgba(224, 204, 16, 0.966);
+  margin-bottom: 10px;
+  text-align: center;
+}
+
+.success-message {
+  color: rgb(15, 199, 128);
+  margin-bottom: 10px;
+  text-align: center;
 }
 
 
@@ -43,6 +62,7 @@
   max-width: 750px;
   display: flex;
 }
+
 
 .Sidebar {
   padding-left: 20px;

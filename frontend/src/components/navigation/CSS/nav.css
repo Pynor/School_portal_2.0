@@ -1,20 +1,19 @@
-.navbar-home {
-  background-color: #fff;
-  padding: 0.5rem 0;
+.navbar-home .navbar-nav .nav-item {
+  margin-left: 1rem;
 }
 
 .navbar-home .container-fluid {
-  display: flex;
   justify-content: space-between;
   align-items: center;
+  display: flex;
 }
 
 .navbar-home .nav-link {
-  color: #fff;
   background-color: #000000;
   text-decoration: none;
-  font-weight: 500;
   padding: 0.5rem 1rem;
+  font-weight: 500;
+  color: #fff;
 }
 
 .navbar-home .nav-link:hover {
@@ -28,32 +27,14 @@
 
 .navbar-home .navbar-nav {
   list-style-type: none;
-  margin: 0;
-  padding: 0;
   display: flex;
 }
 
-.navbar-home .navbar-nav .nav-item {
-  margin-left: 1rem;
+.navbar-home {
+  background-color: #fff;
+  padding: 0.5rem 0;
 }
 
-.error-message {
-  color: rgb(212, 20, 20);
-  text-align: center;
-  margin-bottom: 10px;
-}
-
-.normal-message {
-  color: rgba(224, 204, 16, 0.966);
-  text-align: center;
-  margin-bottom: 10px;
-}
-
-.success-message {
-  color: rgb(15, 199, 128);
-  text-align: center;
-  margin-bottom: 10px;
-}
 .nav-container {
   max-width: 600px;
   padding: 15px;
