@@ -1,20 +1,26 @@
 .form-container {
   margin-bottom: 20px;
   margin-right: auto;
-  margin-left: auto; 
-  max-width: 80%;  
+  margin-left: auto;
+  max-width: 80%;
 }
 
 .form-container h2,
 .form-container h3 {
   overflow-wrap: break-word;
-  white-space: pre-wrap; 
-  font-size: 1.5em; 
+  white-space: pre-wrap;
+  font-size: 1.5em;
+}
+
+.title {
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
 }
 
 .no-select {
-  -webkit-user-select: none; 
-  -moz-user-select: none; 
-  -ms-user-select: none; 
-  user-select: none; 
+  -webkit-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
 }

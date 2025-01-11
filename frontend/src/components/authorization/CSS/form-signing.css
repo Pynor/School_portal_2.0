@@ -16,7 +16,7 @@
     border: none;
 }
 
-@media (max-width: 300px) {
+@media (max-width: 500px) {
     .form-container {
         box-shadow: none;
         padding: 1rem;

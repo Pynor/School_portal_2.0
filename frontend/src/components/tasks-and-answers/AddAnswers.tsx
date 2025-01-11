@@ -25,17 +25,15 @@ const AddAnswers: React.FC<{ tasksListData: TaskList; userData: UserData }> = ({
   const taskList = tasksListData.task_list[taskListIdNumber];
   const isTaskListValid = taskList && taskList.tasks && taskList.tasks.length > 0;
 
-  const [answers, setAnswers] = useState<AnswerList[]>([
-    {
-      user: userData.id,
-      task_list: isTaskListValid ? taskList.id : 0,
-      answers: isTaskListValid ? taskList.tasks.map(task => ({
-        photo_to_the_answer: null,
-        task: task.id,
-        answer: '',
-      })) : [],
-    },
-  ]);
+  const [answers, setAnswers] = useState<AnswerList[]>([{
+    user: userData.id,
+    task_list: isTaskListValid ? taskList.id : 0,
+    answers: isTaskListValid ? taskList.tasks.map(task => ({
+      photo_to_the_answer: null,
+      task: task.id,
+      answer: '',
+    })) : [],
+  }]);
 
 
   // ### Working with time/Работа со временем ###
@@ -50,6 +48,32 @@ const AddAnswers: React.FC<{ tasksListData: TaskList; userData: UserData }> = ({
     if (timeLeft <= halfTime) return 'orange';
     return 'black';
   };
+
+  useEffect(() => {
+    const savedData = localStorage.getItem(`answers_${taskList.id}`);
+    if (savedData) {
+      const { user, task_list } = JSON.parse(savedData);
+      setAnswers([{
+        user: user,
+        task_list: task_list,
+        answers: isTaskListValid ? taskList.tasks.map(task => ({
+          photo_to_the_answer: null,
+          task: task.id,
+          answer: '',
+        })) : [],
+      }]);
+    } else {
+      setAnswers([{
+        user: userData.id,
+        task_list: isTaskListValid ? taskList.id : 0,
+        answers: isTaskListValid ? taskList.tasks.map(task => ({
+          photo_to_the_answer: null,
+          task: task.id,
+          answer: '',
+        })) : [],
+      }]);
+    }
+  }, [taskList.id, userData.id, isTaskListValid, taskList]);
 
   useEffect(() => {
     const savedTime = localStorage.getItem(`timeLeft_${taskList.id}`);
@@ -67,7 +91,7 @@ const AddAnswers: React.FC<{ tasksListData: TaskList; userData: UserData }> = ({
           return 0;
         }
         const newTime = prev - 1;
-        console.log(localStorage)
+
         localStorage.setItem(`timeLeft_${taskList.id}`, newTime.toString());
         return newTime;
       });
@@ -93,13 +117,27 @@ const AddAnswers: React.FC<{ tasksListData: TaskList; userData: UserData }> = ({
   // ### Processing of input data/Обработка вводных данных ###
   const handleChange = (taskId: number, field: 'answer' | 'photo_to_the_answer', e: React.ChangeEvent<HTMLInputElement>) => {
     const value = field === 'photo_to_the_answer' ? e.target.files?.[0] || null : e.target.value;
-    setAnswers(prevAnswers => prevAnswers.map(answerObj => ({
-      ...answerObj,
-      answers: answerObj.answers.map(answer =>
-        answer.task === taskId ? { ...answer, [field]: value } : answer
-      ),
-    })));
+
+    setAnswers(prevAnswers => {
+      const updatedAnswers = prevAnswers.map(answerObj => ({
+        ...answerObj,
+        answers: answerObj.answers.map(answer =>
+          answer.task === taskId ? { ...answer, [field]: value } : answer
+        ),
+      }));
+
+      const dataToSave = {
+        user: updatedAnswers[0].user,
+        task_list: updatedAnswers[0].task_list,
+      };
+
+      localStorage.setItem(`answers_${taskList.id}`, JSON.stringify(dataToSave));
+
+      return updatedAnswers;
+    });
   };
+
+
 
 
   // ### Generation data for POST request/Формирование данных для POST запроса ###
@@ -121,17 +159,22 @@ const AddAnswers: React.FC<{ tasksListData: TaskList; userData: UserData }> = ({
 
     // Send request/Отправка запроса:
     const postResponse = await fetch(`${BASE_URL}/task_app/api/v1/api-answer-list-create/`, {
-      method: 'POST',
       headers: { 'X-CSRFToken': csrftoken },
       credentials: 'include',
+      method: 'POST',
       body: formData,
     });
 
     // Response processing/Обработка ответа:
     if (postResponse.ok) {
-      setMessage(<h2 className="success-message">Ответ получен.</h2>);
       setCookie(`completedTask(${taskList.id})`, 'true', 0, 'Strict', true);
+      setMessage(<h2 className="success-message">Ответ получен.</h2>);
+
+      localStorage.removeItem(`timeLeft_${taskList.id}`);
+      localStorage.removeItem(`answers_${taskList.id}`);
+
       setTimeout(() => setRedirect(true), 1000);
+
     } else {
       const responseData = await postResponse.json();
       setMessage(<h2 className="error-message">{responseData.details || 'Произошла ошибка при получении ответа.'}</h2>);
@@ -152,7 +195,6 @@ const AddAnswers: React.FC<{ tasksListData: TaskList; userData: UserData }> = ({
   return (
     <div className="form-tasks-and-answers">
       <nav className="form-container">
-        {/* Form of sending/Форма отправки */}
         <form onSubmit={handleSubmit}>
           <h2 style={{ textAlign: 'center', color: getTimeColor() }}>
             Оставшееся время: {new Date(timeLeft * 1000).toISOString().substr(11, 8)}
@@ -160,14 +202,11 @@ const AddAnswers: React.FC<{ tasksListData: TaskList; userData: UserData }> = ({
 
           {message && <>{message}</>}
 
-          {/* Task List/Список задач */}
           {isTaskListValid && taskList.tasks.map(task => (
             <div key={task.id} className="form-container no-select">
 
-              {/* Task Criteria fields/Поля условий задачи */}
-              <h2>{`Задача ${task.sequence_number} (${task.title}):`}</h2>
-
-              <div className="description no-select">
+              <h2 className="title">{`Задача ${task.sequence_number} (${task.title}):`}</h2>
+              <div className="description">
                 {task.description.split(' ').map((word, index) => (
                   <span key={index} style={{ wordBreak: 'break-all' }}>{word} </span>
                 ))}
@@ -180,7 +219,7 @@ const AddAnswers: React.FC<{ tasksListData: TaskList; userData: UserData }> = ({
                     alt="Загруженное"
                     onClick={() => setIsModalOpen(true)}
                     src={`${BASE_URL}${task.photo_file}`}
-                    style={{ width: '290px', height: '200px', objectFit: 'cover' }}
+                    style={{ width: '100%', height: 'auto', objectFit: 'cover' }} 
                   />
                 </div>
               )}
@@ -188,7 +227,12 @@ const AddAnswers: React.FC<{ tasksListData: TaskList; userData: UserData }> = ({
               {task.video_file && (
                 <div>
                   <h4>Видео к заданию:</h4>
-                  <video controls style={{ width: '290px', height: '200px', objectFit: 'cover', margin: '10px' }}>
+                  <video
+                    controls
+                    playsInline
+                    onError={(e) => console.error('Error loading video:', e)}
+                    style={{ width: '100%', height: 'auto', objectFit: 'cover', margin: '10px 0' }} 
+                  >
                     <source src={`${BASE_URL}${task.video_file}`} type={task.video_file.type} />
                     Ваш браузер не поддерживает видео.
                   </video>
@@ -213,7 +257,6 @@ const AddAnswers: React.FC<{ tasksListData: TaskList; userData: UserData }> = ({
                 imageSrc={`${BASE_URL}${task.photo_file}`}
               />
 
-              {/* Answer input fields/Поля ввода ответа */}
               <input
                 type="text"
                 placeholder="Ответ:"
@@ -233,7 +276,6 @@ const AddAnswers: React.FC<{ tasksListData: TaskList; userData: UserData }> = ({
             </div>
           ))}
 
-          {/* Send button/Кнопка отправки */}
           <button className="btn-primary" type="submit">
             Прислать ответ
           </button>
@@ -241,6 +283,7 @@ const AddAnswers: React.FC<{ tasksListData: TaskList; userData: UserData }> = ({
       </nav>
     </div>
   );
+
 };
 
 export default AddAnswers;

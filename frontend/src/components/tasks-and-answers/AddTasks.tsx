@@ -75,6 +75,11 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
   // Processing changes in tasks/Обработка изменений в задачах:
   const handleTaskChange = (index: number, e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
+
+    if (name === 'title' && value.length > 30) {
+      setMessage({ text: 'Название задачи не должно превышать 30 символов.', className: 'error-message' });
+      return; 
+    }
     setFormData((prevFormData) => {
       const updatedTasks = [...prevFormData.tasks];
       updatedTasks[index] = { ...updatedTasks[index], [name]: value };
@@ -221,7 +226,7 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
                   <div className="form-group">
                     {/* String imput fields/Строчные поля ввода */}
                     <div className="form-group">
-                      <input className="form-control" type="text" name="title" placeholder="Название задачи" value={task.title}
+                      <input className="form-control" type="text" name="title" placeholder="Название задачи" value={task.title} maxLength={30}
                         onChange={(e) => handleTaskChange(index, e)} required />
                     </div>
 
