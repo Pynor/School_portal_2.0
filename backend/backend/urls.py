@@ -5,6 +5,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 
 urlpatterns = [
+    path('statistic_app/', include('statistic_app.urls')),
     path('user_app/', include('user_app.urls')),
     path('task_app/', include('task_app.urls')),
 
