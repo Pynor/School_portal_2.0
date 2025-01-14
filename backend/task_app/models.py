@@ -1,7 +1,7 @@
 from django.core.validators import FileExtensionValidator
 from django.db import models
 
-from user_app.models import User, SchoolClass
+from user_app.models import SchoolClass, User
 
 
 class Task(models.Model):
