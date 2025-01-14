@@ -12,9 +12,9 @@ class StatisticsLoginStudentsAPIView(APIView):
         school_class_instance = get_object_or_404(SchoolClass, title=school_class)
 
         statistics = Student.objects.filter(school_class=school_class_instance) \
-            .values("authorized") \
             .annotate(count=Count("id")) \
-            .order_by("authorized")
+            .order_by("authorized") \
+            .values("authorized") \
 
         stats_dict = {True: 0, False: 0}
         for stat in statistics:
