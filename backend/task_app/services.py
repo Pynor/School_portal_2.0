@@ -61,8 +61,11 @@ class AnswerListAPIService:
         if AnswerList.objects.filter(task_list=task_list, user=user).exists():
             raise ValidationError({"details": "Ответ на эту задачу уже был получен."})
 
-        answer_list = AnswerList.objects.create(execution_time_answer=execution_time_answer,
-                                                task_list=task_list, user=user)
+        answer_list = AnswerList.objects.create(
+            execution_time_answer=execution_time_answer,
+            task_list=task_list,
+            user=user
+        )
 
         answers_to_create = [Answer(answer_list=answer_list, **answer_data) for answer_data in answers_data]
         Answer.objects.bulk_create(answers_to_create)
