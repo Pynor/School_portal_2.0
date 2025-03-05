@@ -45,6 +45,7 @@ class TaskList(models.Model):
         ("In Progress", "In Progress"),
     )
 
+
     count_task = models.IntegerField(verbose_name="Count task")
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Updated at")
     created_at = models.DateTimeField(auto_now_add=True, verbose_name="Created at")
