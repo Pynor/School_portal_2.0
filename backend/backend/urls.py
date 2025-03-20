@@ -11,7 +11,7 @@ from django.conf.urls.static import static
 schema_view = get_schema_view(
     openapi.Info(
         title="School_Portal_2.0 API",
-        default_version='v1',
+        default_version="v1",
         description="API for internal use (Frontend and School_Portal_bot).",
         terms_of_service="https://www.google.com/policies/terms/",
         contact=openapi.Contact(email="pynor31@mail.ru"),
@@ -22,8 +22,6 @@ schema_view = get_schema_view(
 )
 
 class Command(BaseCommand):
-    help = 'Generate OpenAPI schema file'
-
     def handle(self, *args, **kwargs):
         schema = schema_view.get_schema()
 
