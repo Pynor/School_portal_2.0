@@ -21,7 +21,7 @@ const CheckAnswersHub: React.FC<{ userData: UserData }> = ({ userData }) => {
         e.preventDefault();
 
         // Send request/Отправка запроса:
-        const getResponse = await fetch(`${BASE_URL}/task_app/api/v1/api-task-list-get/${school_class}`, {
+        const getResponse = await fetch(`${BASE_URL}/task_app/v1/api-task-list-get/${school_class}`, {
             headers: {
                 'Access-Control-Request-Headers': 'Content-Type',
                 'Content-Type': 'application/json',

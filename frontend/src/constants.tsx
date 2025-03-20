@@ -1,4 +1,4 @@
-export const BASE_URL = 'http://localhost:8000';
+export const BASE_URL = 'http://localhost:8000/api';
 
 export const CLASSES = [
     '1А', '1Б', '1В', '1Г',

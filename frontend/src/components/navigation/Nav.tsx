@@ -20,7 +20,7 @@ const Nav = (props: { userData: UserData, setName: (name: string) => void }) => 
   const logout = async () => {
     try {
       // Send request/Отправка запроса:
-      const postResponse = await fetch(`${BASE_URL}/user_app/api/v1/api-user-logout/`, {
+      const postResponse = await fetch(`${BASE_URL}/user_app/v1/api-user-logout/`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

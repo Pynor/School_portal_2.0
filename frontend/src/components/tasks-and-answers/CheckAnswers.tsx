@@ -34,7 +34,7 @@ const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
 
             try {
                 // Send request/Отправка запроса:
-                const getResponse = await fetch(`${BASE_URL}/task_app/api/v1/api-answer-list-get/${schoolClass}/${taskListId}`, {
+                const getResponse = await fetch(`${BASE_URL}/task_app/v1/api-answer-list-get/${schoolClass}/${taskListId}`, {
                     headers: {
                         'Access-Control-Request-Headers': 'Content-Type',
                         'Content-Type': 'application/json',
@@ -64,7 +64,7 @@ const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
     const deleteTaskList = async () => {
         try {
             // Send request/Отправка запроса:
-            const postResponse = await fetch(`${BASE_URL}/task_app/api/v1/api-task-list-delete/${taskListId}`, {
+            const postResponse = await fetch(`${BASE_URL}/task_app/v1/api-task-list-delete/${taskListId}`, {
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRFToken': csrftoken

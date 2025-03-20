@@ -83,7 +83,7 @@ const RegisterStudents = (props: { userData: UserData }) => {
     
     // Send request/Отправка запроса:
     try {
-      const postResponse = await fetch(`${BASE_URL}/user_app/api/v1/api-student-register/`, {
+      const postResponse = await fetch(`${BASE_URL}/user_app/v1/api-student-register/`, {
         method: 'POST',
         headers: {
           'Access-Control-Request-Headers': 'Content-Type',

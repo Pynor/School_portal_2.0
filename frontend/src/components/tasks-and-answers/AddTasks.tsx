@@ -135,7 +135,7 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
     // ### Working with server/Работа с сервером ###
     try {
       // Send request/Отправка запроса:
-      const postResponse = await fetch(`${BASE_URL}/task_app/api/v1/api-task-list-create/`, {
+      const postResponse = await fetch(`${BASE_URL}/task_app/v1/api-task-list-create/`, {
         method: 'POST',
         headers: {
           'X-CSRFToken': csrftoken,

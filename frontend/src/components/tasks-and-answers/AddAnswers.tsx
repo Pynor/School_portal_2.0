@@ -158,7 +158,7 @@ const AddAnswers: React.FC<{ tasksListData: TaskList; userData: UserData }> = ({
 
 
     // Send request/Отправка запроса:
-    const postResponse = await fetch(`${BASE_URL}/task_app/api/v1/api-answer-list-create/`, {
+    const postResponse = await fetch(`${BASE_URL}/task_app/v1/api-answer-list-create/`, {
       headers: { 'X-CSRFToken': csrftoken },
       credentials: 'include',
       method: 'POST',

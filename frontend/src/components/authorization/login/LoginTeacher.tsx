@@ -24,7 +24,7 @@ const LoginTeacher = () => {
         e.preventDefault();
 
         // Send request/Отправка запроса:
-        const postResponse = await fetch(`${BASE_URL}/user_app/api/v1/api-teacher-login/`, {
+        const postResponse = await fetch(`${BASE_URL}/user_app/v1/api-teacher-login/`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
