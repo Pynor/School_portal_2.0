@@ -83,6 +83,7 @@ form {
     border: 1px solid #ccc;
     margin-bottom: 20px;
     border-radius: 5px;
+    min-height: 150px;
     resize: vertical;
     font-size: 16px;
     max-width: 80%;

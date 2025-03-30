@@ -13,7 +13,12 @@ const RegisterStudents = (props: { userData: UserData }) => {
   const [message, setMessage] = useState<{ text: string; className: 'success-message' | 'error-message' } | null>(null);
   const [studentsData, setStudentsData] = useState<StudentForRegister[]>([]);
   const messageRef = useRef<HTMLDivElement | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const csrftoken = getCookie('csrftoken');
+  
+  const [isIndividualClassInput, setIsIndividualClassInput] = useState(false);
+  const [containerWidth, setContainerWidth] = useState('100%');
+  const [useCommonClass, setUseCommonClass] = useState(true);
 
   const [studentsInput, setStudentsInput] = useState('');
   const [isBulkInput, setIsBulkInput] = useState(false);
@@ -35,6 +40,27 @@ const RegisterStudents = (props: { userData: UserData }) => {
     }
   }, [message]);
 
+  useEffect(() => {
+    // Обновляем классы учеников при изменении общего класса или режима ввода
+    if (!isIndividualClassInput && schoolClass) {
+      setStudentsData(prevData =>
+        prevData.map(student => ({
+          ...student,
+          school_class: schoolClass
+        })));
+    }
+  }, [schoolClass, isIndividualClassInput]);
+
+  const toggleClassMode = () => {
+    const newMode = !useCommonClass;
+    setUseCommonClass(newMode);
+
+    if (newMode) {
+      // При переходе к общему классу применяем выбранный класс ко всем
+      setStudentsData(prevData =>
+        prevData.map(student => ({ ...student, school_class: schoolClass })))
+    }
+  };
 
   // ### Processing of input data/Обработка вводных данных ###
   const handleInputChange = (index: number, field: keyof StudentForRegister, value: string) => {
@@ -45,42 +71,57 @@ const RegisterStudents = (props: { userData: UserData }) => {
     });
   };
 
-  const handleSchoolClassChange = (value: string) => {
-    setSchoolClass(value);
-    setStudentsData(prevData => prevData.map(student => ({ ...student, school_class: value })));
-  };
 
   const handleNumStudentsChange = (value: number) => {
     setNumStudents(value);
-    setStudentsData(Array.from({ length: value }, () => ({ last_name: '', first_name: '', school_class: schoolClass })));
+    setStudentsData(Array.from({ length: value }, () => ({
+      last_name: '',
+      first_name: '',
+      school_class: useCommonClass ? schoolClass : ''
+    })));
   };
 
   const handleStudentsInputChange = (value: string) => {
     setStudentsInput(value);
+
     const studentEntries = value.split(',')
-      .map(entry => entry.trim()) 
-      .filter(entry => entry) 
+      .map(entry => entry.trim())
+      .filter(entry => entry)
       .map(entry => {
-        const names = entry.split(' ').filter(name => name.trim() !== ''); 
-        const first_name = names[0] || '';
-        const last_name = names.slice(1).join(' ') || ''; 
-        return { first_name, last_name, school_class: schoolClass };
+        const parts = entry.split(' ').filter(part => part.trim() !== '');
+
+        // Если индивидуальные классы и есть что парсить
+        if (!useCommonClass && parts.length > 1) {
+          const classPart = parts[parts.length - 1];
+          const isClassValid = CLASSES.includes(classPart);
+
+          return {
+            first_name: parts[0] || '',
+            last_name: parts.slice(1, isClassValid ? -1 : undefined).join(' ') || '',
+            school_class: isClassValid ? classPart : ''
+          };
+        } else {
+          return {
+            first_name: parts[0] || '',
+            last_name: parts.slice(1).join(' ') || '',
+            school_class: useCommonClass ? schoolClass : ''
+          };
+        }
       });
-  
+
     setStudentsData(studentEntries);
     setNumStudents(studentEntries.length);
   };
-  
 
   // ### Working with server/Работа с сервером ###
   const registerStudents = async (e: React.FormEvent) => {
     e.preventDefault();
-  
+
     if (!schoolClass) {
       setMessage({ text: 'Пожалуйста, выберите класс.', className: 'error-message' });
       return;
     }
-    
+
     // Send request/Отправка запроса:
     try {
       const postResponse = await fetch(`${BASE_URL}/user_app/v1/api-student-register/`, {
@@ -93,7 +134,7 @@ const RegisterStudents = (props: { userData: UserData }) => {
         credentials: 'include',
         body: JSON.stringify(studentsData),
       });
-      
+
       // Response processing/Обработка ответа:
       if (postResponse.ok) {
         setMessage({ text: 'Ученики успешно зарегистрированы.', className: 'success-message' });
@@ -107,49 +148,79 @@ const RegisterStudents = (props: { userData: UserData }) => {
   };
 
 
+  useEffect(() => {
+    if (containerRef.current) {
+      setContainerWidth(`${containerRef.current.offsetWidth}px`);
+    }
+  }, []);
+
+
   // ### Rendering HTMLElement/Отрисовка HTMLElement ###
   return (
     <div className='form-login-and-register'>
-      {props.userData.is_staff ? ( // Checking rights/Проверка прав.
-        <div className="form-container">
+      {props.userData.is_staff ? (
+        <div className="form-container" ref={containerRef}>
           {/* Displaying message/Отображение сообщения */}
           {message && (
             <div ref={messageRef} className={message.className}>
               <h2>{message.text}</h2>
             </div>
           )}
+
           <div className="form-container">
-            {/* Format switching button/Кнопка переключения форматов */}
-            <button className="btn-primary" style={{ marginBottom: '15px' }} type="button" onClick={() => setIsBulkInput(!isBulkInput)}>
-              {isBulkInput ? 'Переключиться на ввод по форме' : 'Переключиться на массовый ввод'}
+            <div className="form-header" style={{ marginBottom: '20px' }}>
+              <h2>
+                Режим классов: {useCommonClass ? 'общий' : 'индивидуальные'}
+              </h2>
+              <h2>
+                Режим ввода: {isBulkInput ? 'массовый' : 'поштучный'}
+              </h2>
+              {useCommonClass && schoolClass && (
+                <h3>Выбран общий класс: {schoolClass}</h3>
+              )}
+            </div>
+            {/* Кнопка переключения типа ввода */}
+            <button className="btn-primary" style={{ marginBottom: '15px' }}
+              onClick={() => setIsBulkInput(!isBulkInput)}>
+              {isBulkInput ? 'Перейти на поштучный ввод' : 'Перейти на массовый ввод'}
             </button>
 
-            <div className="form-group">
-              <select
-                className="form-control"
-                id="school_class"
-                name="school_class"
-                onChange={e => handleSchoolClassChange(e.target.value)}
-                required
-              >
-                <option value="">Выберите класс</option>
-                {CLASSES.map((option) => (
-                  <option key={option} value={option}>
-                    {option}
-                  </option>
-                ))}
-              </select>
-            </div>
+            {/* Кнопка переключения режима классов (видна в обоих режимах) */}
+            <button className="btn-primary" style={{ marginBottom: '15px', marginLeft: '10px' }}
+              onClick={toggleClassMode}>
+              {useCommonClass ? 'Индивидуальные классы' : 'Общий класс'}
+            </button>
+
+            {/* Общий выбор класса (только в режиме общего класса) */}
+            {useCommonClass && (
+              <div className="form-group">
+                <select
+                  className="form-control"
+                  value={schoolClass}
+                  onChange={e => setSchoolClass(e.target.value)}
+                  required
+                >
+                  <option value="">Выберите класс</option>
+                  {CLASSES.map(option => (
+                    <option key={option} value={option}>{option}</option>
+                  ))}
+                </select>
+              </div>
+            )}
           </div>
 
           {isBulkInput ? (
-            /* General filling form/Общая форма заполнения */
-            <div className="form-group">
+            /* Массовый ввод */
+            <div className="form-group" style={{ width: containerWidth }}>
               <textarea
                 value={studentsInput}
                 className="form-control textarea-for-register-student"
                 onChange={(e) => handleStudentsInputChange(e.target.value)}
-                placeholder="Введите учеников (например: Дарья Кузнецова, Иван Иванов)"
+                placeholder={
+                  useCommonClass
+                    ? "Введите учеников (Фамилия Имя через запятую): Иванов Иван, Петрова Мария"
+                    : "Введите учеников с классами (Фамилия Имя Класс): Иванов Иван 5А, Петрова Мария 5Б"
+                }
               />
 
               {studentsData.length > 0 && (
@@ -158,7 +229,8 @@ const RegisterStudents = (props: { userData: UserData }) => {
                   <ul style={{ listStyleType: 'none', padding: '0' }}>
                     {studentsData.map((student, index) => (
                       <li key={index} style={{ padding: '5px 0', borderBottom: '1px solid #eee' }}>
-                        {student.first_name} {student.last_name} ({student.school_class})
+                        {student.first_name} {student.last_name}
+                        {student.school_class && ` (${student.school_class})`}
                       </li>
                     ))}
                   </ul>
@@ -168,7 +240,7 @@ const RegisterStudents = (props: { userData: UserData }) => {
           ) : (
             /* Separate filling forms/Отдельные формы для заполнения */
             <>
-              <div className="form-container">
+              <div className="form-container" style={{ width: containerWidth }}>
                 <div className="form-group">
                   <label htmlFor="num-students">Кол-во учеников</label>
                   <input
@@ -187,7 +259,7 @@ const RegisterStudents = (props: { userData: UserData }) => {
                   {studentsData.map((student, index) => (
                     <div key={index} className="form-container">
                       <div className="student-form">
-                        <h2 className="h2">Ученик: "{index + 1}"</h2>
+                        <h2 className="h2">Ученик {index + 1}</h2>
 
                         <div className="form-group">
                           <input
@@ -196,7 +268,6 @@ const RegisterStudents = (props: { userData: UserData }) => {
                             placeholder="Имя"
                             className="form-control"
                             value={student.first_name}
-                            id={`first_name_${index}`}
                             onChange={(e) => handleInputChange(index, 'first_name', e.target.value)}
                           />
                         </div>
@@ -208,10 +279,25 @@ const RegisterStudents = (props: { userData: UserData }) => {
                             placeholder="Фамилия"
                             className="form-control"
                             value={student.last_name}
-                            id={`last_name_${index}`}
                             onChange={(e) => handleInputChange(index, 'last_name', e.target.value)}
                           />
                         </div>
+
+                        {!useCommonClass && (
+                          <div className="form-group">
+                            <select
+                              className="form-control"
+                              value={student.school_class}
+                              onChange={(e) => handleInputChange(index, 'school_class', e.target.value)}
+                              required
+                            >
+                              <option value="" >Выберите класс</option>
+                              {CLASSES.map(option => (
+                                <option key={option} value={option}>{option}</option>
+                              ))}
+                            </select>
+                          </div>
+                        )}
                       </div>
                     </div>
                   ))}
@@ -224,7 +310,6 @@ const RegisterStudents = (props: { userData: UserData }) => {
           <button className="btn-primary" type="button" onClick={registerStudents}>
             Зарегистрировать
           </button>
-
         </div>
       ) : (
         <div className="form-container">
@@ -233,7 +318,6 @@ const RegisterStudents = (props: { userData: UserData }) => {
       )}
     </div>
   );
-
 };
 
 
