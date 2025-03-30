@@ -1,7 +1,7 @@
+from pathlib import Path
+
 import dotenv
 import os
-
-from pathlib import Path
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -16,6 +16,7 @@ SECRET_KEY = os.environ['SECRET_KEY']
 AUTH_USER_MODEL = 'user_app.User'
 
 ALLOWED_HOSTS = ['0.0.0.0', 'localhost', '127.0.0.1']
+INTERNAL_IPS = ['127.0.0.1']
 
 DEBUG = True
 
@@ -29,6 +30,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'rest_framework',
+    'debug_toolbar',
     'corsheaders',
     'drf_yasg',
 
@@ -44,6 +46,7 @@ MIDDLEWARE = [
     'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -64,6 +67,14 @@ REST_FRAMEWORK = {
     ],
 }
 
+SWAGGER_SETTINGS = {
+    'DEFAULT_INFO': 'backend.urls.openapi_info',
+    'SECURITY_DEFINITIONS': {
+        'Basic': {
+            'type': 'basic'
+        }
+    },
+}
 
 ROOT_URLCONF = 'backend.urls'
 
@@ -98,6 +109,7 @@ DATABASES = {
     }
 }
 
+SESSION_ENGINE = "django.contrib.sessions.backends.cached_db"
 
 AUTH_PASSWORD_VALIDATORS = [
     {
