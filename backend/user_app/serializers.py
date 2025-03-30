@@ -11,7 +11,7 @@ class StudentSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Student
-        fields = ["id", "school_class", "authorized", "last_name", "first_name"]
+        fields = ["school_class", "authorized", "first_name", "last_name", "id"]
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -33,7 +33,7 @@ class UserSerializer(serializers.ModelSerializer):
 
 
 class TeacherRegisterAPISerializer(serializers.ModelSerializer):
-    secret_key = serializers.CharField(max_length=40)
+    secret_key = serializers.CharField(max_length=40, write_only=True)
     user = UserSerializer(write_only=True)
 
     class Meta:

@@ -1,9 +1,8 @@
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import permissions, generics
 from rest_framework.views import APIView
 
 from .serializers import *
-from .services import *
-from .models import *
 
 
 class AnswerListCreateAPIView(generics.CreateAPIView):
@@ -72,11 +71,14 @@ class StudentAndAnswerListAPIView(APIView):
         return AnswerListSerializer.get_student_and_answer_list(kwargs=kwargs)
 
 
-class TaskListAPIView(APIView):
+class TaskListGetAPIView(APIView):
+    @swagger_auto_schema(operation_description="Get a list of tasks for a class")
     def get(self, request, school_class, user_id=None):
         if user_id:
             return TaskListSerializer.get_unfinished_task_list(school_class=school_class, user_id=user_id)
         return TaskListSerializer.get_all_task_list(school_class=school_class)
 
+class TaskListDeleteAPIView(APIView):
+    @swagger_auto_schema(operation_description="Delete an issue by task ID")
     def delete(self, request, task_id):
         return TaskListSerializer.delete_task_list_by_id(task_id=task_id)

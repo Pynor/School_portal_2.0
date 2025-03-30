@@ -1,4 +1,5 @@
 from rest_framework import generics, permissions
+from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 
 from .serializers import *
@@ -17,6 +18,8 @@ class StudentsRegisterListAPIView(generics.CreateAPIView):
 
 
 class TeacherLoginAPIView(APIView):
+    permission_classes = [AllowAny]
+
     def post(self, request) -> Response:
         user = TeacherLoginAPIService(student_serializer=StudentSerializer,
                                       user_serializer=UserSerializer,
@@ -26,6 +29,8 @@ class TeacherLoginAPIView(APIView):
 
 
 class StudentLoginAPIView(APIView):
+    permission_classes = [AllowAny]
+
     def post(self, request) -> Response:
         user = StudentLoginAPIService(student_serializer=StudentSerializer,
                                       user_serializer=UserSerializer,
