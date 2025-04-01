@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, useState } from 'react';
+import React, { SyntheticEvent, useEffect, useRef, useState } from 'react';
 import { Navigate } from "react-router-dom";
 
 import { getCookie } from '../../../functions';
@@ -7,10 +7,11 @@ import { BASE_URL } from '../../../constants';
 import '../CSS/form-signing.css';
 import './../../../App.css';
 
-
 const RegisterTeacher = () => {
     // ### Assigning technical variables/Назначение технических переменных ###
     const [message, setMessage] = useState<React.ReactNode>(null);
+    const errorTimeoutRef = useRef<NodeJS.Timeout>();
+    const messageTimeoutRef = useRef<NodeJS.Timeout>();
     const [redirect, setRedirect] = useState(false);
     const [loading, setLoading] = useState(false);
     const csrftoken = getCookie('csrftoken');
@@ -23,10 +24,8 @@ const RegisterTeacher = () => {
     const [username, setUserName] = useState('');
     const [password, setPassword] = useState('');
 
-
     // ### Logging upon successful registration/Вход в систему после успешной регистрации ###
     const login = async () => {
-
         // Send request/Отправка запроса:
         const postResponse = await fetch(`${BASE_URL}/user_app/v1/api-teacher-login/`, {
             method: 'POST',
@@ -50,43 +49,77 @@ const RegisterTeacher = () => {
         }
     };
 
-
     // ### Sending a registration request/Отправка запроса на регистрацию ###
     const register = async (e: SyntheticEvent) => {
         e.preventDefault();
-        setLoading(true); 
+        setLoading(true);
 
-        // Send request/Отправка запроса:
-        const postResponse = await fetch(`${BASE_URL}/user_app/api/v1/api-teacher-register/`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'X-CSRFToken': csrftoken
-            },
-            credentials: 'include',
-            body: JSON.stringify({
-                user: {
-                    password,
-                    username,
-                    last_name,
-                    first_name
+        try {
+            const postResponse = await fetch(`${BASE_URL}/user_app/v1/api-teacher-register/`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
                 },
-                secret_key
-            })
-        });
+                credentials: 'include',
+                body: JSON.stringify({
+                    user: {
+                        password,
+                        username,
+                        last_name,
+                        first_name
+                    },
+                    secret_key
+                })
+            });
 
-        setLoading(false);
+            setLoading(false);
 
-        // Response processing/Обработка ответа:
-        if (postResponse.ok) {
-            setMessage(<h2 className="success-message">Вы успешно зарегистрировались.</h2>);
-            await login();
-        } else {
-            const data = await postResponse.json();
-            setError(data.username ? data.username[0] : data.detail || 'Ошибка регистрации');
+            if (postResponse.ok) {
+                // Показываем сообщение об успехе
+                setMessage(
+                    <div className="message-animation">
+                        <h2 style={{ marginBottom: "30px" }} className="success-message">
+                            Вы успешно зарегистрировались. Выполняется вход...
+                        </h2>
+                    </div>
+                );
+
+                // Ждем 3 секунды перед входом
+                messageTimeoutRef.current = setTimeout(async () => {
+                    await login();
+                    // Плавно скрываем сообщение
+                    setMessage(null);
+                }, 3000);
+            } else {
+                const data = await postResponse.json();
+                setError(data.username ? data.username[0] : data.detail || 'Ошибка регистрации');
+                
+                // Hide error after 5 seconds/Скрытие ошибки через 5 секунд
+                errorTimeoutRef.current = setTimeout(() => {
+                    setError('');
+                }, 5000);
+            }
+        } catch (err) {
+            setLoading(false);
+            setError('Ошибка сети при регистрации');
+            errorTimeoutRef.current = setTimeout(() => {
+                setError('');
+            }, 5000);
         }
     };
 
+    // Cleanup effect/Очистка эффектов
+    useEffect(() => {
+        return () => {
+            if (errorTimeoutRef.current) {
+                clearTimeout(errorTimeoutRef.current);
+            }
+            if (messageTimeoutRef.current) {
+                clearTimeout(messageTimeoutRef.current);
+            }
+        };
+    }, []);
 
     // ### Rendering HTMLElement/Отрисовка HTMLElement ###
     if (redirect) {

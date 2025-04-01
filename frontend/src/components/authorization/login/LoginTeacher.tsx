@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, useState } from 'react';
+import React, { SyntheticEvent, useEffect, useRef, useState } from 'react';
 import { Navigate } from "react-router-dom";
 
 import { getCookie } from '../../../functions';
@@ -10,6 +10,7 @@ import './../../../App.css';
 
 const LoginTeacher = () => {
     // ### Assigning variables/Назначение переменных ###
+    const errorTimeoutRef = useRef<NodeJS.Timeout>();
     const [redirect, setRedirect] = useState(false);
     const csrftoken = getCookie('csrftoken');
 
@@ -22,6 +23,11 @@ const LoginTeacher = () => {
     // ### Working with server/Работа с сервером ###
     const login = async (e: SyntheticEvent) => {
         e.preventDefault();
+
+        // Clear previous timeout if exists/Очистка предыдущего таймера
+        if (errorTimeoutRef.current) {
+            clearTimeout(errorTimeoutRef.current);
+        }
 
         // Send request/Отправка запроса:
         const postResponse = await fetch(`${BASE_URL}/user_app/v1/api-teacher-login/`, {
@@ -52,8 +58,22 @@ const LoginTeacher = () => {
             } else {
                 setError(data.detail);
             }
+
+            // Hide error after 5 seconds/Скрытие ошибки через 5 секунд
+            errorTimeoutRef.current = setTimeout(() => {
+                setError('');
+            }, 5000);
         }
     }
+
+    // Cleanup effect/Очистка эффектов
+        useEffect(() => {
+            return () => {
+                if (errorTimeoutRef.current) {
+                    clearTimeout(errorTimeoutRef.current);
+                }
+            };
+        }, []);
 
 
     // ### Rendering HTMLElement/Отрисовка HTMLElement ###
@@ -69,7 +89,7 @@ const LoginTeacher = () => {
                     <h1 className="h1">Авторизация</h1>
 
                     {/* Displaying message/Отображение сообщения */}
-                    {error && <h3 className="error-message">{error}</h3>}
+                    {error && <h3 style={{ marginBottom: "30px" }} className="error-message">{error}</h3>}
 
                     {/* Input fields/Поля ввода */}
                     <div className="form-group">

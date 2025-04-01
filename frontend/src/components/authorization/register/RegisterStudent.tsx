@@ -7,11 +7,17 @@ import '../CSS/form-signing.css';
 import './../../../App.css';
 
 const RegisterStudents = (props: { userData: UserData }) => {
-  // ### State and refs ###
-  const [message, setMessage] = useState<{ text: string; className: 'success-message' | 'error-message' } | null>(null);
+  // ### Assigning variables/Назначение переменных ###
+  const [message, setMessage] = useState<{
+    text: string;
+    className: 'success-message' | 'error-message';
+    visible: boolean;
+  } | null>(null);
+
   const [studentsData, setStudentsData] = useState<StudentForRegister[]>([]);
   const messageRef = useRef<HTMLDivElement | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const messageTimeoutRef = useRef<NodeJS.Timeout>();
   const csrftoken = getCookie('csrftoken');
 
   const [isIndividualClassInput, setIsIndividualClassInput] = useState(false);
@@ -21,12 +27,31 @@ const RegisterStudents = (props: { userData: UserData }) => {
   const [schoolClass, setSchoolClass] = useState('');
   const [numStudents, setNumStudents] = useState(0);
 
-  // ### Effects ###
+
+  // ### Working with message/Работа с сообщениями ###
+  const showMessage = (text: string, type: 'success' | 'error') => {
+
+    if (messageTimeoutRef.current) {
+      clearTimeout(messageTimeoutRef.current);
+    }
+
+    setMessage({
+      text,
+      className: type === 'success' ? 'success-message' : 'error-message',
+      visible: true
+    });
+
+    messageTimeoutRef.current = setTimeout(() => {
+      setMessage(prev => prev ? { ...prev, visible: false } : null);
+      setTimeout(() => setMessage(null), 500);
+    }, 4000);
+  };
+  
+
+  // ### Effects/Эффекты ###
   useEffect(() => {
     if (message && messageRef.current) {
       messageRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      const timer = setTimeout(() => setMessage(null), 4000);
-      return () => clearTimeout(timer);
     }
   }, [message]);
 
@@ -40,7 +65,16 @@ const RegisterStudents = (props: { userData: UserData }) => {
     }
   }, [schoolClass, isIndividualClassInput]);
 
-  // ### Handlers ###
+  useEffect(() => {
+    return () => {
+      if (messageTimeoutRef.current) {
+        clearTimeout(messageTimeoutRef.current);
+      }
+    };
+  }, []);
+
+
+  // ### Processing of input data/Обработка вводных данных ###
   const toggleClassMode = () => {
     const newMode = !useCommonClass;
     setUseCommonClass(newMode);
@@ -95,15 +129,21 @@ const RegisterStudents = (props: { userData: UserData }) => {
     setNumStudents(studentEntries.length);
   };
 
-  // ### API Call ###
+  // ### Working with server/Работа с сервером ###
   const registerStudents = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!schoolClass && useCommonClass) {
-      setMessage({ text: 'Пожалуйста, выберите класс.', className: 'error-message' });
+      showMessage('Пожалуйста, выберите класс.', 'error');
       return;
     }
 
+    if (studentsData.length === 0) {
+      showMessage('Добавьте хотя бы одного ученика для регистрации.', 'error');
+      return;
+    }
+
+    // Send request/Отправка запроса:
     try {
       const postResponse = await fetch(`${BASE_URL}/user_app/v1/api-student-register/`, {
         method: 'POST',
@@ -115,21 +155,27 @@ const RegisterStudents = (props: { userData: UserData }) => {
         body: JSON.stringify(studentsData),
       });
 
+      // Response processing/Обработка ответа:
       if (postResponse.ok) {
-        setMessage({ text: 'Ученики успешно зарегистрированы.', className: 'success-message' });
+        showMessage('Ученики успешно зарегистрированы!', 'success');
         setStudentsData([]);
         setStudentsInput('');
         setNumStudents(0);
       } else {
         const responseData = await postResponse.json();
-        setMessage({ text: `Ошибка: ${responseData.error || 'неизвестная ошибка'}`, className: 'error-message' });
+        const errorMsg = responseData.error ||
+          (responseData.detail ? responseData.detail : 'Неизвестная ошибка');
+        showMessage(`Ошибка регистрации: ${errorMsg}`, 'error');
       }
     } catch (error) {
-      setMessage({ text: 'Ошибка сети или сервера', className: 'error-message' });
+      showMessage('Ошибка сети при отправке данных', 'error');
+      console.error('Registration error:', error);
     }
   };
 
-  // ### Render ###
+
+  // ### Rendering HTMLElement/Отрисовка HTMLElement ###
+
   if (!props.userData.is_staff) {
     return (
       <div className="form-container">
@@ -141,10 +187,13 @@ const RegisterStudents = (props: { userData: UserData }) => {
   return (
     <div className="form-wrapper">
       <div className="form-container card" ref={containerRef}>
-        {/* Message display */}
+        {/* Displaying message/Отображение сообщения */}
         {message && (
-          <div ref={messageRef} className={`message ${message.className}`}>
-            <p>{message.text}</p>
+          <div
+            ref={messageRef}
+            className={`message ${message.className} ${message.visible ? 'visible' : 'hidden'}`}
+          >
+            <h3>{message.text}</h3>
           </div>
         )}
 
@@ -200,6 +249,7 @@ const RegisterStudents = (props: { userData: UserData }) => {
         )}
 
         {isBulkInput ? (
+          /* General filling form/Общая форма заполнения */
           <div className="bulk-input-container">
             <div className="form-group">
               <label>
@@ -238,6 +288,7 @@ const RegisterStudents = (props: { userData: UserData }) => {
             )}
           </div>
         ) : (
+          /* Separate filling forms/Отдельные формы для заполнения */
           <>
             <div className="form-group">
               <label>Количество учеников</label>
@@ -297,6 +348,7 @@ const RegisterStudents = (props: { userData: UserData }) => {
           </>
         )}
 
+        {/* Send button/Кнопка отправки */}
         <button
           className="btn btn-submit"
           onClick={registerStudents}

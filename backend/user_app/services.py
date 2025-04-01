@@ -73,7 +73,7 @@ class TeacherRegisterAPIService:
                 .first()
 
             if not secret_key_obj:
-                raise serializers.ValidationError("Недействительный или уже использованный секретный ключ")
+                raise serializers.ValidationError({"detail": "Недействительный или уже использованный секретный ключ"})
 
             teacher = Teacher.objects.create(
                 user=User.objects.create_user(
@@ -172,7 +172,7 @@ class BaseLoginAPIService(UserAPIService):
             user_data = self.get_user_and_password()
 
             if not user_data or "user" not in user_data or "password" not in user_data:
-                raise AuthenticationFailed("Недопустимый формат учетных данных")
+                raise AuthenticationFailed({"detail": "Недопустимый формат учетных данных"})
 
             user = user_data["user"]
 

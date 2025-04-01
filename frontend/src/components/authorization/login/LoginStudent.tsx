@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, useState } from 'react';
+import React, { SyntheticEvent, useEffect, useRef, useState } from 'react';
 import { Navigate } from "react-router-dom";
 
 import { BASE_URL, CLASSES } from '../../../constants';
@@ -10,6 +10,7 @@ import './../../../App.css';
 
 const LoginStudent = () => {
     // ### Assigning variables/Назначение переменных ###
+    const errorTimeoutRef = useRef<NodeJS.Timeout>();
     const [redirect, setRedirect] = useState(false);
     const csrftoken = getCookie('csrftoken');
     const [error, setError] = useState('');
@@ -20,10 +21,14 @@ const LoginStudent = () => {
     const [last_name, setLastName] = useState('');
     const [password, setPassword] = useState('');
 
-
     // ### Working with server/Работа с сервером ###
     const login = async (e: SyntheticEvent) => {
         e.preventDefault();
+
+        // Clear previous timeout if exists/Очистка предыдущего таймера
+        if (errorTimeoutRef.current) {
+            clearTimeout(errorTimeoutRef.current);
+        }
 
         // Send request/Отправка запроса:
         const postResponse = await fetch(`${BASE_URL}/user_app/v1/api-student-login/`, {
@@ -44,11 +49,9 @@ const LoginStudent = () => {
         // Response processing/Обработка ответа:
         if (postResponse.ok) {
             setRedirect(true);
-
             setTimeout(() => {
                 window.location.reload();
             }, 500);
-
         } else {
             const data = await postResponse.json();
             if (data && data.username) {
@@ -56,9 +59,22 @@ const LoginStudent = () => {
             } else {
                 setError(data.detail);
             }
+
+            // Hide error after 5 seconds/Скрытие ошибки через 5 секунд
+            errorTimeoutRef.current = setTimeout(() => {
+                setError('');
+            }, 5000);
         }
     }
 
+    // Cleanup effect/Очистка эффектов
+    useEffect(() => {
+        return () => {
+            if (errorTimeoutRef.current) {
+                clearTimeout(errorTimeoutRef.current);
+            }
+        };
+    }, []);
 
     // ### Rendering HTMLElement/Отрисовка HTMLElement ###
     if (redirect) {
@@ -73,7 +89,7 @@ const LoginStudent = () => {
                     <h1 className="h1">Авторизация</h1>
 
                     {/* Displaying message/Отображение сообщения */}
-                    {error && <h3 className="error-message">{error}</h3>}
+                    {error && <h3 style={{ marginBottom: "30px" }} className="error-message">{error}</h3>}
 
                     {/* Input fields/Поля ввода */}
                     <div className="form-group">
