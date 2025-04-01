@@ -54,6 +54,7 @@ const CheckAnswersHub: React.FC<{ userData: UserData }> = ({ userData }) => {
                         <form onSubmit={getTasks}>
                             <select
                                 className='form-control'
+                                style={{width: "100%"}}
                                 id='task_for'
                                 name='task_for'
                                 value={school_class}

@@ -182,7 +182,7 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
                   </div>
 
                   <div className="form-group">
-                    <select className="form-control" style={{ marginBottom: '20px' }} id="task_for" name="task_for" value={formData.task_for} onChange={handleChange} required>
+                    <select className="form-control" style={{ marginBottom: '20px', width: "100%" }} id="task_for" name="task_for" value={formData.task_for} onChange={handleChange} required>
                       <option value="">Выберите класс</option>
                       {CLASSES.map((option) => (
                         <option key={option} value={option}>
