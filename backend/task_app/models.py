@@ -1,6 +1,6 @@
 from django.core.validators import FileExtensionValidator
-from django.utils import timezone
 from django.db import models, transaction
+from django.utils import timezone
 
 from user_app.models import SchoolClass, User
 
@@ -17,33 +17,32 @@ class ArchivedManager(models.Manager):
 
 class Task(models.Model):
     CONDITION_CHOICES = (
-        ("None", "Without additional tasks"),
-        ("Photo", "Take a picture of the answer")
+        ("Photo", "Take a picture of the answer"),
+        ("None", "Without additional tasks")
     )
 
-    is_archived = models.BooleanField(default=False, verbose_name="Archived")
-    archived_at = models.DateTimeField(null=True, blank=True, verbose_name="Archived at")
-
-    answer_to_the_task = models.CharField(verbose_name="Answer to task")
-    sequence_number = models.IntegerField(verbose_name="Sequence number")
-    title = models.CharField(max_length=30, unique=True, verbose_name="Title to task")
-    description = models.TextField(max_length=300, null=True, verbose_name="Description")
-    link_to_article = models.URLField(null=True, blank=True, verbose_name="Link to article")
-
-    task_list = models.ForeignKey("TaskList", related_name="tasks", verbose_name="List tasks",
-                                  on_delete=models.CASCADE)
-    additional_condition = models.CharField(max_length=255, null=True, verbose_name="Additional condition",
-                                            choices=CONDITION_CHOICES)
-
-    docx_file = models.FileField(upload_to="tasks_media/docx/",
-                                 null=True, blank=True, verbose_name="DOCX file",
-                                 validators=[FileExtensionValidator(allowed_extensions=["docx"])])
+    video_file = models.FileField(upload_to="tasks_media/video/", null=True, blank=True, verbose_name="Video file",
+                                  validators=[FileExtensionValidator(allowed_extensions=["mp4", "MPG", "mkv", "mov"])])
 
     photo_file = models.ImageField(upload_to="tasks_media/images/", null=True, blank=True, verbose_name="Photo file")
 
-    video_file = models.FileField(upload_to="tasks_media/video/",
-                                  null=True, blank=True, verbose_name="Video file",
-                                  validators=[FileExtensionValidator(allowed_extensions=["mp4", "MPG", "mkv", "mov"])])
+    docx_file = models.FileField(upload_to="tasks_media/docx/",null=True, blank=True, verbose_name="DOCX file",
+                                 validators=[FileExtensionValidator(allowed_extensions=["docx"])])
+
+    additional_condition = models.CharField(max_length=255, null=True, verbose_name="Additional condition",
+                                            choices=CONDITION_CHOICES)
+
+    task_list = models.ForeignKey("TaskList", related_name="tasks", verbose_name="List tasks",
+                                  on_delete=models.CASCADE)
+
+    archived_at = models.DateTimeField(null=True, blank=True, verbose_name="Archived at")
+    is_archived = models.BooleanField(default=False, verbose_name="Archived")
+
+    link_to_article = models.URLField(null=True, blank=True, verbose_name="Link to article")
+    description = models.TextField(max_length=300, null=True, verbose_name="Description")
+    title = models.CharField(max_length=30, unique=True, verbose_name="Title to task")
+    sequence_number = models.IntegerField(verbose_name="Sequence number")
+    answer_to_the_task = models.CharField(verbose_name="Answer to task")
 
     def __str__(self):
         return f"Task({self.sequence_number}) of ({self.task_list.title}): {self.title}"
@@ -73,6 +72,12 @@ class TaskList(models.Model):
         ("Active", "Active")
     )
 
+    archived_at = models.DateTimeField(null=True, db_index=True, blank=True, verbose_name="Archived at")
+    is_archived = models.BooleanField(default=False, db_index=True, verbose_name="Archived")
+
+    created_at = models.DateTimeField(auto_now_add=True, db_index=True, verbose_name="Created at")
+    updated_at = models.DateTimeField(auto_now=True, verbose_name="Updated at")
+
     task_for = models.ForeignKey(to=SchoolClass, db_index=True, on_delete=models.PROTECT, verbose_name="Task for")
     time_to_tasks = models.DurationField(blank=True, null=True, verbose_name="Time to task")
     title = models.CharField(max_length=255, unique=True, verbose_name="Title task list")
@@ -81,11 +86,6 @@ class TaskList(models.Model):
     status = models.CharField(max_length=20, db_index=True, choices=STATUS_CHOICES,
                               default="Created", verbose_name="Task status")
 
-    archived_at = models.DateTimeField(null=True, db_index=True, blank=True, verbose_name="Archived at")
-    is_archived = models.BooleanField(default=False, db_index=True, verbose_name="Archived")
-
-    created_at = models.DateTimeField(auto_now_add=True, db_index=True, verbose_name="Created at")
-    updated_at = models.DateTimeField(auto_now=True, verbose_name="Updated at")
 
     @transaction.atomic
     def archive(self):
