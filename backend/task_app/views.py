@@ -73,12 +73,20 @@ class StudentAndAnswerListAPIView(APIView):
 
 class TaskListGetAPIView(APIView):
     @swagger_auto_schema(operation_description="Get a list of tasks for a class")
-    def get(self, request, school_class, user_id=None):
+    def get(self, request, school_class, status="active", user_id=None):
         if user_id:
             return TaskListSerializer.get_unfinished_task_list(school_class=school_class, user_id=user_id)
-        return TaskListSerializer.get_all_task_list(school_class=school_class)
+        return TaskListSerializer.get_all_task_list(school_class=school_class, status=status)
+
 
 class TaskListDeleteAPIView(APIView):
     @swagger_auto_schema(operation_description="Delete an issue by task ID")
     def delete(self, request, task_id):
         return TaskListSerializer.delete_task_list_by_id(task_id=task_id)
+
+
+class TaskListArchivedAPIView(APIView):
+    @swagger_auto_schema(operation_description="Archived an issue by task ID")
+    def delete(self, request, task_id):
+        return TaskListSerializer.archived_task_list_by_id(task_id=task_id)
+

@@ -69,8 +69,8 @@ class TaskListSerializer(serializers.ModelSerializer):
         read_only_fields = ("count_task",)
 
     @staticmethod
-    def get_all_task_list(school_class: str) -> Response:
-        task_lists = TaskListAPIService.get_all_task_list(school_class=school_class)
+    def get_all_task_list(school_class: str, status: str) -> Response:
+        task_lists = TaskListAPIService.get_all_task_list(school_class=school_class, status=status)
         task_list_serializers = [TaskListSerializer(task_list).data for task_list in task_lists]
 
         return Response({"task_list": task_list_serializers}, status=200)
@@ -88,3 +88,7 @@ class TaskListSerializer(serializers.ModelSerializer):
     @staticmethod
     def delete_task_list_by_id(task_id):
         return TaskListAPIService.delete_task_list_by_id(task_id=task_id)
+
+    @staticmethod
+    def archived_task_list_by_id(task_id):
+        return TaskListAPIService.archived_task_list_by_id(task_id=task_id)
