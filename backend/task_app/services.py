@@ -1,3 +1,4 @@
+from django.db import transaction, IntegrityError
 from django.db.models import Prefetch, Q
 from rest_framework import status
 
@@ -11,26 +12,50 @@ from .models import Task, TaskList, Answer, AnswerList
 class TaskListAPIService:
     @staticmethod
     def create_task_list(validated_data: dict) -> TaskList:
-        time_to_tasks = validated_data.pop("time_to_tasks")
-        task_for_title = validated_data.pop("task_for")
-        tasks_data = validated_data.pop("tasks")
-        title = validated_data.pop("title")
+        try:
+            with transaction.atomic():
+                tasks_data = validated_data.pop("tasks")
+                task_for_title = validated_data.pop("task_for")
 
-        task_for = SchoolClass.objects.get(title=task_for_title)
+                task_for_id = (
+                    SchoolClass.objects
+                    .filter(title=task_for_title)
+                    .values_list('id', flat=True)
+                    .first()
+                )
+                if not task_for_id:
+                    raise ValidationError({"detail": "Такого класса не существует."})
 
-        task_list = TaskList.objects.create(time_to_tasks=time_to_tasks,
-                                            count_task=len(tasks_data),
-                                            task_for=task_for,
-                                            title=title)
+                task_list = TaskList.all_objects.select_related('task_for').create(
+                    task_for_id=task_for_id,
+                    time_to_tasks=validated_data.pop("time_to_tasks"),
+                    title=validated_data.pop("title"),
+                    count_task=len(tasks_data)
+                )
 
-        tasks_to_create = [Task(task_list=task_list, **task_data) for task_data in tasks_data]
-        Task.objects.bulk_create(tasks_to_create)
+                if tasks_data:
+                    Task.objects.bulk_create([
+                        Task(task_list_id=task_list.id, **task_data)
+                        for task_data in tasks_data
+                    ])
 
-        return task_list
+                return task_list
+
+        except IntegrityError as e:
+            if 'task_app_tasklist_title_key' in str(e):
+                raise ValidationError({"detail": "Название списка задач уже существует"})
+            raise
 
     @staticmethod
     def get_all_task_list(school_class: str, status: str) -> list[TaskList]:
-        task_list = TaskList.all_objects.select_related('task_for').filter(task_for__title=school_class)
+
+        if status == "active":
+            task_list = TaskList.objects.select_related('task_for').filter(task_for__title=school_class)
+        elif status == "archive":
+            task_list = TaskList.archived_objects.select_related('task_for').filter(task_for__title=school_class)
+        elif status == "all":
+            task_list = TaskList.all_objects.select_related('task_for').filter(task_for__title=school_class)
+
         return task_list
 
     @staticmethod
@@ -42,22 +67,29 @@ class TaskListAPIService:
 
     @staticmethod
     def delete_task_list_by_id(task_id: int) -> Response:
-        deleted_count, _ = TaskList.objects.filter(id=task_id).delete()
+        deleted_count, _ = TaskList.all_objects.filter(id=task_id).delete()
 
         if deleted_count == 0:
             return Response({"detail": "Задачи не существует."}, status=status.HTTP_404_NOT_FOUND)
 
         return Response(status=status.HTTP_204_NO_CONTENT)
-
 
     @staticmethod
     def archived_task_list_by_id(task_id: int) -> Response:
-        deleted_count, _ = TaskList.objects.select_for_update(id=task_id)
+        try:
+            task_list = TaskList.objects.get(pk=task_id)
+        except TaskList.DoesNotExist:
+            return Response(
+                {"detail": "Задачи не существует."},
+                status=status.HTTP_404_NOT_FOUND
+            )
 
-        if deleted_count == 0:
-            return Response({"detail": "Задачи не существует."}, status=status.HTTP_404_NOT_FOUND)
+        task_list.archive()
 
-        return Response(status=status.HTTP_204_NO_CONTENT)
+        return Response(
+            {"detail": "Задача успешно архивирована."},
+            status=status.HTTP_200_OK
+        )
 
 
 class AnswerListAPIService:

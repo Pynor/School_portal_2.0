@@ -1,5 +1,6 @@
 from rest_framework.response import Response
 from rest_framework import serializers
+from rest_framework import status as sts
 
 from .services import AnswerListAPIService, TaskListAPIService
 from .models import Answer, AnswerList, Task, TaskList
@@ -70,16 +71,17 @@ class TaskListSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_all_task_list(school_class: str, status: str) -> Response:
-        task_lists = TaskListAPIService.get_all_task_list(school_class=school_class, status=status)
+        task_lists = TaskListAPIService.get_all_task_list(
+            school_class=school_class,
+            status=status
+        )
         task_list_serializers = [TaskListSerializer(task_list).data for task_list in task_lists]
-
         return Response({"task_list": task_list_serializers}, status=200)
 
     @staticmethod
     def get_unfinished_task_list(school_class: str, user_id: int) -> Response:
         task_lists = TaskListAPIService.get_unfinished_task_list(school_class=school_class, user_id=user_id)
         task_list_serializers = [TaskListSerializer(task_list).data for task_list in task_lists]
-
         return Response({"task_list": task_list_serializers}, status=200)
 
     def create(self, validated_data: dict[str]) -> TaskList:

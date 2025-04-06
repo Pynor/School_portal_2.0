@@ -64,6 +64,7 @@ class TaskList(models.Model):
         indexes = [
             models.Index(fields=['task_for', 'is_archived']),
             models.Index(fields=['status', 'is_archived']),
+            models.Index(fields=['title', 'is_archived']),
         ]
         ordering = ['-created_at']
 

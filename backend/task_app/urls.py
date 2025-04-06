@@ -11,7 +11,7 @@ urlpatterns = [
     path("v1/api-task-list-create/", TaskListCreateAPIView.as_view(), name='task-list-create'),
 
     re_path(
-        r'^v1/api-task-list-get/(?P<school_class>[^/]+)(?:/(?P<user_id>\d+))?(?:/(?P<status>(?:active|archive|all))?$',
+        r'^v1/api-task-list-get/(?P<school_class>[\w-]+)(?:/(?P<user_id>\d+))?(?:/(?P<status>(?:active|archive|all))?)/$',
         TaskListGetAPIView.as_view(),
         name='task-list-get'
     ),

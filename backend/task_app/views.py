@@ -87,6 +87,6 @@ class TaskListDeleteAPIView(APIView):
 
 class TaskListArchivedAPIView(APIView):
     @swagger_auto_schema(operation_description="Archived an issue by task ID")
-    def delete(self, request, task_id):
+    def put(self, request, task_id):
         return TaskListSerializer.archived_task_list_by_id(task_id=task_id)
 
