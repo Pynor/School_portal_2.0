@@ -2,9 +2,9 @@ from rest_framework import generics, permissions
 from rest_framework.permissions import AllowAny
 from rest_framework.views import APIView
 
+from .permissions import IsTeacher
 from .serializers import *
 from .services import *
-from .models import *
 
 
 class TeacherRegisterAPIView(generics.CreateAPIView):
@@ -14,7 +14,7 @@ class TeacherRegisterAPIView(generics.CreateAPIView):
 
 class StudentsRegisterListAPIView(generics.CreateAPIView):
     serializer_class = StudentsRegisterListAPISerializer
-    permission_classes = [permissions.AllowAny]
+    permission_classes = [IsTeacher]
 
 
 class TeacherLoginAPIView(APIView):

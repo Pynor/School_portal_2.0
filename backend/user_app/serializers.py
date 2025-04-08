@@ -5,8 +5,8 @@ from .models import Teacher, Student, SchoolClass, User
 
 
 class StudentSerializer(serializers.ModelSerializer):
-    last_name = serializers.CharField(max_length=40, source="user.last_name")
     first_name = serializers.CharField(max_length=40, source="user.first_name")
+    last_name = serializers.CharField(max_length=40, source="user.last_name")
     school_class = serializers.CharField(max_length=3)
 
     class Meta:
@@ -58,4 +58,4 @@ class SchoolClassSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = SchoolClass
-        fields = ["id", "slug", "title"]
+        fields = ["title", "slug", "id"]

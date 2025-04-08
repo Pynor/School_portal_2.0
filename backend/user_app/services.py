@@ -1,19 +1,17 @@
 from __future__ import annotations
 
-import secrets
-
-from rest_framework import serializers
-from rest_framework.exceptions import AuthenticationFailed, ValidationError
+from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.response import Response
+from rest_framework import serializers
 
-from django.contrib.auth.hashers import make_password, identify_hasher
+from django.contrib.auth.hashers import make_password
 from django.db import transaction, IntegrityError
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import login
 
+from typing_extensions import Any
 import datetime
 import jwt
-from typing_extensions import Any
 
 from .models import TeacherSecretKey, SchoolClass, Student, Teacher, User
 
@@ -42,14 +40,10 @@ class UserAPIService:
         user = get_object_or_404(User, id=payload["id"])
 
         if user.is_staff:
-            serializer = self.user_serializer(user)
-            return Response(serializer.data, status=200)
+            return Response(self.user_serializer(user).data, status=200)
 
-        student = get_object_or_404(Student, user=user)
-        student_serializer = self.student_serializer(student)
-        user_serializer = self.user_serializer(user)
-
-        return Response({**user_serializer.data, "student": student_serializer.data}, status=200)
+        student_serializer = self.student_serializer(get_object_or_404(Student, user=user))
+        return Response({**self.user_serializer(user).data, "student": student_serializer.data}, status=200)
 
 
 class UserLogoutAPIService(UserAPIService):
@@ -64,12 +58,11 @@ class TeacherRegisterAPIService:
 
     @staticmethod
     def create_teacher(validated_data: dict) -> Teacher:
-        secret_key_value = validated_data.get("secret_key")
         user_data = validated_data.pop("user")
 
         with transaction.atomic():
             secret_key_obj = TeacherSecretKey.objects.select_for_update() \
-                .filter(key=secret_key_value, logged=False) \
+                .filter(key=validated_data.get("secret_key"), logged=False) \
                 .first()
 
             if not secret_key_obj:
@@ -154,11 +147,10 @@ class StudentsRegisterListAPIService:
 
         students_data = []
         for i, user in enumerate(users):
-            class_title = validated_data[i]["school_class"]
             students_data.append(Student(
-                user=user,
-                school_class=school_classes[class_title],
-                authorized=False
+                school_class=school_classes[validated_data[i]["school_class"]],
+                authorized=False,
+                user=user
             ))
 
         return Student.objects.bulk_create(students_data, batch_size=500)
@@ -206,9 +198,9 @@ class BaseLoginAPIService(UserAPIService):
     def get_payload(self, user) -> dict:
         now = datetime.datetime.utcnow()
         return {
-            "id": user.id,
-            "is_staff": self.is_staff_user(user),
             "exp": now + datetime.timedelta(minutes=self.TOKEN_EXPIRE_MINUTES),
+            "is_staff": self.is_staff_user(user),
+            "id": user.id,
             "iat": now
         }
 
@@ -241,8 +233,8 @@ class TeacherLoginAPIService(BaseLoginAPIService):
 
 class StudentLoginAPIService(BaseLoginAPIService):
     def get_user_and_password(self) -> dict[str, Any]:
-        data = self.request.data
         required_fields = ["first_name", "last_name", "school_class", "password"]
+        data = self.request.data
 
         if not all(field in data for field in required_fields):
             return {"user": None, "password": None}

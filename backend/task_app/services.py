@@ -1,9 +1,9 @@
 from django.db import transaction, IntegrityError
 from django.db.models import Prefetch, Q
-from rest_framework import status
 
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
+from rest_framework import status
 
 from user_app.models import SchoolClass, Student, User
 from .models import Task, TaskList, Answer, AnswerList
@@ -15,22 +15,22 @@ class TaskListAPIService:
         try:
             with transaction.atomic():
                 tasks_data = validated_data.pop("tasks")
-                task_for_title = validated_data.pop("task_for")
 
                 task_for_id = (
                     SchoolClass.objects
-                    .filter(title=task_for_title)
+                    .filter(title=validated_data.pop("task_for"))
                     .values_list('id', flat=True)
                     .first()
                 )
+
                 if not task_for_id:
                     raise ValidationError({"detail": "Такого класса не существует."})
 
                 task_list = TaskList.all_objects.select_related('task_for').create(
-                    task_for_id=task_for_id,
                     time_to_tasks=validated_data.pop("time_to_tasks"),
                     title=validated_data.pop("title"),
-                    count_task=len(tasks_data)
+                    count_task=len(tasks_data),
+                    task_for_id=task_for_id,
                 )
 
                 if tasks_data:
@@ -118,7 +118,6 @@ class AnswerListAPIService:
     def get_students_answers_and_tasks_by_task_list(kwargs: dict, student_serializer,
                                                     answer_serializer, task_serializer) -> Response:
 
-        task_list_id = kwargs["task_list_id"]
         school_class = SchoolClass.objects.prefetch_related(
             Prefetch('student_set', queryset=Student.objects.select_related('user'))
         ).get(title=kwargs["school_class"])
@@ -126,8 +125,8 @@ class AnswerListAPIService:
         students = school_class.student_set.all()
 
         answers = Answer.objects.filter(
-            answer_list__task_list=task_list_id,
-            answer_list__user__in=students.values_list('user', flat=True)
+            answer_list__user__in=students.values_list('user', flat=True),
+            answer_list__task_list=kwargs["task_list_id"]
         ).select_related("task")
 
         answers_dict = {}
@@ -144,10 +143,10 @@ class AnswerListAPIService:
             serialized_answers = answer_serializer(student_answers, many=True).data
             tasks_and_answers = [
                 {
-                    "answer": serialized_answers[i],
-                    "execution_time_answer": student_answers[i].answer_list.execution_time_answer,
                     "task": task_serializer(instance=student_answers[i].task,
-                                            context={'include_answer': True}).data if student_answers[i].task else None
+                                            context={'include_answer': True}).data if student_answers[i].task else None,
+                    "execution_time_answer": student_answers[i].answer_list.execution_time_answer,
+                    "answer": serialized_answers[i]
                 }
                 for i in range(len(student_answers))
             ]

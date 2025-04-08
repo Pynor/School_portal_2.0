@@ -1,12 +1,11 @@
 from rest_framework.response import Response
 from rest_framework import serializers
-from rest_framework import status as sts
+
 
 from .services import AnswerListAPIService, TaskListAPIService
 from .models import Answer, AnswerList, Task, TaskList
 
 from user_app.serializers import StudentSerializer
-from user_app.models import SchoolClass, Student
 
 
 class AnswerSerializer(serializers.ModelSerializer):
@@ -51,8 +50,8 @@ class TaskSerializer(serializers.ModelSerializer):
         }
 
     def to_representation(self, instance):
-        representation = super().to_representation(instance)
         include_answer = self.context.get('include_answer', False)
+        representation = super().to_representation(instance)
 
         if not include_answer:
             representation.pop("answer_to_the_task", None)
@@ -61,8 +60,8 @@ class TaskSerializer(serializers.ModelSerializer):
 
 
 class TaskListSerializer(serializers.ModelSerializer):
-    tasks = TaskSerializer(many=True)
     task_for = serializers.CharField()
+    tasks = TaskSerializer(many=True)
 
     class Meta:
         model = TaskList
@@ -75,6 +74,7 @@ class TaskListSerializer(serializers.ModelSerializer):
             school_class=school_class,
             status=status
         )
+
         task_list_serializers = [TaskListSerializer(task_list).data for task_list in task_lists]
         return Response({"task_list": task_list_serializers}, status=200)
 
