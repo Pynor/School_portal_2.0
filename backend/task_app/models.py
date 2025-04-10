@@ -2,8 +2,7 @@ from django.core.validators import FileExtensionValidator
 from django.db import models, transaction
 from django.utils import timezone
 
-from user_app.models import SchoolSubject, SchoolClass, User
-from backend.user_app.models import Teacher
+from user_app.models import SchoolSubject, SchoolClass, Teacher, User
 
 
 class ActiveManager(models.Manager):
