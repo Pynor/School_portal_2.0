@@ -12,6 +12,13 @@ export type UserData = {
   id: number;
 };
 
+export type MessageType = 'success' | 'error' | 'info' | 'warning';
+export interface Message {
+    content: React.ReactNode;
+    type: MessageType;
+    duration?: number;
+}
+
 export type StudentForRegister = {
   school_class: string;
   first_name: string;
