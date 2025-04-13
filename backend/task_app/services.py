@@ -28,21 +28,23 @@ class TaskListAPIService:
 
                 task_list = TaskList.all_objects.select_related('task_for').create(
                     time_to_tasks=validated_data.pop("time_to_tasks"),
+                    subject=validated_data.pop("subject_id"),
+                    creator=validated_data.pop("creator_id"),
                     title=validated_data.pop("title"),
                     count_task=len(tasks_data),
-                    task_for_id=task_for_id,
+                    task_for=task_for_id,
                 )
 
                 if tasks_data:
                     Task.objects.bulk_create([
-                        Task(task_list_id=task_list.id, **task_data)
+                        Task(task_list=task_list.id, **task_data)
                         for task_data in tasks_data
                     ])
 
                 return task_list
 
         except IntegrityError as e:
-            if 'task_app_tasklist_title_key' in str(e):
+            if "task_app_tasklist_title_key" in str(e):
                 raise ValidationError({"detail": "Название списка задач уже существует"})
             raise
 

@@ -88,12 +88,7 @@ class SchoolClass(models.Model):
 
 class SchoolSubject(models.Model):
     teachers = models.ManyToManyField(Teacher, related_name="subjects", blank=True, verbose_name="Assigned Teachers")
-    title = models.CharField(max_length=3, validators=[
-        RegexValidator(
-            regex=r'^\d{1,2}[A-Я]$',
-            message="Class must be in format '10A'"
-        )
-    ], db_index=True, verbose_name="Subject")
+    title = models.CharField(max_length=50, db_index=True, verbose_name="Subject")
 
     def __str__(self):
         return self.title

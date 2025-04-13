@@ -80,7 +80,7 @@ class TaskList(models.Model):
     updated_at = models.DateTimeField(auto_now=True, verbose_name="Updated at")
 
     task_for = models.ForeignKey(to=SchoolClass, db_index=True, on_delete=models.PROTECT, verbose_name="Task for")
-    creator = models.ForeignKey(to=Teacher, db_index=True, on_delete=models.PROTECT, verbose_name="Creator")
+    creator = models.ForeignKey(to=Teacher, db_index=True, on_delete=models.CASCADE, verbose_name="Creator")
     time_to_tasks = models.DurationField(blank=True, null=True, verbose_name="Time to task")
     title = models.CharField(max_length=255, unique=True, verbose_name="Title task list")
     count_task = models.PositiveIntegerField(verbose_name="Count task")
