@@ -65,7 +65,7 @@ class TaskListSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = TaskList
-        fields = ("time_to_tasks", "count_task", "task_for", "title",  "tasks", "id")
+        fields = ("time_to_tasks", "count_task", "task_for", "creator", "subject", "title",  "tasks", "id")
         read_only_fields = ("count_task",)
 
     @staticmethod

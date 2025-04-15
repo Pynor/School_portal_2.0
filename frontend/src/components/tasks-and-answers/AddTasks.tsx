@@ -2,11 +2,10 @@ import React, { useEffect, useState, useRef } from 'react';
 
 import { TaskListForAddTasks, UserData, Task } from '../../types';
 import { useMessageHandler, getCookie } from '../../functions';
-import { BASE_URL, CLASSES } from '../../constants';
+import { BASE_URL, SUBJECTS, CLASSES } from '../../constants';
 
 import './CSS/add-task.css';
 import '../../App.css';
-
 
 
 const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
@@ -27,12 +26,14 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
   const initialFormData: TaskListForAddTasks = {
     tasks: [{ sequence_number: 1, ...emptyTask }],
     time_to_tasks: '',
+    subject_id: '',
     count_task: 1,
     task_for: '',
     title: ''
   };
 
   const [formData, setFormData] = useState<TaskListForAddTasks>(initialFormData);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
 
   // ### Working with message/Работа с сообщениями ###
@@ -42,7 +43,7 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
     }
   }, []);
 
-  
+
   // ### Processing of input data/Обработка вводных данных ###
 
   // Processing changes in the number of tasks/Обработка изменения количества задач:
@@ -75,7 +76,7 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
         type: 'error',
         duration: 4000
       });
-      return; 
+      return;
     }
     setFormData((prevFormData) => {
       const updatedTasks = [...prevFormData.tasks];
@@ -92,6 +93,10 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
       updatedTasks[index] = { ...updatedTasks[index], [fileType]: file };
       return { ...prevFormData, tasks: updatedTasks };
     });
+  };
+
+  const validateTimeFormat = (time: string) => {
+    return /^([0-5]?\d):([0-5]?\d)$/.test(time);
   };
 
   // Adding a new task to the task array/Добавление новой задачи в массив задач:
@@ -112,9 +117,30 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
     e.preventDefault();
     clearMessage();
 
+    if (!validateTimeFormat(formData.time_to_tasks)) {
+      showMessage({
+        content: 'Введите время в формате ММ:СС (например, 30:00)',
+        type: 'error',
+        duration: 4000
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
+    if (!formData.subject_id || !formData.task_for) {
+      showMessage({
+        content: 'Пожалуйста, выберите класс и предмет',
+        type: 'error',
+        duration: 4000
+      });
+      setIsSubmitting(false);
+      return;
+    }
+
     const formToSend = new FormData();
     formToSend.append('title', formData.title);
     formToSend.append('task_for', formData.task_for);
+    formToSend.append('subject', formData.subject_id);
     formToSend.append('count_task', formData.count_task.toString());
     formToSend.append('time_to_tasks', formData.time_to_tasks.toString());
 
@@ -141,7 +167,7 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
         credentials: 'include',
         body: formToSend,
       });
-      
+
       // Response processing/Обработка ответа:
       if (postResponse.ok) {
         showMessage({
@@ -186,15 +212,45 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
                   {/* Field for entering general test information/Поле для ввода общей информации теста */}
 
                   <div className="form-group">
-                    <input className="form-control" style={{ width: '91.9%' }} type="text" name="title" placeholder="Название теста" value={formData.title} onChange={handleChange} required />
+                    <input className="form-control"
+                      placeholder="Название теста"
+                      style={{ width: '91.9%' }}
+                      type="text" name="title"
+                      onChange={handleChange}
+                      value={formData.title}
+                      required />
                   </div>
 
                   <div className="form-group">
-                    <select className="form-control" style={{ marginBottom: '20px', width: "100%" }} id="task_for" name="task_for" value={formData.task_for} onChange={handleChange} required>
+                    <select className="form-control"
+                      style={{ width: "100%" }}
+                      id="task_for" name="task_for"
+                      value={formData.task_for}
+                      onChange={handleChange}
+                      required
+                    >
+
                       <option value="">Выберите класс</option>
                       {CLASSES.map((option) => (
                         <option key={option} value={option}>
                           {option}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="form-group">
+                    <select className="form-control"
+                    style={{ marginBottom: '20px', width: "100%" }}
+                      value={formData.subject_id}
+                      onChange={handleChange}
+                      name="subject_id"
+                      required
+                    >
+                      <option value="">Выберите предмет</option>
+                      {SUBJECTS.map((subject) => (
+                        <option key={subject.id} value={subject.id}>
+                          {subject.name}
                         </option>
                       ))}
                     </select>
@@ -218,15 +274,15 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
                   </div>
 
                 </div>
-                
+
                 {/* Button for adding tasks/Кнопка добавления задач */}
                 <button className="btn-primary" type="button" onClick={addTask}>
                   Добавить задачу
                 </button>
-                
+
               </div>
             </div>
-            
+
             {/* Формы добавления задач */}
             {formData.tasks.map((task, index) => (
               <div key={index}>
@@ -285,7 +341,7 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
                 </div>
               </div>
             ))}
-            
+
             {/* Send button/Кнопка отправки */}
             <button className="btn-primary" type="submit">
               Создать тест

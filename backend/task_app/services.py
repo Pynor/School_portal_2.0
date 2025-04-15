@@ -5,7 +5,7 @@ from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
 from rest_framework import status
 
-from user_app.models import SchoolClass, Student, User
+from user_app.models import SchoolSubject, SchoolClass, Student, User
 from .models import Task, TaskList, Answer, AnswerList
 
 
@@ -14,22 +14,22 @@ class TaskListAPIService:
     def create_task_list(validated_data: dict) -> TaskList:
         try:
             with transaction.atomic():
+                print(validated_data)
                 tasks_data = validated_data.pop("tasks")
-
                 task_for_id = (
                     SchoolClass.objects
                     .filter(title=validated_data.pop("task_for"))
-                    .values_list('id', flat=True)
                     .first()
                 )
 
                 if not task_for_id:
                     raise ValidationError({"detail": "Такого класса не существует."})
 
+
                 task_list = TaskList.all_objects.select_related('task_for').create(
                     time_to_tasks=validated_data.pop("time_to_tasks"),
-                    subject=validated_data.pop("subject_id"),
-                    creator=validated_data.pop("creator_id"),
+                    creator=validated_data.pop("creator"),
+                    subject=validated_data.pop("subject"),
                     title=validated_data.pop("title"),
                     count_task=len(tasks_data),
                     task_for=task_for_id,
@@ -37,7 +37,7 @@ class TaskListAPIService:
 
                 if tasks_data:
                     Task.objects.bulk_create([
-                        Task(task_list=task_list.id, **task_data)
+                        Task(task_list=task_list, **task_data)
                         for task_data in tasks_data
                     ])
 

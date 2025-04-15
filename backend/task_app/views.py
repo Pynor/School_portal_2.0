@@ -42,7 +42,6 @@ class TaskListCreateAPIView(generics.CreateAPIView):
     def create(self, request, *args, **kwargs):
         tasks_data = []
         i = 0
-
         while f"tasks[{i}][title]" in request.data:
             task_data = {key: request.data.get(f"tasks[{i}][{key}]") for key in [
                 "additional_condition",
@@ -61,13 +60,13 @@ class TaskListCreateAPIView(generics.CreateAPIView):
         request._full_data = {
             "time_to_tasks": request.data.get("time_to_tasks"),
             "count_task": request.data.get("count_task"),
-            "subject_id": request.data.get("subject_id"),
-            "creator_id": self.request.user.teacher.id,
             "task_for": request.data.get("task_for"),
+            "subject": request.data.get("subject"),
+            "creator": self.request.user.teacher.id,
             "title": request.data.get("title"),
             "tasks": tasks_data
         }
-
+        print(request.data)
         return super().create(request, *args, **kwargs)
 
 
