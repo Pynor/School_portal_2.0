@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Link } from "react-router-dom";
 
-import { getCookie } from '../../functions';
+import { useMessageHandler, getCookie } from '../../functions';
 import { BASE_URL } from '../../constants';
 import { UserData } from '../../types';
 
@@ -10,14 +10,14 @@ import './CSS/nav.css'
 
 const Nav = (props: { userData: UserData, setName: (name: string) => void }) => {
   // ### Assigning variables/Назначение переменных ###
-  const [message, setMessage] = useState<React.ReactNode>(null);
-  const [showMessage, setShowMessage] = useState(false);
+  const { showMessage, MessageComponent, clearMessage, currentMessage } = useMessageHandler();
 
   const csrftoken = getCookie('csrftoken');
 
 
   // ### Working with server/Работа с сервером ###
   const logout = async () => {
+    clearMessage()
     try {
       // Send request/Отправка запроса:
       const postResponse = await fetch(`${BASE_URL}/user_app/v1/api-user-logout/`, {
@@ -32,20 +32,25 @@ const Nav = (props: { userData: UserData, setName: (name: string) => void }) => 
       // Response processing/Обработка ответа:
       if (postResponse.ok) {
         props.setName('');
-        setShowMessage(true);
-        setMessage(<h2 className="success-message">Вы успешно вышли.</h2>);
+        showMessage({
+          content: 'Вы успешно вышли',
+          type: 'success',
+          duration: 1000
+        });
+        setTimeout(() => window.location.reload(), 1000);
       } else {
-        setShowMessage(true);
-        setMessage(<h2 className="error-message">Ошибка при выходе.</h2>);
+        showMessage({
+          content: 'Ошибка при выходе из системы',
+          type: 'error',
+          duration: 3000
+        });
       }
-
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000);
-
     } catch (error) {
-      setShowMessage(true);
-      setMessage(<h2 className="error-message">Ошибка при выходе.</h2>);
+      showMessage({
+        content: 'Ошибка соединения с сервером',
+        type: 'error',
+        duration: 3000
+      });
     }
   };
 
@@ -93,10 +98,10 @@ const Nav = (props: { userData: UserData, setName: (name: string) => void }) => 
       </div>
 
       {/* Displaying message/Отображение сообщения */}
-      {message && (
+      {currentMessage && (
         <div className="nav-container">
           <div className="form-container">
-            {showMessage && message}
+            <MessageComponent />
           </div>
         </div>
       )}

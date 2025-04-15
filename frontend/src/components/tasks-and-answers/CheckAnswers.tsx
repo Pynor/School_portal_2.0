@@ -2,7 +2,7 @@ import { useParams, Navigate, Link } from 'react-router-dom';
 import React, { useEffect, useState, useRef } from 'react';
 
 import { StudentAndAnswerForCheckAnswers, SortCriteria, UserData } from '../../types';
-import { getCookie } from '../../functions';
+import { useMessageHandler, getCookie } from '../../functions';
 import { BASE_URL } from '../../constants';
 
 import Modal from './ModalWindows';
@@ -14,11 +14,11 @@ import '../../App.css';
 const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
     // ### Assigning variables/Назначение переменных ###
     const criteriaOptions: SortCriteria[] = ['correct', 'alphabet', 'time', 'photo'];
+    const [redirectMessage, setRedirectMessage] = useState<React.ReactNode>(null);
+    const { showMessage, MessageComponent, clearMessage } = useMessageHandler();
     const [sortCriteria, setSortCriteria] = useState<SortCriteria>('correct');
     const [data, setData] = useState<StudentAndAnswerForCheckAnswers[]>();
-    const [redirectMessage, setRedirectMessage] = useState<React.ReactNode>(null);
     const [isModalOpen, setIsModalOpen] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
     const [searchTerm, setSearchTerm] = useState('');
     const { schoolClass, taskListId } = useParams();
     const [redirect, setRedirect] = useState(false);
@@ -48,11 +48,19 @@ const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
                     const responseData = await getResponse.json();
                     setData(responseData);
                 } else {
-                    setErrorMessage('Произошла ошибка при получении задачи.');
+                    showMessage({
+                        content: 'Произошла ошибка при получении задачи.',
+                        type: 'error',
+                        duration: 3000
+                    });
                 }
 
             } catch (error) {
-                setErrorMessage('Произошла ошибка.');
+                showMessage({
+                    content: 'Произошла ошибка.',
+                    type: 'error',
+                    duration: 3000
+                });
             }
         };
 
@@ -62,6 +70,7 @@ const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
 
     // ### Sending a DELETE request/Отправка DELETE запроса ###
     const deleteTaskList = async () => {
+        clearMessage();
         try {
             // Send request/Отправка запроса:
             const postResponse = await fetch(`${BASE_URL}/task_app/v1/api-task-list-delete/${taskListId}`, {
@@ -78,11 +87,19 @@ const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
                 setRedirectMessage(<h2 className="success-message">Тест завершен.</h2>);
                 setTimeout(() => setRedirect(true), 1000);
             } else {
-                setErrorMessage('Произошла ошибка при завершении теста.')
+                showMessage({
+                    content: 'Произошла ошибка при завершении теста.',
+                    type: 'error',
+                    duration: 3000
+                });
             }
 
         } catch (error) {
-            setErrorMessage('Произошла ошибка.')
+            showMessage({
+                content: 'Произошла ошибка.',
+                type: 'error',
+                duration: 3000
+            });
         }
     };
 
@@ -200,8 +217,7 @@ const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
 
                                 {/* Основное содержимое */}
                                 <div>
-                                    {errorMessage && <h2 className='error-message'>{errorMessage}</h2>}
-
+                                    <MessageComponent />
                                     <div className='students-container'>
                                         {filteredData().length === 0 ? (
                                             <h2 className='student-container'>Таких учеников нет</h2>

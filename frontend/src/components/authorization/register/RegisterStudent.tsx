@@ -1,23 +1,17 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { StudentForRegister, UserData } from '../../../types';
 import { BASE_URL, CLASSES } from '../../../constants';
-import { getCookie } from '../../../functions';
+import { useMessageHandler, getCookie } from '../../../functions';
 
 import '../CSS/form-signing.css';
 import './../../../App.css';
 
 const RegisterStudents = (props: { userData: UserData }) => {
   // ### Assigning variables/Назначение переменных ###
-  const [message, setMessage] = useState<{
-    text: string;
-    className: 'success-message' | 'error-message';
-    visible: boolean;
-  } | null>(null);
+  const { MessageComponent, showMessage, clearMessage, currentMessage } = useMessageHandler();
 
   const [studentsData, setStudentsData] = useState<StudentForRegister[]>([]);
-  const messageRef = useRef<HTMLDivElement | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const messageTimeoutRef = useRef<NodeJS.Timeout>();
   const csrftoken = getCookie('csrftoken');
 
   const [isIndividualClassInput, setIsIndividualClassInput] = useState(false);
@@ -26,35 +20,9 @@ const RegisterStudents = (props: { userData: UserData }) => {
   const [isBulkInput, setIsBulkInput] = useState(false);
   const [schoolClass, setSchoolClass] = useState('');
   const [numStudents, setNumStudents] = useState(0);
-
-
-  // ### Working with message/Работа с сообщениями ###
-  const showMessage = (text: string, type: 'success' | 'error') => {
-
-    if (messageTimeoutRef.current) {
-      clearTimeout(messageTimeoutRef.current);
-    }
-
-    setMessage({
-      text,
-      className: type === 'success' ? 'success-message' : 'error-message',
-      visible: true
-    });
-
-    messageTimeoutRef.current = setTimeout(() => {
-      setMessage(prev => prev ? { ...prev, visible: false } : null);
-      setTimeout(() => setMessage(null), 500);
-    }, 4000);
-  };
   
 
   // ### Effects/Эффекты ###
-  useEffect(() => {
-    if (message && messageRef.current) {
-      messageRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  }, [message]);
-
   useEffect(() => {
     if (!isIndividualClassInput && schoolClass) {
       setStudentsData(prevData =>
@@ -64,14 +32,6 @@ const RegisterStudents = (props: { userData: UserData }) => {
         })));
     }
   }, [schoolClass, isIndividualClassInput]);
-
-  useEffect(() => {
-    return () => {
-      if (messageTimeoutRef.current) {
-        clearTimeout(messageTimeoutRef.current);
-      }
-    };
-  }, []);
 
 
   // ### Processing of input data/Обработка вводных данных ###
@@ -130,16 +90,25 @@ const RegisterStudents = (props: { userData: UserData }) => {
   };
 
   // ### Working with server/Работа с сервером ###
-  const registerStudents = async (e: React.FormEvent) => {
+const registerStudents = async (e: React.FormEvent) => {
     e.preventDefault();
+    clearMessage();
 
     if (!schoolClass && useCommonClass) {
-      showMessage('Пожалуйста, выберите класс.', 'error');
+      showMessage({
+        content: 'Пожалуйста, выберите класс.',
+        type: 'error',
+        duration: 3000
+      });
       return;
     }
 
     if (studentsData.length === 0) {
-      showMessage('Добавьте хотя бы одного ученика для регистрации.', 'error');
+      showMessage({
+        content: 'Добавьте хотя бы одного ученика для регистрации.',
+        type: 'error',
+        duration: 3000
+      });
       return;
     }
 
@@ -157,7 +126,11 @@ const RegisterStudents = (props: { userData: UserData }) => {
 
       // Response processing/Обработка ответа:
       if (postResponse.ok) {
-        showMessage('Ученики успешно зарегистрированы!', 'success');
+        showMessage({
+          content: 'Ученики успешно зарегистрированы!',
+          type: 'success',
+          duration: 3000
+        });
         setStudentsData([]);
         setStudentsInput('');
         setNumStudents(0);
@@ -165,10 +138,18 @@ const RegisterStudents = (props: { userData: UserData }) => {
         const responseData = await postResponse.json();
         const errorMsg = responseData.error ||
           (responseData.detail ? responseData.detail : 'Неизвестная ошибка');
-        showMessage(`Ошибка регистрации: ${errorMsg}`, 'error');
+        showMessage({
+          content: `Ошибка регистрации: ${errorMsg}`,
+          type: 'error',
+          duration: 5000
+        });
       }
     } catch (error) {
-      showMessage('Ошибка сети при отправке данных', 'error');
+      showMessage({
+        content: 'Ошибка сети при отправке данных',
+        type: 'error',
+        duration: 5000
+      });
       console.error('Registration error:', error);
     }
   };
@@ -188,12 +169,9 @@ const RegisterStudents = (props: { userData: UserData }) => {
     <div className="form-wrapper">
       <div className="form-container card" ref={containerRef}>
         {/* Displaying message/Отображение сообщения */}
-        {message && (
-          <div
-            ref={messageRef}
-            className={`message ${message.className} ${message.visible ? 'visible' : 'hidden'}`}
-          >
-            <h3>{message.text}</h3>
+        {currentMessage && (
+          <div className="message-container">
+            <MessageComponent />
           </div>
         )}
 

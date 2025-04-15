@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useRef } from 'react';
 
 import { TaskListForAddTasks, UserData, Task } from '../../types';
+import { useMessageHandler, getCookie } from '../../functions';
 import { BASE_URL, CLASSES } from '../../constants';
-import { getCookie } from '../../functions';
 
 import './CSS/add-task.css';
 import '../../App.css';
@@ -11,7 +11,7 @@ import '../../App.css';
 
 const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
   // ### Assigning variables/Назначение переменных ###
-  const [message, setMessage] = useState<{ text: string; className: 'success-message' | 'error-message' } | null>(null);
+  const { showMessage, MessageComponent, clearMessage } = useMessageHandler();
   const messageRef = useRef<HTMLDivElement | null>(null);
   const csrftoken = getCookie('csrftoken');
 
@@ -37,17 +37,10 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
 
   // ### Working with message/Работа с сообщениями ###
   useEffect(() => {
-    if (message) {
-      // Scrolling to a message/Прокрутка к сообщению:
-      if (messageRef.current) {
-        messageRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      }
-  
-      // Setting a timer to hide a message/Установка таймера для скрытия сообщения:
-      const timer = setTimeout(() => setMessage(null), 4000);
-      return () => clearTimeout(timer);
+    if (messageRef.current) {
+      messageRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-  }, [message]);
+  }, []);
 
   
   // ### Processing of input data/Обработка вводных данных ###
@@ -77,7 +70,11 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
     const { name, value } = e.target;
 
     if (name === 'title' && value.length > 30) {
-      setMessage({ text: 'Название задачи не должно превышать 30 символов.', className: 'error-message' });
+      showMessage({
+        content: 'Название задачи не должно превышать 30 символов.',
+        type: 'error',
+        duration: 4000
+      });
       return; 
     }
     setFormData((prevFormData) => {
@@ -113,6 +110,7 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
   // ### Generation data for POST request/Формирование данных для POST запроса ###
   const addTasks = async (e: React.FormEvent) => {
     e.preventDefault();
+    clearMessage();
 
     const formToSend = new FormData();
     formToSend.append('title', formData.title);
@@ -146,15 +144,27 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
       
       // Response processing/Обработка ответа:
       if (postResponse.ok) {
-        setMessage({ text: 'Задача создана.', className: 'success-message' });
+        showMessage({
+          content: 'Задача создана.',
+          type: 'success',
+          duration: 4000
+        });
         setFormData(initialFormData);
       } else {
         const errorData = await postResponse.json();
         const errorMessage = errorData.title ? errorData.title.join(', ') : 'Неизвестная ошибка';
-        setMessage({ text: `Произошла ошибка при создании задачи: ${errorMessage}`, className: 'error-message' });
+        showMessage({
+          content: `Произошла ошибка при создании задачи: ${errorMessage}`,
+          type: 'error',
+          duration: 4000
+        });
       }
     } catch (error) {
-      setMessage({ text: 'Произошла ошибка при отправке данных.', className: 'error-message' });
+      showMessage({
+        content: 'Произошла ошибка при отправке данных.',
+        type: 'error',
+        duration: 4000
+      });
     }
   };
 
@@ -164,11 +174,9 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
     <div className="form-tasks-and-answers">
       <nav className="form-container">
         {/* Displaying message/Отображение сообщения */}
-        {message && (
-          <div ref={messageRef} className={message.className}>
-            <h2>{message.text}</h2>
-          </div>
-        )}
+        <div ref={messageRef}>
+          <MessageComponent />
+        </div>
         {userData.is_staff ? ( // Checking rights/Проверка прав.
           <form onSubmit={addTasks}>
             <div className="form-group">

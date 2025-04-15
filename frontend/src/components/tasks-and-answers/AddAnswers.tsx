@@ -2,7 +2,7 @@ import { Navigate, useParams } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 
 import { UserData, TaskList, AnswerList } from "../../types";
-import { getCookie, setCookie } from '../../functions';
+import { useMessageHandler, getCookie, setCookie } from '../../functions';
 import { BASE_URL } from '../../constants';
 
 import Modal from "./ModalWindows";
@@ -13,7 +13,7 @@ import '../../App.css';
 
 const AddAnswers: React.FC<{ tasksListData: TaskList; userData: UserData }> = ({ tasksListData, userData }) => {
   // ### Assigning variables/Назначение переменных ###
-  const [message, setMessage] = useState<React.ReactNode>(null);
+  const { showMessage, MessageComponent, clearMessage } = useMessageHandler();
   const { taskListId } = useParams<{ taskListId: string }>();
   const taskListIdNumber = parseInt(taskListId as string, 10);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -168,24 +168,32 @@ const AddAnswers: React.FC<{ tasksListData: TaskList; userData: UserData }> = ({
     // Response processing/Обработка ответа:
     if (postResponse.ok) {
       setCookie(`completedTask(${taskList.id})`, 'true', 0, 'Strict', true);
-      setMessage(<h2 className="success-message">Ответ получен.</h2>);
+      showMessage({
+        content: 'Ответ успешно отправлен!',
+        type: 'success',
+        duration: 3000
+      });
 
       localStorage.removeItem(`timeLeft_${taskList.id}`);
       localStorage.removeItem(`answers_${taskList.id}`);
 
-      setTimeout(() => setRedirect(true), 1000);
-
+      setTimeout(() => setRedirect(true), 3000);
     } else {
       const responseData = await postResponse.json();
-      setMessage(<h2 className="error-message">{responseData.details || 'Произошла ошибка при получении ответа.'}</h2>);
+      showMessage({
+        content: responseData.details || 'Произошла ошибка при отправке ответа',
+        type: 'error',
+        duration: 5000
+      });
     }
-  };
+  }
 
 
   // Processing Submit/Обработка Submit:
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     postResponse();
+    clearMessage();
   };
 
 
@@ -199,9 +207,7 @@ const AddAnswers: React.FC<{ tasksListData: TaskList; userData: UserData }> = ({
           <h2 style={{ textAlign: 'center', color: getTimeColor() }}>
             Оставшееся время: {new Date(timeLeft * 1000).toISOString().substr(11, 8)}
           </h2>
-
-          {message && <>{message}</>}
-
+          <MessageComponent />
           {isTaskListValid && taskList.tasks.map(task => (
             <div key={task.id} className="form-container no-select">
 

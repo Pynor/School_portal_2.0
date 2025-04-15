@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 
+import { useMessageHandler } from '../../functions';
 import { BASE_URL, CLASSES } from '../../constants';
 import { Task, UserData } from '../../types';
 
@@ -9,12 +10,10 @@ import '../../App.css';
 
 const CheckAnswersHub: React.FC<{ userData: UserData }> = ({ userData }) => {
     // ### Assigning variables/Назначение переменных ###
+    const { showMessage, MessageComponent, clearMessage } = useMessageHandler();
     const [data, setData] = useState<{ task_list: Task[] }>({ task_list: [] });
     const [getTasksCompleted, setGetTasksCompleted] = useState(false);
-    const [errorMessage, setErrorMessage] = useState('');
     const [school_class, setSchoolClass] = useState('');
-    const messageTimeoutRef = useRef<NodeJS.Timeout>();
-    const errorTimeoutRef = useRef<NodeJS.Timeout>();
     const [status, setStatus] = useState('active'); 
 
     // Statuses/Статусы
@@ -28,9 +27,15 @@ const CheckAnswersHub: React.FC<{ userData: UserData }> = ({ userData }) => {
     // ### Sending a GET request/Отправка GET запроса ###
     const getTasks = async (e: React.FormEvent) => {
         e.preventDefault();
+        clearMessage();
 
         if (!school_class) {
-            setErrorMessage('Пожалуйста, выберите класс');
+
+            showMessage({
+                content: 'Пожалуйста, выберите класс',
+                type: 'error',
+                duration: 3000
+            });
             return;
         }
 
@@ -54,27 +59,19 @@ const CheckAnswersHub: React.FC<{ userData: UserData }> = ({ userData }) => {
                 const responseData = await getResponse.json();
                 setData(responseData);
                 setGetTasksCompleted(true);
-                setErrorMessage('');
             } else {
                 throw new Error('Произошла ошибка при загрузке задач');
             }
         } catch (error) {
-            setErrorMessage('Произошла неизвестная ошибка');
+            showMessage({
+                content: 'Произошла неизвестная ошибка',
+                type: 'error',
+                duration: 3000
+            });
             setGetTasksCompleted(false);
         }
     };
 
-    // Cleanup effect/Очистка эффектов
-    useEffect(() => {
-        return () => {
-            if (errorTimeoutRef.current) {
-                clearTimeout(errorTimeoutRef.current);
-            }
-            if (messageTimeoutRef.current) {
-                clearTimeout(messageTimeoutRef.current);
-            }
-        };
-    }, []);
 
     // ### Rendering HTMLElement/Отрисовка HTMLElement ###
     return (
@@ -82,8 +79,7 @@ const CheckAnswersHub: React.FC<{ userData: UserData }> = ({ userData }) => {
             <div className='form-container'>
                 {userData.is_staff ? (
                     <>
-                        {errorMessage && <h2 className='error-message'>{errorMessage}</h2>}
-
+                        <MessageComponent />
                         <form onSubmit={getTasks}>
                             <select
                                 onChange={(e) => setSchoolClass(e.target.value)}
