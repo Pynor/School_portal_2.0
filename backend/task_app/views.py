@@ -61,12 +61,12 @@ class TaskListCreateAPIView(generics.CreateAPIView):
             "time_to_tasks": request.data.get("time_to_tasks"),
             "count_task": request.data.get("count_task"),
             "task_for": request.data.get("task_for"),
-            "subject": request.data.get("subject"),
             "creator": self.request.user.teacher.id,
+            "subject": request.data.get("subject"),
             "title": request.data.get("title"),
             "tasks": tasks_data
         }
-        print(request.data)
+
         return super().create(request, *args, **kwargs)
 
 
@@ -107,4 +107,3 @@ class TaskListArchivedAPIView(APIView):
     @swagger_auto_schema(operation_description="Archived an issue by task ID")
     def put(self, request, task_id):
         return TaskListSerializer.archived_task_list_by_id(task_id=task_id)
-

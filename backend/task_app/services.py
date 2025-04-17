@@ -14,7 +14,6 @@ class TaskListAPIService:
     def create_task_list(validated_data: dict) -> TaskList:
         try:
             with transaction.atomic():
-                print(validated_data)
                 tasks_data = validated_data.pop("tasks")
                 task_for_id = (
                     SchoolClass.objects
@@ -26,7 +25,7 @@ class TaskListAPIService:
                     raise ValidationError({"detail": "Такого класса не существует."})
 
 
-                task_list = TaskList.all_objects.select_related('task_for').create(
+                task_list = TaskList.objects.select_related('task_for').create(
                     time_to_tasks=validated_data.pop("time_to_tasks"),
                     creator=validated_data.pop("creator"),
                     subject=validated_data.pop("subject"),
@@ -49,7 +48,7 @@ class TaskListAPIService:
             raise
 
     @staticmethod
-    def get_all_task_list(school_class: str, status: str) -> list[TaskList]:
+    def get_task_list(school_class: str, status: str) -> list[TaskList]:
 
         if status == "active":
             task_list = TaskList.objects.select_related('task_for').filter(task_for__title=school_class)

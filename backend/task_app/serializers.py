@@ -70,7 +70,7 @@ class TaskListSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_all_task_list(school_class: str, status: str) -> Response:
-        task_lists = TaskListAPIService.get_all_task_list(
+        task_lists = TaskListAPIService.get_task_list(
             school_class=school_class,
             status=status
         )
