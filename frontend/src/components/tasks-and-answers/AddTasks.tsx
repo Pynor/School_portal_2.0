@@ -1,12 +1,9 @@
 import React, { useEffect, useState, useRef } from 'react';
-
 import { TaskListForAddTasks, UserData, Task } from '../../types';
 import { useMessageHandler, getCookie } from '../../functions';
 import { BASE_URL, SUBJECTS, CLASSES } from '../../constants';
-
 import './CSS/add-task.css';
 import '../../App.css';
-
 
 const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
   // ### Assigning variables/Назначение переменных ###
@@ -33,16 +30,7 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
   };
 
   const [formData, setFormData] = useState<TaskListForAddTasks>(initialFormData);
-  const [isSubmitting, setIsSubmitting] = useState(false);
-
-
-  // ### Working with message/Работа с сообщениями ###
-  useEffect(() => {
-    if (messageRef.current) {
-      messageRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    }
-  }, []);
-
+  const [activeTab, setActiveTab] = useState<number>(0);
 
   // ### Processing of input data/Обработка вводных данных ###
 
@@ -109,6 +97,7 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
         tasks: [...prevFormData.tasks, newTask],
       };
     });
+    setActiveTab(formData.count_task);
   };
 
 
@@ -123,7 +112,9 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
         type: 'error',
         duration: 4000
       });
-      setIsSubmitting(false);
+      if (messageRef.current) {
+        messageRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
       return;
     }
 
@@ -133,10 +124,13 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
         type: 'error',
         duration: 4000
       });
-      setIsSubmitting(false);
+      if (messageRef.current) {
+        messageRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
       return;
     }
 
+    // Data collection/Сборка данных
     const formToSend = new FormData();
     formToSend.append('title', formData.title);
     formToSend.append('task_for', formData.task_for);
@@ -176,6 +170,10 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
           duration: 4000
         });
         setFormData(initialFormData);
+
+        if (messageRef.current) {
+          messageRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
       } else {
         const errorData = await postResponse.json();
         const errorMessage = errorData.title ? errorData.title.join(', ') : 'Неизвестная ошибка';
@@ -184,6 +182,10 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
           type: 'error',
           duration: 4000
         });
+
+        if (messageRef.current) {
+          messageRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        }
       }
     } catch (error) {
       showMessage({
@@ -191,164 +193,271 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
         type: 'error',
         duration: 4000
       });
+
+      if (messageRef.current) {
+        messageRef.current.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
     }
   };
 
 
   // ### Rendering HTMLElement/Отрисовка HTMLElement ###
   return (
-    <div className="form-tasks-and-answers">
-      <nav className="form-container">
-        {/* Displaying message/Отображение сообщения */}
-        <div ref={messageRef}>
-          <MessageComponent />
-        </div>
-        {userData.is_staff ? ( // Checking rights/Проверка прав.
-          <form onSubmit={addTasks}>
-            <div className="form-group">
-              <div className="form-container">
-                <div className="form-group">
+    <div className="form-container-wrapper">
+      {userData.is_staff ? ( // Checking rights/Проверка прав.
+        <form onSubmit={addTasks} className="task-creation-form">
+          <div ref={messageRef}>
+            <MessageComponent />
+          </div>
+          <div className="form-general-section">
+            <h2 className="form-section-title">Основные параметры теста</h2>
 
-                  {/* Field for entering general test information/Поле для ввода общей информации теста */}
-
-                  <div className="form-group">
-                    <input className="form-control"
-                      placeholder="Название теста"
-                      style={{ width: '91.9%' }}
-                      type="text" name="title"
-                      onChange={handleChange}
-                      value={formData.title}
-                      required />
-                  </div>
-
-                  <div className="form-group">
-                    <select className="form-control"
-                      style={{ width: "100%" }}
-                      id="task_for" name="task_for"
-                      value={formData.task_for}
-                      onChange={handleChange}
-                      required
-                    >
-
-                      <option value="">Выберите класс</option>
-                      {CLASSES.map((option) => (
-                        <option key={option} value={option}>
-                          {option}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className="form-group">
-                    <select className="form-control"
-                    style={{ marginBottom: '20px', width: "100%" }}
-                      value={formData.subject_id}
-                      onChange={handleChange}
-                      name="subject_id"
-                      required
-                    >
-                      <option value="">Выберите предмет</option>
-                      {SUBJECTS.map((subject) => (
-                        <option key={subject.id} value={subject.id}>
-                          {subject.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-
-                  <div className='form-group-time'>
-                    <div className='form-time-div'>Время на выполнение:</div>
-                    <input
-                      className="form-control"
-                      type="text"
-                      name="time_to_tasks"
-                      value={formData.time_to_tasks}
-                      onChange={handleChange}
-                      placeholder="мин:сек"
-                      style={{ width: '31%' }}
-                    />
-                  </div>
-
-                  <div className="form-group">
-                    <input className="form-control" style={{ width: '91.9%' }} type="number" name="count_task" placeholder="Кол-во задач" value={formData.count_task} onChange={handleChange} min={1} required />
-                  </div>
-
-                </div>
-
-                {/* Button for adding tasks/Кнопка добавления задач */}
-                <button className="btn-primary" type="button" onClick={addTask}>
-                  Добавить задачу
-                </button>
-
+            <div className="form-row">
+              <div className="form-group">
+                <label className="form-label">Название теста</label>
+                <input
+                  className="form-input"
+                  type="text"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleChange}
+                  placeholder="Введите название теста"
+                  required
+                />
               </div>
             </div>
 
-            {/* Формы добавления задач */}
-            {formData.tasks.map((task, index) => (
-              <div key={index}>
-                <div className="form-container">
-                  <div className="form-group">
-                    {/* String imput fields/Строчные поля ввода */}
-                    <div className="form-group">
-                      <input className="form-control" type="text" name="title" placeholder="Название задачи" value={task.title} maxLength={30}
-                        onChange={(e) => handleTaskChange(index, e)} required />
+            <div className="form-row">
+              <div className="form-group">
+                <label className="form-label">Класс</label>
+                <select
+                  className="form-select"
+                  name="task_for"
+                  value={formData.task_for}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">Выберите класс</option>
+                  {CLASSES.map((option) => (
+                    <option key={option} value={option}>
+                      {option}
+                    </option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Предмет</label>
+                <select
+                  className="form-select"
+                  name="subject_id"
+                  value={formData.subject_id}
+                  onChange={handleChange}
+                  required
+                >
+                  <option value="">Выберите предмет</option>
+                  {SUBJECTS.map((subject) => (
+                    <option key={subject.id} value={subject.id}>
+                      {subject.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            </div>
+
+            <div className="form-row">
+              <div className="form-group">
+                <label className="form-label">Количество задач</label>
+                <input
+                  className="form-input"
+                  type="number"
+                  name="count_task"
+                  value={formData.count_task}
+                  onChange={handleChange}
+                  min={1}
+                  required
+                />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">Время на выполнение (ММ:СС)</label>
+                <input
+                  className="form-input"
+                  type="text"
+                  name="time_to_tasks"
+                  value={formData.time_to_tasks}
+                  onChange={handleChange}
+                  placeholder="30:00"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+
+          <div className="tasks-tabs">
+            {formData.tasks.map((_, index) => (
+              <button
+                key={index}
+                type="button"
+                className={`tab-button ${activeTab === index ? 'active' : ''}`}
+                onClick={() => setActiveTab(index)}
+              >
+                Задача {index + 1}
+              </button>
+            ))}
+            <button
+              type="button"
+              className="tab-button add-button"
+              onClick={addTask}
+            >
+              + Добавить задачу
+            </button>
+          </div>
+
+          {formData.tasks.map((task, index) => (
+            <div
+              key={index}
+              className={`task-section ${activeTab === index ? 'active' : ''}`}
+            >
+              <h2 className="form-section-title">Задача {index + 1}</h2>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label className="form-label">Название задачи</label>
+                  <input
+                    className="form-input"
+                    type="text"
+                    name="title"
+                    value={task.title}
+                    onChange={(e) => handleTaskChange(index, e)}
+                    placeholder="Введите название задачи"
+                    maxLength={30}
+                    required
+                  />
+                  <span className="char-counter">{task.title.length}/30</span>
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label className="form-label">Описание задачи</label>
+                  <textarea
+                    className="form-textarea"
+                    name="description"
+                    value={task.description}
+                    onChange={(e) => handleTaskChange(index, e)}
+                    placeholder="Введите описание задачи"
+                    required
+                    rows={4}
+                  />
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label className="form-label">Ответ на задачу</label>
+                  <input
+                    className="form-input"
+                    type="text"
+                    name="answer_to_the_task"
+                    value={task.answer_to_the_task}
+                    onChange={(e) => handleTaskChange(index, e)}
+                    placeholder="Введите ответ"
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="form-label">Дополнительное условие</label>
+                  <select
+                    className="form-select"
+                    name="additional_condition"
+                    value={task.additional_condition}
+                    onChange={(e) => handleTaskChange(index, e)}
+                    required
+                  >
+                    <option value="None">Без доп. условий</option>
+                    <option value="Photo">Сделать фото решения</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="form-group">
+                  <label className="form-label">Ссылка на статью (если есть)</label>
+                  <input
+                    className="form-input"
+                    type="url"
+                    name="link_to_article"
+                    value={task.link_to_article}
+                    onChange={(e) => handleTaskChange(index, e)}
+                    placeholder="https://example.com"
+                  />
+                </div>
+              </div>
+
+              <div className="form-row">
+                <div className="file-upload-section">
+                  <h3 className="file-upload-title">Прикрепленные файлы</h3>
+
+                  <div className="file-upload-grid">
+                    <div className="file-upload-group">
+                      <label className="form-label">DOCX файл</label>
+                      <div className="file-input-wrapper">
+                        <input
+                          type="file"
+                          accept=".docx, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                          onChange={(e) => handleFileChange(index, 'docx_file', e)}
+                        />
+                        <span className="file-input-label">
+                          {task.docx_file ? (task.docx_file as File).name : 'Выберите файл'}
+                        </span>
+                      </div>
                     </div>
 
-                    <div className="form-group">
-                      <textarea className="form-control" name="description" value={task.description} placeholder="Описание задачи"
-                        onChange={(e) => handleTaskChange(index, e)} required />
+                    <div className="file-upload-group">
+                      <label className="form-label">Изображение</label>
+                      <div className="file-input-wrapper">
+                        <input
+                          type="file"
+                          accept="image/png, image/jpeg"
+                          onChange={(e) => handleFileChange(index, 'photo_file', e)}
+                        />
+                        <span className="file-input-label">
+                          {task.photo_file ? (task.photo_file as File).name : 'Выберите файл'}
+                        </span>
+                      </div>
                     </div>
 
-                    <div className="form-group">
-                      <input className="form-control" type="text" name="answer_to_the_task" placeholder="Ответ на задачу" value={task.answer_to_the_task}
-                        onChange={(e) => handleTaskChange(index, e)} />
+                    <div className="file-upload-group">
+                      <label className="form-label">Видео</label>
+                      <div className="file-input-wrapper">
+                        <input
+                          type="file"
+                          accept="video/mp4, video/x-m4v, video/*"
+                          onChange={(e) => handleFileChange(index, 'video_file', e)}
+                        />
+                        <span className="file-input-label">
+                          {task.video_file ? (task.video_file as File).name : 'Выберите файл'}
+                        </span>
+                      </div>
                     </div>
-                    <div className="form-group">
-                      <input className="form-control" type="url" name="link_to_article" placeholder="Ссылка на статью" value={task.link_to_article}
-                        onChange={(e) => handleTaskChange(index, e)} />
-                    </div>
-
-                    <div className="form-group">
-                      <select className="form-control" id="additional_condition" name="additional_condition" value={task.additional_condition}
-                        onChange={(e) => handleTaskChange(index, e)} required>
-                        <option value="None">Без доп. условий</option>
-                        <option value="Photo">Сделать фото решения</option>
-                      </select>
-                    </div>
-
-                    {/* File input fields/Файловые поля ввода */}
-                    <h3 className="normal-message">Нежелательно отправлять более 1 файла.</h3>
-
-                    <div className='form-group'>
-                      <div className='form-file-div'>DOCX файл:</div>
-                      <input className="form-control" type="file" name="docx_file" accept=".docx, application/vnd.openxmlformats-officedocument.wordprocessingml.document"
-                        onChange={(e) => handleFileChange(index, 'docx_file', e)} />
-                    </div>
-
-                    <div className='form-group'>
-                      <div className='form-file-div'>Фото файл:</div>
-                      <input className="form-control" type="file" name="photo_file" accept="image/png, image/jpeg"
-                        onChange={(e) => handleFileChange(index, 'photo_file', e)} />
-                    </div>
-
-                    <div className='form-group'>
-                      <div className='form-file-div'>Видео файл:</div>
-                      <input className="form-control" type="file" name="video_file" accept="video/mp4, video/x-m4v, video/*"
-                        onChange={(e) => handleFileChange(index, 'video_file', e)} />
-                    </div>
-
                   </div>
                 </div>
               </div>
-            ))}
+            </div>
+          ))}
 
-            {/* Send button/Кнопка отправки */}
-            <button className="btn-primary" type="submit">
+          <div className="form-submit-section">
+            <button type="submit" className="submit-button">
               Создать тест
             </button>
-
-          </form>) : (<h2 className="error-message">У вас нет на это прав.</h2>)}
-      </nav>
+          </div>
+        </form>
+      ) : (
+        <div className="access-denied-container">
+          <h2 className="error-message">У вас нет на это прав.</h2>
+        </div>
+      )}
     </div>
   );
 };
