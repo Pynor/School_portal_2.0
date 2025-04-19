@@ -275,6 +275,7 @@ const registerStudents = async (e: React.FormEvent) => {
                 type="number"
                 value={numStudents}
                 className="form-input"
+                style={{ width: '92%' }}
                 onChange={(e) => handleNumStudentsChange(parseInt(e.target.value, 10))}
               />
             </div>
