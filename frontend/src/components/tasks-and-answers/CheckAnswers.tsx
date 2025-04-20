@@ -101,6 +101,43 @@ const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
         }
     };
 
+    // ### Sending a DELETE request/Отправка DELETE запроса ###
+    const archiveTaskList = async () => {
+        clearMessage();
+        try {
+            const postResponse = await fetch(`${BASE_URL}/task_app/v1/api-task-list-archived/${taskListId}`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                },
+                credentials: 'include',
+                method: 'PUT'
+            });
+
+            if (postResponse.ok) {
+                setRedirectMessage(
+                    <div className="success-message-container">
+                        <h2 className="success-message">Тест заархивирован</h2>
+                    </div>
+                );
+                setTimeout(() => setRedirect(true), 1500);
+            } else {
+                showMessage({
+                    content: 'Произошла ошибка при фрхивации теста.',
+                    type: 'error',
+                    duration: 3000
+                });
+            }
+
+        } catch (error) {
+            showMessage({
+                content: 'Произошла ошибка.',
+                type: 'error',
+                duration: 3000
+            });
+        }
+    };
+
     // ### Function for sorting data/Функция для сортировки данных ###
     const filteredData = () => {
         if (!data) return [];
@@ -205,15 +242,19 @@ const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
                                                     className={`sort-button ${sortCriteria === criteria ? 'active' : ''}`}
                                                     onClick={() => setSortCriteria(criteria)}>
                                                     {criteria === 'photo' ? 'Фото' :
-                                                     criteria === 'correct' ? 'Правильности' :
-                                                     criteria === 'alphabet' ? 'Алфавиту' : 'Времени'}
+                                                        criteria === 'correct' ? 'Правильности' :
+                                                            criteria === 'alphabet' ? 'Алфавиту' : 'Времени'}
                                                 </button>
                                             ))}
                                         </div>
                                     </div>
 
+                                    <button className='archive-test-button' onClick={archiveTaskList}>
+                                        Архивировать тест
+                                    </button>
+
                                     <button className='finish-test-button' onClick={deleteTaskList}>
-                                        Завершить тест
+                                        Удалить тест
                                     </button>
                                 </div>
 
@@ -282,8 +323,8 @@ const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
                                                                                 <div className={`answer-text ${answer_and_task.answer.answer === answer_and_task.task.answer_to_the_task ? 'correct' : 'incorrect'}`}>
                                                                                     <span>Ответ: {answer_and_task.answer.answer}</span>
                                                                                     <span className="verdict">
-                                                                                        {answer_and_task.answer.answer === answer_and_task.task.answer_to_the_task ? 
-                                                                                        '✓ Верно' : '✗ Неверно'}
+                                                                                        {answer_and_task.answer.answer === answer_and_task.task.answer_to_the_task ?
+                                                                                            '✓ Верно' : '✗ Неверно'}
                                                                                     </span>
                                                                                 </div>
                                                                             ) : (

@@ -131,6 +131,23 @@
   border-color: #2840ad;
 }
 
+.archive-test-button {
+  width: 100%;
+  padding: 10px;
+  background: #08b892;
+  margin-bottom: 15px;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.archive-test-button:hover {
+  background: hsl(167, 92%, 30%);
+}
+
 
 /* End button/Кнопка завершения */
 .finish-test-button {

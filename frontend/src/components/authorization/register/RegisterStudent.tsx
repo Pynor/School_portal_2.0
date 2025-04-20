@@ -20,7 +20,7 @@ const RegisterStudents = (props: { userData: UserData }) => {
   const [isBulkInput, setIsBulkInput] = useState(false);
   const [schoolClass, setSchoolClass] = useState('');
   const [numStudents, setNumStudents] = useState(0);
-  
+
 
   // ### Effects/Эффекты ###
   useEffect(() => {
@@ -90,7 +90,7 @@ const RegisterStudents = (props: { userData: UserData }) => {
   };
 
   // ### Working with server/Работа с сервером ###
-const registerStudents = async (e: React.FormEvent) => {
+  const registerStudents = async (e: React.FormEvent) => {
     e.preventDefault();
     clearMessage();
 
@@ -210,12 +210,13 @@ const registerStudents = async (e: React.FormEvent) => {
         </div>
 
         {useCommonClass && (
-          <div className="form-group" style={{ width: '100%' }}>
+          <div className="form-group">
             <label>Общий класс</label>
             <select
+              onChange={e => setSchoolClass(e.target.value)}
+              style={{ width: '100%' }}
               className="form-select"
               value={schoolClass}
-              onChange={e => setSchoolClass(e.target.value)}
               required
             >
               <option value="">Выберите класс</option>

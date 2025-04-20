@@ -86,6 +86,7 @@ const CheckAnswersHub: React.FC<{ userData: UserData }> = ({ userData }) => {
                                 <select
                                     onChange={(e) => setSchoolClass(e.target.value)}
                                     className='form-control select-input'
+                                    style={{ width: '100%' }}
                                     value={school_class}
                                     name='task_for'
                                     id='task_for'
@@ -104,6 +105,7 @@ const CheckAnswersHub: React.FC<{ userData: UserData }> = ({ userData }) => {
                                 <select
                                     onChange={(e) => setStatus(e.target.value)}
                                     className='form-control select-input'
+                                    style={{ width: '100%' }}
                                     value={status}
                                     name='status'
                                     id='status'
