@@ -210,7 +210,7 @@ const registerStudents = async (e: React.FormEvent) => {
         </div>
 
         {useCommonClass && (
-          <div className="form-group">
+          <div className="form-group" style={{ width: '100%' }}>
             <label>Общий класс</label>
             <select
               className="form-select"

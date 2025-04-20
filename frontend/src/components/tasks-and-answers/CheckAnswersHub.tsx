@@ -80,7 +80,7 @@ const CheckAnswersHub: React.FC<{ userData: UserData }> = ({ userData }) => {
                             <MessageComponent />
                         </div>
 
-                        <form onSubmit={getTasks} style={{ width: '90%' }} className="filter-form">
+                        <form onSubmit={getTasks} style={{ width: '100%' }} className="filter-form">
                             <div className="form-group select-container">
                                 <label htmlFor="task_for" className="select-label">Класс:</label>
                                 <select
