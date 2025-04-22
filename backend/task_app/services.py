@@ -48,14 +48,17 @@ class TaskListAPIService:
             raise
 
     @staticmethod
-    def get_task_list(school_class: str, status: str) -> list[TaskList]:
+    def get_task_list(school_class: str, subject_id: str, status: str) -> list[TaskList]:
 
         if status == "active":
-            task_list = TaskList.objects.select_related('task_for').filter(task_for__title=school_class)
+            task_list = TaskList.objects.select_related('task_for').filter(task_for__title=school_class,
+                                                                           subject=subject_id)
         elif status == "archive":
-            task_list = TaskList.archived_objects.select_related('task_for').filter(task_for__title=school_class)
+            task_list = TaskList.archived_objects.select_related('task_for').filter(task_for__title=school_class,
+                                                                                    subject=subject_id)
         elif status == "all":
-            task_list = TaskList.all_objects.select_related('task_for').filter(task_for__title=school_class)
+            task_list = TaskList.all_objects.select_related('task_for').filter(task_for__title=school_class,
+                                                                               subject=subject_id)
 
         return task_list
 

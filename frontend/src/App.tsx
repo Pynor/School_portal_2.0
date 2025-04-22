@@ -62,7 +62,7 @@ const App = () => {
                 setUserData(userData);
 
                 if (!userData.is_staff && userData.student) {
-                    const tasksGetResponse = await fetch(`${BASE_URL}/task_app/v1/api-task-list-get/${userData.student.school_class}/${userData.id}`, {
+                    const tasksGetResponse = await fetch(`${BASE_URL}/task_app/v1/api-task-list-get/?class=${userData.student.school_class}&user_id=${userData.id}`, {
                         headers: {
                             'Access-Control-Request-Headers': 'Content-Type',
                             'Content-Type': 'application/json',

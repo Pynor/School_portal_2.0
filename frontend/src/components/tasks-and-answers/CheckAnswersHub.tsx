@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 import { useMessageHandler } from '../../functions';
-import { BASE_URL, CLASSES } from '../../constants';
+import { BASE_URL, SUBJECTS, CLASSES } from '../../constants';
 import { Task, UserData } from '../../types';
 
 import './CSS/add-task.css';
@@ -13,6 +13,7 @@ const CheckAnswersHub: React.FC<{ userData: UserData }> = ({ userData }) => {
     const { showMessage, MessageComponent, clearMessage } = useMessageHandler();
     const [data, setData] = useState<{ task_list: Task[] }>({ task_list: [] });
     const [getTasksCompleted, setGetTasksCompleted] = useState(false);
+    const [subjectId, setSubjectId] = useState<number | ''>('');
     const [school_class, setSchoolClass] = useState('');
     const [status, setStatus] = useState('active');
 
@@ -38,9 +39,13 @@ const CheckAnswersHub: React.FC<{ userData: UserData }> = ({ userData }) => {
         }
 
         // Формируем URL/Forming the URL
-        let url = `${BASE_URL}/task_app/v1/api-task-list-get/${school_class}`;
+        let url = `${BASE_URL}/task_app/v1/api-task-list-get/?class=${school_class}`;
+
         if (status) {
-            url += `/${status}`;
+            url += `&status=${status}`;
+        }
+        if (subjectId) {
+            url += `&subject_id=${subjectId}`;
         }
 
         try {
@@ -101,7 +106,27 @@ const CheckAnswersHub: React.FC<{ userData: UserData }> = ({ userData }) => {
                                 </select>
                             </div>
 
+                            <div className="form-group select-container">
+                                <label htmlFor="subject" className="select-label">Предмет:</label>
+                                <select
+                                    onChange={(e) => setSubjectId(e.target.value ? parseInt(e.target.value) : '')}
+                                    className='form-control select-input'
+                                    style={{ width: '100%' }}
+                                    value={subjectId}
+                                    name='subject'
+                                    id='subject'
+                                >
+                                    <option value=''>Все предметы</option>
+                                    {SUBJECTS.map((subject) => (
+                                        <option key={subject.id} value={subject.id}>
+                                            {subject.name}
+                                        </option>
+                                    ))}
+                                </select>
+                            </div>
+
                             <div className="form-group">
+                            <label htmlFor="subject" className="select-label">Статус:</label>
                                 <select
                                     onChange={(e) => setStatus(e.target.value)}
                                     className='form-control select-input'
