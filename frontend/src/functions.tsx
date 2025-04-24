@@ -23,10 +23,10 @@ export function setCookie(name: string, value: string, days: number = 0, sameSit
 
 
 export const useMessageHandler = () => {
-    const [message, setMessage] = useState<React.ReactNode>(null);
     const [messageType, setMessageType] = useState<MessageType>('info');
+    const [message, setMessage] = useState<React.ReactNode>(null);
     const timeoutRef = useRef<NodeJS.Timeout>();
-
+    
     const showMessage = (msg: Message) => {
         if (timeoutRef.current) {
             clearTimeout(timeoutRef.current);

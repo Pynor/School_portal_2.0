@@ -1,5 +1,5 @@
 import { Navigate, useParams } from "react-router-dom";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 
 import { UserData, TaskList, AnswerList } from "../../types";
 import { useMessageHandler, getCookie, setCookie } from '../../functions';
@@ -16,6 +16,7 @@ const AddAnswers: React.FC<{ tasksListData: TaskList; userData: UserData }> = ({
   const { showMessage, MessageComponent, clearMessage } = useMessageHandler();
   const { taskListId } = useParams<{ taskListId: string }>();
   const taskListIdNumber = parseInt(taskListId as string, 10);
+  const messageRef = useRef<HTMLDivElement | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [redirect, setRedirect] = useState(false);
   const [timeLeft, setTimeLeft] = useState(0);
@@ -91,14 +92,14 @@ const AddAnswers: React.FC<{ tasksListData: TaskList; userData: UserData }> = ({
           return 0;
         }
         const newTime = prev - 1;
-
         localStorage.setItem(`timeLeft_${taskList.id}`, newTime.toString());
         return newTime;
       });
     }, 1000);
 
     return () => clearInterval(interval);
-  });
+  }, [taskList.id, totalSeconds]);
+
 
   const formatTimeToHHMMSS = (seconds: number): string => {
     const hours = Math.floor(seconds / 3600);
@@ -190,10 +191,10 @@ const AddAnswers: React.FC<{ tasksListData: TaskList; userData: UserData }> = ({
 
 
   // Processing Submit/Обработка Submit:
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    postResponse();
     clearMessage();
+    await postResponse();
   };
 
 
@@ -207,7 +208,9 @@ const AddAnswers: React.FC<{ tasksListData: TaskList; userData: UserData }> = ({
           <h2 style={{ textAlign: 'center', color: getTimeColor() }}>
             Оставшееся время: {new Date(timeLeft * 1000).toISOString().substr(11, 8)}
           </h2>
-          <MessageComponent />
+          <div ref={messageRef}>
+            <MessageComponent />
+          </div>
           {isTaskListValid && taskList.tasks.map(task => (
             <div key={task.id} className="form-container no-select">
 
@@ -225,7 +228,7 @@ const AddAnswers: React.FC<{ tasksListData: TaskList; userData: UserData }> = ({
                     alt="Загруженное"
                     onClick={() => setIsModalOpen(true)}
                     src={`${BASE_URL}${task.photo_file}`}
-                    style={{ width: '100%', height: 'auto', objectFit: 'cover' }} 
+                    style={{ width: '100%', height: 'auto', objectFit: 'cover' }}
                   />
                 </div>
               )}
@@ -237,7 +240,7 @@ const AddAnswers: React.FC<{ tasksListData: TaskList; userData: UserData }> = ({
                     controls
                     playsInline
                     onError={(e) => console.error('Error loading video:', e)}
-                    style={{ width: '100%', height: 'auto', objectFit: 'cover', margin: '10px 0' }} 
+                    style={{ width: '100%', height: 'auto', objectFit: 'cover', margin: '10px 0' }}
                   >
                     <source src={`${BASE_URL}${task.video_file}`} type={task.video_file.type} />
                     Ваш браузер не поддерживает видео.
