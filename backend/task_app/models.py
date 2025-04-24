@@ -50,8 +50,8 @@ class Task(models.Model):
 
 class TaskList(models.Model):
     archived_objects = ArchivedManager()
-    all_objects = models.Manager()
-    objects = ActiveManager()
+    active_objects = ActiveManager()
+    objects = models.Manager()
 
     class Meta:
         constraints = [

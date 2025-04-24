@@ -57,7 +57,7 @@ class TaskListAPIService:
             task_list = TaskList.archived_objects.select_related('task_for').filter(task_for__title=school_class,
                                                                                     subject=subject_id)
         elif status == "all":
-            task_list = TaskList.all_objects.select_related('task_for').filter(task_for__title=school_class,
+            task_list = TaskList.objects.select_related('task_for').filter(task_for__title=school_class,
                                                                                subject=subject_id)
 
         return task_list
@@ -71,7 +71,7 @@ class TaskListAPIService:
 
     @staticmethod
     def delete_task_list_by_id(task_id: int) -> Response:
-        deleted_count, _ = TaskList.all_objects.filter(id=task_id).delete()
+        deleted_count, _ = TaskList.objects.filter(id=task_id).delete()
 
         if deleted_count == 0:
             return Response({"detail": "Задачи не существует."}, status=status.HTTP_404_NOT_FOUND)

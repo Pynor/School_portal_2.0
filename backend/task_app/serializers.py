@@ -20,6 +20,10 @@ class AnswerSerializer(serializers.ModelSerializer):
 
 
 class AnswerListSerializer(serializers.ModelSerializer):
+    task_list = serializers.PrimaryKeyRelatedField(
+        error_messages={"does_not_exist": "Недопустимый первичный ключ \"{pk_value}\" - объект не существует."},
+        queryset=TaskList.objects.all()
+    )
     answers = AnswerSerializer(many=True, write_only=True)
 
     class Meta:
