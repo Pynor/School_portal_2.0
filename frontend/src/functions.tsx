@@ -1,87 +1,89 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Message, MessageType } from './types';
 
 
 export function getCookie(name: string) {
     const cookieValue = document.cookie
-      .split('; ')
-      .find(row => row.startsWith(`${name}=`));
+        .split('; ')
+        .find(row => row.startsWith(`${name}=`));
     if (cookieValue) {
-      return cookieValue.split('=')[1];
+        return cookieValue.split('=')[1];
     }
     return '';
 };
 
 export function setCookie(name: string, value: string, days: number = 0, sameSite: 'Lax' | 'Strict' | 'None' = 'Lax', secure: boolean = false) {
-  
-  const expires = days ? `expires=${new Date(Date.now() + days * 24 * 60 * 60 * 1000).toUTCString()}` : '';
-  const secureFlag = secure ? 'Secure' : '';
-  const sameSiteFlag = `SameSite=${sameSite}`;
 
-  document.cookie = `${name}=${value}; ${expires}; path=/; ${sameSiteFlag}; ${secureFlag}`.trim();
+    const expires = days ? `expires=${new Date(Date.now() + days * 24 * 60 * 60 * 1000).toUTCString()}` : '';
+    const secureFlag = secure ? 'Secure' : '';
+    const sameSiteFlag = `SameSite=${sameSite}`;
+
+    document.cookie = `${name}=${value}; ${expires}; path=/; ${sameSiteFlag}; ${secureFlag}`.trim();
 }
 
 
+
+
 export const useMessageHandler = () => {
-    const [messageType, setMessageType] = useState<MessageType>('info');
-    const [message, setMessage] = useState<React.ReactNode>(null);
+    const [message, setMessage] = useState<{
+        content: React.ReactNode;
+        type: MessageType;
+    } | null>(null);
+
     const timeoutRef = useRef<NodeJS.Timeout>();
-    
-    const showMessage = (msg: Message) => {
+
+    // Полностью очищаем предыдущее сообщение и таймер
+    const clearMessage = useCallback(() => {
+        setMessage(null);
         if (timeoutRef.current) {
             clearTimeout(timeoutRef.current);
+            timeoutRef.current = undefined;
         }
+    }, []);
 
-        setMessage(msg.content);
-        setMessageType(msg.type);
+    // Показ нового сообщения
+    const showMessage = useCallback((msg: Message) => {
+        // Сначала очищаем предыдущее сообщение
+        clearMessage();
 
-        // Automatic hiding of the message after a specified time/Автоматическое скрытие сообщения через указанное время
+        // Устанавливаем новое сообщение
+        setMessage({
+            content: msg.content,
+            type: msg.type
+        });
+
+        // Автоматическое скрытие через duration (если указано)
         if (msg.duration && msg.duration > 0) {
             timeoutRef.current = setTimeout(() => {
                 setMessage(null);
             }, msg.duration);
         }
-    };
+    }, [clearMessage]);
 
-    const clearMessage = () => {
-        if (timeoutRef.current) {
-            clearTimeout(timeoutRef.current);
-        }
-        setMessage(null);
-    };
-
-    useEffect(() => {
-        return () => {
-            if (timeoutRef.current) {
-                clearTimeout(timeoutRef.current);
-            }
-        };
-    }, []);
-
-    const MessageComponent = () => {
+    // Компонент для отображения сообщения
+    const MessageComponent = useCallback(() => {
         if (!message) return null;
 
-        const baseClasses = "message-animation";
-        const typeClasses = {
-            success: "success-message",
-            error: "error-message",
-            info: "info-message",
-            warning: "normal-message"
-        };
+        const baseClass = 'message';
+        const typeClass = {
+            success: 'message-success',
+            error: 'message-error',
+            info: 'message-info',
+            warning: 'message-warning'
+        }[message.type];
 
         return (
-            <div className={`${baseClasses} ${typeClasses[messageType]}`}>
-                {message}
+            <div className={`${baseClass} ${typeClass}`}>
+                {message.content}
             </div>
         );
-    };
+    }, [message]);
 
     return {
-        currentType: messageType,
-        currentMessage: message,
-        
-        MessageComponent,
-        clearMessage,
         showMessage,
+        clearMessage,
+        MessageComponent,
+        currentMessage: message?.content,
+        currentType: message?.type
     };
 };

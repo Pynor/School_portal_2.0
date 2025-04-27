@@ -1,3 +1,4 @@
+/* BasicStyles/Основные стили*/
 .tasks-grid {
     display: grid;
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -24,8 +25,6 @@
 }
 
 
-
-/* Основные стили контейнера */
 .form-container-wrapper {
     width: 100%;
     display: flex;
@@ -34,14 +33,14 @@
 }
 
 
-/* Стили для формы */
+/* Styles for the form/Стили для формы */
 .task-creation-form {
     display: flex;
     flex-direction: column;
     gap: 30px;
 }
 
-/* Секции формы */
+/* Sections of the form/Секции формы */
 .form-general-section,
 .task-section {
     background: #f8f9fa;
@@ -58,7 +57,6 @@
     text-align: center;
 }
 
-/* Строки и группы в форме */
 .form-row {
     display: flex;
     gap: 20px;
@@ -71,7 +69,6 @@
     flex-direction: column;
 }
 
-/* Общие стили для input, select, textarea */
 .form-input,
 .form-select,
 .form-textarea {
@@ -103,7 +100,6 @@
     min-height: 100px;
 }
 
-/* Счетчик символов */
 .char-counter {
     font-size: 12px;
     color: #6c757d;
@@ -111,7 +107,6 @@
     margin-top: 4px;
 }
 
-/* Стили для табов с задачами */
 .tasks-tabs {
     display: flex;
     flex-wrap: wrap;
@@ -147,7 +142,6 @@
     background: #218838;
 }
 
-/* Стили для загрузки файлов */
 .file-upload-section {
     width: 100%;
 }
@@ -201,7 +195,6 @@
     background: #dee2e6;
 }
 
-/* Секция с кнопкой отправки */
 .form-submit-section {
     display: flex;
     justify-content: center;
@@ -222,7 +215,6 @@
     background: #0069d9;
 }
 
-/* Сообщение об ошибке доступа */
 .access-denied-container {
     text-align: center;
     padding: 40px;
@@ -233,7 +225,6 @@
     font-size: 20px;
 }
 
-/* Скрытие неактивных секций задач */
 .task-section {
     display: none;
 }

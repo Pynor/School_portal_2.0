@@ -116,7 +116,6 @@ const CheckAnswersHub: React.FC<{ userData: UserData }> = ({ userData }) => {
                                     name='subject'
                                     id='subject'
                                 >
-                                    <option value=''>Все предметы</option>
                                     {SUBJECTS.map((subject) => (
                                         <option key={subject.id} value={subject.id}>
                                             {subject.name}

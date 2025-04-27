@@ -9,7 +9,6 @@ import './../../App.css';
 
 const ProfileStudent = ({ tasksListData, userData }: { tasksListData: TaskList; userData: UserData }) => {
     const hasTasks = tasksListData && tasksListData.task_list.length > 0;
-    console.log(localStorage)
 
 
     // ### Rendering HTMLElement/Отрисовка HTMLElement ###
@@ -37,7 +36,7 @@ const ComponentTaskList = ({ task_list }: { task_list: TaskList }) => {
                 // Checking the status of tasks/Проверка статуса заданий.
                 const isCompleted = getCookie(`completedTask(${option.id})`) === 'true';
                 return isCompleted ? (
-                    <h3 key={index} className="success-message" style={{ width: '300px' }}>
+                    <h3 key={index} className="static-success-message" style={{ width: '300px' }}>
                         Задание {option.title} сделано.
                     </h3>
                 ) : (
@@ -51,11 +50,11 @@ const ComponentTaskList = ({ task_list }: { task_list: TaskList }) => {
 };
 
 const NoTasksMessage = () => (
-    <h2 className="success-message">Задач для вас пока нет.</h2>
+    <h2 className="static-success-message">Задач для вас пока нет.</h2>
 );
 
 const NotRegisteredMessage = () => (
-    <h2 className="error-message">Вы не авторизованы.</h2>
+    <h2 className="static-error-message">Вы не авторизованы.</h2>
 );
 
 

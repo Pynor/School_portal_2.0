@@ -3,7 +3,7 @@ import React, { useEffect, useState, useRef } from 'react';
 
 import { StudentAndAnswerForCheckAnswers, SortCriteria, UserData } from '../../types';
 import { useMessageHandler, getCookie } from '../../functions';
-import { BASE_URL } from '../../constants';
+import { MEDIA_URL, BASE_URL } from '../../constants';
 
 import Modal from './ModalWindows';
 
@@ -248,7 +248,6 @@ const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
                                             ))}
                                         </div>
                                     </div>
-
                                     <button className='archive-test-button' onClick={archiveTaskList}>
                                         Архивировать тест
                                     </button>
@@ -301,12 +300,12 @@ const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
                                                                                     alt='Решение ученика'
                                                                                     className='answer-photo'
                                                                                     onClick={() => setIsModalOpen(true)}
-                                                                                    src={`${BASE_URL}${answer_and_task.answer.photo_to_the_answer}`}
+                                                                                    src={`${MEDIA_URL}${answer_and_task.answer.photo_to_the_answer}`}
                                                                                 />
                                                                                 <Modal
                                                                                     isOpen={isModalOpen}
                                                                                     onClose={() => setIsModalOpen(false)}
-                                                                                    imageSrc={`${BASE_URL}${answer_and_task.answer.photo_to_the_answer}`}
+                                                                                    imageSrc={`${MEDIA_URL}${answer_and_task.answer.photo_to_the_answer}`}
                                                                                 />
                                                                             </div>
                                                                         ) : (
