@@ -85,9 +85,9 @@ class TaskListGetAPIView(APIView):
 
         if user_id:
             return TaskListSerializer.get_unfinished_task_list(school_class=school_class, user_id=user_id)
-        #
-        # if not request.user.is_staff:
-        #     raise PermissionDenied("Доступно только учителям")
+
+        if not request.user.is_staff:
+            raise PermissionDenied("Доступно только учителям")
 
         return TaskListSerializer.get_all_task_list(status=request.GET.get("status", "active"),
                                                     subject_id=request.GET.get("subject_id"),

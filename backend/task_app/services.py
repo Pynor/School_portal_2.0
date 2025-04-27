@@ -51,7 +51,7 @@ class TaskListAPIService:
     def get_task_list(school_class: str, subject_id: str, status: str) -> list[TaskList]:
 
         if status == "active":
-            task_list = TaskList.objects.select_related('task_for').filter(task_for__title=school_class,
+            task_list = TaskList.active_objects.select_related('task_for').filter(task_for__title=school_class,
                                                                            subject=subject_id)
         elif status == "archive":
             task_list = TaskList.archived_objects.select_related('task_for').filter(task_for__title=school_class,
@@ -64,7 +64,7 @@ class TaskListAPIService:
 
     @staticmethod
     def get_unfinished_task_list(school_class: str, user_id: int) -> list[TaskList]:
-        task_list = TaskList.objects.select_related('task_for').filter(task_for__title=school_class).exclude(
+        task_list = TaskList.active_objects.select_related('task_for').filter(task_for__title=school_class).exclude(
             Q(answerlist__user_id=user_id)
         )
         return task_list
@@ -81,7 +81,7 @@ class TaskListAPIService:
     @staticmethod
     def archived_task_list_by_id(task_id: int) -> Response:
         try:
-            task_list = TaskList.objects.get(pk=task_id)
+            task_list = TaskList.active_objects.get(pk=task_id)
         except TaskList.DoesNotExist:
             return Response(
                 {"detail": "Задачи не существует."},
