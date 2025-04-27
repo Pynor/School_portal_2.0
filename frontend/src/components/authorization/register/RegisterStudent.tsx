@@ -160,7 +160,7 @@ const RegisterStudents = (props: { userData: UserData }) => {
   if (!props.userData.is_staff) {
     return (
       <div className="form-container">
-        <h2 className="error-message">У вас нет прав для этого действия</h2>
+        <h2 style={{ animation: "none" }} className="error-message">У вас нет прав для этого действия</h2>
       </div>
     );
   }

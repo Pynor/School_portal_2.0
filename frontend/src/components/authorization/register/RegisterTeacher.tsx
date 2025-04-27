@@ -81,7 +81,7 @@ const RegisterTeacher = () => {
                     type: 'success',
                     duration: 3000
                 });
-                
+
                 setTimeout(async () => {
                     await login();
                 }, 3000);
@@ -92,7 +92,7 @@ const RegisterTeacher = () => {
                     content: data.username ? data.username[0] : data.detail || 'Ошибка регистрации',
                     type: 'error',
                     duration: 5000
-                });     
+                });
 
             }
         } catch (err) {
@@ -121,57 +121,62 @@ const RegisterTeacher = () => {
                     {error && <h3 className="error-message">{error}</h3>}
                     <div className="form-group">
                         <input
-                            type="text"
+                        onChange={e => setFirstName(e.target.value)}
+                            style={{ width: '100%' }}
                             className="form-control"
-                            id="first_name"
-                            placeholder="Имя"
-                            required
                             value={first_name}
-                            onChange={e => setFirstName(e.target.value)}
+                            placeholder="Имя"
+                            id="first_name"
+                            type="text"
+                            required
                         />
                     </div>
                     <div className="form-group">
                         <input
-                            type="text"
+                        onChange={e => setLastName(e.target.value)}
+                            style={{ width: '100%' }}
                             className="form-control"
-                            id="last_name"
                             placeholder="Фамилия"
-                            required
                             value={last_name}
-                            onChange={e => setLastName(e.target.value)}
-                        />
-                    </div>
-                    <div className="form-group">
-                        <input
+                            id="last_name"
                             type="text"
-                            className="form-control"
-                            id="username"
-                            placeholder="Имя пользователя"
                             required
-                            value={username}
+                        />
+                    </div>
+                    <div className="form-group">
+                        <input
                             onChange={e => setUserName(e.target.value)}
+                            placeholder="Имя пользователя"
+                            style={{ width: '100%' }}
+                            className="form-control"
+                            value={username}
+                            id="username"
+                            type="text"
+                            required
                         />
                     </div>
                     <div className="form-group">
                         <input
-                            type="password"
-                            className="form-control"
-                            id="password"
-                            placeholder="Пароль"
-                            required
-                            value={password}
                             onChange={e => setPassword(e.target.value)}
+                            style={{ width: '100%' }}
+                            className="form-control"
+                            placeholder="Пароль"
+                            value={password}
+                            type="password"
+                            id="password"
+                            required
                         />
                     </div>
                     <div className="form-group">
                         <input
-                            type="password"
-                            className="form-control"
-                            id="secret_key"
-                            placeholder="Кодовое слово"
-                            required
-                            value={secret_key}
                             onChange={e => setSecretKey(e.target.value)}
+                            placeholder="Кодовое слово"
+                            style={{ width: '100%' }}
+                            className="form-control"
+                            value={secret_key}
+                            type="password"
+                            id="secret_key"
+                            required
                         />
                     </div>
 
