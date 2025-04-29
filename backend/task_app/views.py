@@ -101,9 +101,9 @@ class TaskListDeleteAPIView(APIView):
         return TaskListSerializer.delete_task_list_by_id(task_id=task_id)
 
 
-class TaskListArchivedAPIView(APIView):
+class TaskListChangeStatusAPIView(APIView):
     permission_classes = [IsTeacher]
 
     @swagger_auto_schema(operation_description="Archived an issue by task ID")
     def put(self, request, task_id):
-        return TaskListSerializer.archived_task_list_by_id(task_id=task_id)
+        return TaskListSerializer.change_status_task_list_by_id(task_id=task_id)

@@ -97,5 +97,5 @@ class TaskListSerializer(serializers.ModelSerializer):
         return TaskListAPIService.delete_task_list_by_id(task_id=task_id)
 
     @staticmethod
-    def archived_task_list_by_id(task_id):
-        return TaskListAPIService.archived_task_list_by_id(task_id=task_id)
+    def change_status_task_list_by_id(task_id):
+        return TaskListAPIService.change_status_task_list_by_id(task_id=task_id)

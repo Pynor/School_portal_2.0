@@ -79,19 +79,24 @@ class TaskListAPIService:
         return Response(status=status.HTTP_204_NO_CONTENT)
 
     @staticmethod
-    def archived_task_list_by_id(task_id: int) -> Response:
+    def change_status_task_list_by_id(task_id: int) -> Response:
         try:
-            task_list = TaskList.active_objects.get(pk=task_id)
+            task_list = TaskList.objects.get(pk=task_id)
         except TaskList.DoesNotExist:
             return Response(
                 {"detail": "Задачи не существует."},
                 status=status.HTTP_404_NOT_FOUND
             )
 
-        task_list.archive()
+        if task_list.is_archived:
+            task_list.restore()
+            message = "Задача успешно разархивирована."
+        else:
+            task_list.archive()
+            message = "Задача успешно архивирована."
 
         return Response(
-            {"detail": "Задача успешно архивирована."},
+            {"detail": message},
             status=status.HTTP_200_OK
         )
 
