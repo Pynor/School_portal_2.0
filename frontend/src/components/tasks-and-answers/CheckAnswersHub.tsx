@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-import { useMessageHandler } from '../../functions';
 import { BASE_URL, SUBJECTS, CLASSES } from '../../constants';
+import { useMessageHandler } from '../../functions';
 import { Task, UserData } from '../../types';
 
 import './CSS/add-task.css';

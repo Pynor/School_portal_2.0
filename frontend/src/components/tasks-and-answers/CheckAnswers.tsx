@@ -105,7 +105,7 @@ const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
     const archiveTaskList = async () => {
         clearMessage();
         try {
-            const postResponse = await fetch(`${BASE_URL}/task_app/v1/api-task-list-archived/${taskListId}`, {
+            const postResponse = await fetch(`${BASE_URL}/task_app/v1/api-task-list-change-status/${taskListId}`, {
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRFToken': csrftoken
