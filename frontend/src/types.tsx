@@ -58,7 +58,7 @@ export interface ModalProps {
 }
 
 export type TaskListForAddTasks = {
-  time_to_tasks: string,
+  time_to_tasks: string;
   count_task: number;
   subject_id: string;
   task_for: string;

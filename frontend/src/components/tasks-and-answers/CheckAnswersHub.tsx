@@ -17,6 +17,7 @@ const CheckAnswersHub: React.FC<{ userData: UserData }> = ({ userData }) => {
     const [school_class, setSchoolClass] = useState('');
     const [status, setStatus] = useState('active');
 
+
     // Statuses/Статусы
     const STATUS_OPTIONS = [
         { value: 'archive', label: 'Архивные задачи' },
@@ -159,7 +160,7 @@ const CheckAnswersHub: React.FC<{ userData: UserData }> = ({ userData }) => {
                                             <Link
                                                 key={index}
                                                 className='task-card'
-                                                to={`/check-answers/${school_class}/${option.id}`}
+                                                to={`/check-answers/${school_class}/${option.id}/${status}`}
                                             >
                                                 <div className="task-card-content">
                                                     <h3 className="task-title">{option.title}</h3>

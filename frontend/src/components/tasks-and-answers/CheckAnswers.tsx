@@ -19,10 +19,12 @@ const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
     const [data, setData] = useState<StudentAndAnswerForCheckAnswers[]>();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
-    const { schoolClass, taskListId } = useParams();
+    const { schoolClass, taskListId, status } = useParams();
     const [redirect, setRedirect] = useState(false);
     const csrftoken = getCookie('csrftoken');
+    const isArchived = status === 'archive';
     const hasFetchedRef = useRef(false);
+
 
     // ### Sending a GET request/Отправка GET запроса ###
     useEffect(() => {
@@ -86,7 +88,7 @@ const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
                 setTimeout(() => setRedirect(true), 1500);
             } else {
                 showMessage({
-                    content: 'Произошла ошибка при завершении теста.',
+                    content: 'Произошла ошибка при удалении теста.',
                     type: 'error',
                     duration: 3000
                 });
@@ -117,13 +119,15 @@ const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
             if (postResponse.ok) {
                 setRedirectMessage(
                     <div className="success-message-container">
-                        <h2 className="success-message">Тест заархивирован</h2>
+                        <h2 className="success-message">
+                            {isArchived ? 'Тест разархивирован' : 'Тест заархивирован'}
+                        </h2>
                     </div>
                 );
                 setTimeout(() => setRedirect(true), 1500);
             } else {
                 showMessage({
-                    content: 'Произошла ошибка при фрхивации теста.',
+                    content: `Произошла ошибка при ${isArchived ? 'раз' : ''}архивации теста.`,
                     type: 'error',
                     duration: 3000
                 });
@@ -216,7 +220,9 @@ const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
                                 <Link to='/check-answers-hub' className='back-button'>
                                     <span className="arrow-icon">←</span> Вернуться
                                 </Link>
-                                <h1 className="page-title">Ответы учеников {schoolClass} класса</h1>
+                                <h1 className="page-title">
+                                    Ответы учеников {schoolClass} класса {isArchived && "(архив)"}
+                                </h1>
                             </div>
 
                             <div className='content-wrapper'>
@@ -248,9 +254,16 @@ const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
                                             ))}
                                         </div>
                                     </div>
-                                    <button className='archive-test-button' onClick={archiveTaskList}>
-                                        Архивировать тест
-                                    </button>
+
+                                    {isArchived ? (
+                                        <button className='archive-test-button' onClick={archiveTaskList}>
+                                            Разархивировать тест
+                                        </button>
+                                    ) : (
+                                        <button className='archive-test-button' onClick={archiveTaskList}>
+                                            Архивировать тест
+                                        </button>
+                                    )}
 
                                     <button className='finish-test-button' onClick={deleteTaskList}>
                                         Удалить тест
