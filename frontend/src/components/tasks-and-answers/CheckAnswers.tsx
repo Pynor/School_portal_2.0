@@ -1,9 +1,9 @@
-import { useParams, Navigate, Link } from 'react-router-dom';
+import { useParams, Navigate, Link, useLocation } from 'react-router-dom';
 import React, { useEffect, useState, useRef } from 'react';
 
-import { StudentAndAnswerForCheckAnswers, SortCriteria, UserData } from '../../types';
+import { StudentAndAnswerForCheckAnswers, SortCriteria, UserData, Task } from '../../types';
 import { useMessageHandler, getCookie } from '../../functions';
-import { MEDIA_URL, BASE_URL } from '../../constants';
+import { MEDIA_URL, BASE_URL, SUBJECTS } from '../../constants';
 
 import Modal from './ModalWindows';
 
@@ -17,10 +17,12 @@ const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
     const { showMessage, MessageComponent, clearMessage } = useMessageHandler();
     const [sortCriteria, setSortCriteria] = useState<SortCriteria>('correct');
     const [data, setData] = useState<StudentAndAnswerForCheckAnswers[]>();
+    const [isTaskInfoModalOpen, setIsTaskInfoModalOpen] = useState(false);
+    const { schoolClass, taskListId, status } = useParams();
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
-    const { schoolClass, taskListId, status } = useParams();
     const [redirect, setRedirect] = useState(false);
+    const taskData = useLocation().state?.taskData;
     const csrftoken = getCookie('csrftoken');
     const isArchived = status === 'archive';
     const hasFetchedRef = useRef(false);
@@ -64,6 +66,8 @@ const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
 
         getAnswerLists();
     }, []);
+
+    console.log(taskData)
 
     // ### Sending a DELETE request/Отправка DELETE запроса ###
     const deleteTaskList = async () => {
@@ -225,6 +229,76 @@ const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
                                 </h1>
                             </div>
 
+                            {isTaskInfoModalOpen && taskData && (
+                                <div className="modal-overlay" onClick={() => setIsTaskInfoModalOpen(false)}>
+                                    <div className="task-info-modal" onClick={e => e.stopPropagation()}>
+                                        <button
+                                            className="close-modal-button"
+                                            onClick={() => setIsTaskInfoModalOpen(false)}
+                                        >
+                                            ×
+                                        </button>
+                                        <h2>Информация о списке задач</h2>
+                                        <div className="task-info-content">
+                                            <div className="task-info-row">
+                                                <span className="task-info-label">Название:</span>
+                                                <span className="task-info-value">{taskData.title}</span>
+                                            </div>
+                                            <div className="task-info-row">
+                                                <span className="task-info-label">Описание:</span>
+                                                <span className="task-info-value">{taskData.description || "Нет описания"}</span>
+                                            </div>
+                                            <div className="task-info-row">
+                                                <span className="task-info-label">Предмет:</span>
+                                                <span className="task-info-value">
+                                                    {SUBJECTS.find(s => s.id === taskData.subject_id)?.name || "Не указан"}
+                                                </span>
+                                            </div>
+                                            <div className="task-info-row">
+                                                <span className="task-info-label">Класс:</span>
+                                                <span className="task-info-value">{taskData.task_for}</span>
+                                            </div>
+                                            <div className="task-info-row">
+                                                <span className="task-info-label">Дата создания:</span>
+                                                <span className="task-info-value">
+                                                    {new Date(taskData.created_at).toLocaleString()}
+                                                </span>
+                                            </div>
+                                            <div className="task-info-row">
+                                                <span className="task-info-label">Статус:</span>
+                                                <span className="task-info-value">
+                                                    {status === 'archive' ? 'Архив' : 'Активен'}
+                                                </span>
+                                            </div>
+                                            <div className="task-info-tasks">
+                                                <h3>Задачи в списке:</h3>
+                                                {taskData.tasks && taskData.tasks.length > 0 ? (
+                                                    <ul className="tasks-list">
+                                                        {taskData.tasks.map((task: Task, index: number) => (
+                                                            <li key={index} className="task-item">
+                                                                <div className="task-item-title">{task.title}</div>
+                                                                <div className="task-item-details">
+                                                                    <div className="task-item-row">
+                                                                        <span className="detail-label">Задача:</span>
+                                                                        <span className="detail-value">{task.description}</span>
+                                                                    </div>
+                                                                    <div className="task-item-row">
+                                                                        <span className="detail-label">Ответ:</span>
+                                                                        <span className="detail-value">{task.answer_to_the_task}</span>
+                                                                    </div>
+                                                                </div>
+                                                            </li>
+                                                        ))}
+                                                    </ul>
+                                                ) : (
+                                                    <p>Нет задач в этом списке</p>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
+
                             <div className='content-wrapper'>
                                 {/* Панель управления */}
                                 <div className='control-panel'>
@@ -254,6 +328,15 @@ const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
                                             ))}
                                         </div>
                                     </div>
+
+                                    {taskData && (
+                                        <button
+                                            className='task-info-button'
+                                            onClick={() => setIsTaskInfoModalOpen(true)}
+                                        >
+                                            Информация о задании
+                                        </button>
+                                    )}
 
                                     {isArchived ? (
                                         <button className='archive-test-button' onClick={archiveTaskList}>

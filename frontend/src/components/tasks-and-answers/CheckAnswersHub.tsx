@@ -160,8 +160,9 @@ const CheckAnswersHub: React.FC<{ userData: UserData }> = ({ userData }) => {
                                             <Link
                                                 key={index}
                                                 className='task-card'
+                                                state={{ taskData: option }}
                                                 to={`/check-answers/${school_class}/${option.id}/${status}`}
-                                            >
+                                            >   
                                                 <div className="task-card-content">
                                                     <h3 className="task-title">{option.title}</h3>
                                                 </div>
