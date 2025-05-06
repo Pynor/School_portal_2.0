@@ -1,6 +1,5 @@
 from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin, UserManager
 from django.contrib.auth.hashers import make_password, check_password
-from django.core.validators import RegexValidator
 from django.utils.text import slugify
 from django.conf import settings
 from django.db.models import Q

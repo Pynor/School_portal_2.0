@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from rest_framework.exceptions import AuthenticationFailed
+from rest_framework.exceptions import AuthenticationFailed, ValidationError
 from rest_framework.response import Response
 from rest_framework import serializers
 
@@ -256,3 +256,47 @@ class StudentLoginAPIService(BaseLoginAPIService):
 
     def post_login(self, user) -> None:
         Student.objects.filter(user=user).update(authorized=True)
+
+
+class ChangePasswordAPIService:
+    def __init__(self, request):
+        self.request = request
+
+    def change_password(self):
+        token = self.request.COOKIES.get("jwt")
+        if not token:
+            raise AuthenticationFailed("Unauthenticated (not jwt token)")
+
+        try:
+            payload = jwt.decode(token, "secret", algorithms=["HS256"])
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed("Unauthenticated")
+
+        user = User.objects.filter(id=payload["id"]).first()
+        if not user:
+            raise AuthenticationFailed("User not found")
+
+        data = self.request.data
+        if not all(k in data for k in ["old_password", "new_password"]):
+            raise ValidationError({"detail": "Both old_password and new_password are required"})
+
+        if not user.check_password(data['old_password']):
+            raise ValidationError({"old_password": "Wrong password"})
+
+        user.set_password(data['new_password'])
+        user.save()
+
+        new_token = self._generate_token(user)
+        response = Response({"message": "Password changed successfully"}, status=200)
+        response.set_cookie(key="jwt", value=new_token, httponly=True)
+        return response
+
+    def _generate_token(self, user):
+        now = datetime.utcnow()
+        payload = {
+            "exp": now + datetime.timedelta(minutes=60),
+            "is_staff": user.is_staff,
+            "id": user.id,
+            "iat": now
+        }
+        return jwt.encode(payload, "secret", algorithm="HS256")

@@ -38,6 +38,12 @@ class StudentLoginAPIView(APIView):
         response = user.login()
         return response
 
+class ChangePasswordAPIView(APIView):
+    def post(self, request):
+        service = ChangePasswordAPIService(request=request)
+        response = service.change_password()
+        return response
+
 
 class UserAPIView(APIView):
     def get(self, request) -> Response:

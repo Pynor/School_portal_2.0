@@ -50,9 +50,6 @@ class StudentsRegisterListAPISerializer(serializers.ListSerializer):
     def create(self, validated_data: list[dict[str, str]]):
         return StudentsRegisterListAPIService.create_students(validated_data)
 
-    def update(self, instance, validated_data):
-        return ...
-
 
 class SchoolClassSerializer(serializers.ModelSerializer):
 
