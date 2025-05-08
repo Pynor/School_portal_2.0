@@ -9,8 +9,8 @@ from django.db import transaction, IntegrityError
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import login
 
+from datetime import datetime, timedelta
 from typing_extensions import Any
-import datetime
 import jwt
 
 from .models import TeacherSecretKey, SchoolClass, Student, Teacher, User
@@ -196,9 +196,9 @@ class BaseLoginAPIService(UserAPIService):
         return response
 
     def get_payload(self, user) -> dict:
-        now = datetime.datetime.utcnow()
+        now = datetime.utcnow()
         return {
-            "exp": now + datetime.timedelta(minutes=self.TOKEN_EXPIRE_MINUTES),
+            "exp": now + timedelta(minutes=self.TOKEN_EXPIRE_MINUTES),
             "is_staff": self.is_staff_user(user),
             "id": user.id,
             "iat": now
@@ -294,7 +294,7 @@ class ChangePasswordAPIService:
     def _generate_token(self, user):
         now = datetime.utcnow()
         payload = {
-            "exp": now + datetime.timedelta(minutes=60),
+            "exp": now + timedelta(minutes=60),
             "is_staff": user.is_staff,
             "id": user.id,
             "iat": now
