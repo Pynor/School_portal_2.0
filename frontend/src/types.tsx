@@ -12,6 +12,11 @@ export type UserData = {
   id: number;
 };
 
+export interface ChangePasswordForm {
+  old_password: string;
+  new_password: string;
+}
+
 export type MessageType = 'success' | 'error' | 'info' | 'warning';
 export interface Message {
     content: React.ReactNode;

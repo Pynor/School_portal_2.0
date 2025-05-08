@@ -67,7 +67,6 @@ const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
         getAnswerLists();
     }, []);
 
-    console.log(taskData)
 
     // ### Sending a DELETE request/Отправка DELETE запроса ###
     const deleteTaskList = async () => {

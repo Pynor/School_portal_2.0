@@ -5,9 +5,12 @@ import RegisterStudents from './components/authorization/register/RegisterStuden
 import RegisterTeacher from './components/authorization/register/RegisterTeacher';
 import RegisterHub from './components/authorization/register/RegisterHub';
 
+
 import LoginStudent from './components/authorization/login/LoginStudent';
 import LoginTeacher from './components/authorization/login/LoginTeacher';
 import LoginHub from './components/authorization/login/LoginHub';
+
+import ChangePassword from './components/authorization/ChangePassword';
 
 import ProfileTeacher from './components/profile/ProfileTeacher';
 import ProfileStudent from './components/profile/ProfileStudent';
@@ -106,10 +109,12 @@ const App = () => {
                             <Route path="/register-teacher" element={<RegisterTeacher />} />
                             <Route path="/register-hub" element={<RegisterHub />} />
 
+                            <Route path="/change-password" element={<ChangePassword />} />
+
                             <Route path="/login-student" element={<LoginStudent />} />
                             <Route path="/login-teacher" element={<LoginTeacher />} />
                             <Route path="/login-hub" element={<LoginHub />} />
-
+                            
                             <Route path="/" element={<Home />} />
 
                         </Routes>

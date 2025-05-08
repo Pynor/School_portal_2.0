@@ -1,11 +1,12 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { Message, MessageType } from './types';
+import { useCallback, useState, useRef } from 'react';
+import { MessageType, Message } from './types';
 
 
 export function getCookie(name: string) {
     const cookieValue = document.cookie
         .split('; ')
         .find(row => row.startsWith(`${name}=`));
+
     if (cookieValue) {
         return cookieValue.split('=')[1];
     }
@@ -15,13 +16,11 @@ export function getCookie(name: string) {
 export function setCookie(name: string, value: string, days: number = 0, sameSite: 'Lax' | 'Strict' | 'None' = 'Lax', secure: boolean = false) {
 
     const expires = days ? `expires=${new Date(Date.now() + days * 24 * 60 * 60 * 1000).toUTCString()}` : '';
-    const secureFlag = secure ? 'Secure' : '';
     const sameSiteFlag = `SameSite=${sameSite}`;
+    const secureFlag = secure ? 'Secure' : '';
 
     document.cookie = `${name}=${value}; ${expires}; path=/; ${sameSiteFlag}; ${secureFlag}`.trim();
 }
-
-
 
 
 export const useMessageHandler = () => {
@@ -67,10 +66,10 @@ export const useMessageHandler = () => {
         const baseClass = 'message';
         const typeClass = {
             success: 'message-success',
+            warning: 'message-warning',
             error: 'message-error',
             info: 'message-info',
-            warning: 'message-warning'
-        }[message.type];
+        } [message.type];
 
         return (
             <div className={`${baseClass} ${typeClass}`}>
@@ -80,9 +79,10 @@ export const useMessageHandler = () => {
     }, [message]);
 
     return {
-        showMessage,
-        clearMessage,
         MessageComponent,
+        clearMessage,
+        showMessage,
+
         currentMessage: message?.content,
         currentType: message?.type
     };
