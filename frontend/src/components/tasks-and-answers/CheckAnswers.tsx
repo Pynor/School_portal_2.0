@@ -85,7 +85,6 @@ const CheckAnswers: React.FC<{ userData: UserData }> = ({ userData }) => {
                 setRedirectMessage(
                     <div className="success-message-container">
                         <h2 className="success-message">Тест завершен</h2>
-                        <div className="success-icon">✓</div>
                     </div>
                 );
                 setTimeout(() => setRedirect(true), 1500);

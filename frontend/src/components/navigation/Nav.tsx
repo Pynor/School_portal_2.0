@@ -100,9 +100,7 @@ const Nav = (props: { userData: UserData, setName: (name: string) => void }) => 
       {/* Displaying message/Отображение сообщения */}
       {currentMessage && (
         <div className="nav-container">
-          <div className="form-container">
             <MessageComponent />
-          </div>
         </div>
       )}
 
