@@ -5,6 +5,8 @@ import { getCookie, useMessageHandler } from '../../functions';
 import { ChangePasswordForm } from '../../types';
 import { BASE_URL } from '../../constants';
 
+import './CSS/change-password.css';
+
 
 const ChangePassword: React.FC = () => {
     const [formData, setFormData] = useState<ChangePasswordForm>({
@@ -67,18 +69,20 @@ const ChangePassword: React.FC = () => {
         }
     };
 
-    return (
-        <div className="auth-container">
-            <h2>Change Password</h2>
+        return (
+        <div className="change-password-container">
+            <h1>Смена пароля</h1>
+            
             <div className="message-container">
                 <MessageComponent />
             </div>
 
             <form onSubmit={handleSubmit}>
                 <div className="form-group">
-                    <label htmlFor="old_password">Current Password</label>
                     <input
                         value={formData.old_password}
+                        placeholder="Текущий пароль"
+                        className="form-control"
                         onChange={handleChange}
                         name="old_password"
                         id="old_password"
@@ -88,9 +92,10 @@ const ChangePassword: React.FC = () => {
                 </div>
 
                 <div className="form-group">
-                    <label htmlFor="new_password">New Password</label>
                     <input
                         value={formData.new_password}
+                        placeholder="Новый пароль"
+                        className="form-control"
                         onChange={handleChange}
                         name="new_password"
                         id="new_password"
@@ -99,12 +104,17 @@ const ChangePassword: React.FC = () => {
                     />
                 </div>
 
-                <button type="submit" disabled={isLoading}>
-                    {isLoading ? 'Processing...' : 'Change Password'}
+                <button 
+                    type="submit" 
+                    className="btn-primary" 
+                    disabled={isLoading}
+                >
+                    {isLoading ? 'Обработка...' : 'Сменить пароль'}
                 </button>
             </form>
         </div>
     );
 };
+
 
 export default ChangePassword;
