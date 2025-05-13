@@ -72,9 +72,15 @@ const Nav = (props: { userData: UserData, setName: (name: string) => void }) => 
           <Link to="/profile-teacher" className="nav-link btn btn-primary">Профиль</Link>
         </li>
       ) : (
-        <li className="nav-item">
-          <Link to="/profile-student" className="nav-link btn btn-primary">Профиль</Link>
-        </li>
+        <ul className="navbar-nav">
+          <li className="nav-item">
+            <Link to="/profile-student" className="nav-link btn btn-primary">Профиль</Link>
+          </li>
+
+          <li className="nav-item">
+            <Link to="/change-password" className="nav-link btn btn-primary">Изменить пароль</Link>
+          </li>
+        </ul>
       )
       }
       <li className="nav-item">
@@ -100,7 +106,7 @@ const Nav = (props: { userData: UserData, setName: (name: string) => void }) => 
       {/* Displaying message/Отображение сообщения */}
       {currentMessage && (
         <div className="nav-container">
-            <MessageComponent />
+          <MessageComponent />
         </div>
       )}
 

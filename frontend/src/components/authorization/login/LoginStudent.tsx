@@ -35,10 +35,10 @@ const LoginStudent = () => {
             },
             credentials: 'include',
             body: JSON.stringify({
-                password,
-                last_name,
+                school_class,
                 first_name,
-                school_class
+                last_name,
+                password,
             })
         });
 
