@@ -263,9 +263,12 @@ class ChangePasswordAPIService:
         self.request = request
 
     def change_password(self):
-        token = self.request.COOKIES.get("jwt")
+        token = self.request.headers.get('Authorization', '').split('Bearer ')[-1]
         if not token:
-            raise AuthenticationFailed("Unauthenticated (not jwt token)")
+            token = self.request.COOKIES.get("jwt")
+
+        if not token:
+            raise AuthenticationFailed("Unauthenticated (no token provided)")
 
         try:
             payload = jwt.decode(token, "secret", algorithms=["HS256"])
@@ -287,7 +290,7 @@ class ChangePasswordAPIService:
         user.save()
 
         new_token = self._generate_token(user)
-        response = Response({"message": "Password changed successfully"}, status=200)
+        response = Response({"message": "Password changed successfully", "jwt_token": new_token}, status=200)
         response.set_cookie(key="jwt", value=new_token, httponly=True)
         return response
 

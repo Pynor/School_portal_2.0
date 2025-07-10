@@ -33,7 +33,7 @@ const ChangePassword: React.FC = () => {
         clearMessage();
 
         try {
-            const response = await fetch(`${BASE_URL}/user_app/v1/api-student-change-password/`, {
+            const response = await fetch(`${BASE_URL}/user_app/v1/api-change-password/`, {
                 headers: {
                     'Content-Type': 'application/json',
                     'X-CSRFToken': csrftoken,
