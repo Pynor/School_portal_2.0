@@ -1,5 +1,5 @@
 from rest_framework.exceptions import PermissionDenied
-from rest_framework import permissions, generics
+from rest_framework import permissions, generics, status
 from rest_framework.views import APIView
 
 from drf_yasg.utils import swagger_auto_schema
@@ -40,28 +40,44 @@ class TaskListCreateAPIView(generics.CreateAPIView):
     permission_classes = [IsTeacher]
 
     def create(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return Response(
+                {"detail": "Authentication credentials were not provided."},
+                status=status.HTTP_401_UNAUTHORIZED
+            )
+
+        if not hasattr(request.user, 'teacher'):
+            return Response(
+                {"detail": "Only teachers can create task lists."},
+                status=status.HTTP_403_FORBIDDEN
+            )
+
         tasks_data = []
         i = 0
-        while f"tasks[{i}][title]" in request.data:
-            task_data = {key: request.data.get(f"tasks[{i}][{key}]") for key in [
-                "additional_condition",
-                "answer_to_the_task",
-                "link_to_article",
-                "sequence_number",
-                "description",
-                "photo_file",
-                "video_file",
-                "docx_file",
-                "title"
-            ]}
+        while True:
+            task_title = request.data.get(f"tasks[{i}][title]")
+            if task_title is None:
+                break
+
+            task_data = {
+                "title": task_title,
+                "additional_condition": request.data.get(f"tasks[{i}][additional_condition]", "None"),
+                "answer_to_the_task": request.data.get(f"tasks[{i}][answer_to_the_task]", ""),
+                "link_to_article": request.data.get(f"tasks[{i}][link_to_article]", ""),
+                "sequence_number": request.data.get(f"tasks[{i}][sequence_number]", i + 1),
+                "description": request.data.get(f"tasks[{i}][description]", ""),
+                "photo_file": request.data.get(f"tasks[{i}][photo_file]"),
+                "video_file": request.data.get(f"tasks[{i}][video_file]"),
+                "docx_file": request.data.get(f"tasks[{i}][docx_file]"),
+            }
             tasks_data.append(task_data)
             i += 1
 
         request._full_data = {
             "time_to_tasks": request.data.get("time_to_tasks"),
-            "count_task": request.data.get("count_task"),
+            "count_task": len(tasks_data),
             "task_for": request.data.get("task_for"),
-            "creator": self.request.user.teacher.id,
+            "creator": request.user.teacher.id,
             "subject": request.data.get("subject"),
             "title": request.data.get("title"),
             "tasks": tasks_data
