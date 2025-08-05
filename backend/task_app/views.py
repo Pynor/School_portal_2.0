@@ -1,7 +1,10 @@
-from rest_framework.exceptions import PermissionDenied
+from rest_framework.authentication import SessionAuthentication
 from rest_framework import permissions, generics, status
+from rest_framework.exceptions import PermissionDenied
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.views import APIView
 
+from rest_framework_simplejwt.authentication import JWTAuthentication
 from drf_yasg.utils import swagger_auto_schema
 
 from user_app.permissions import IsTeacher
@@ -36,8 +39,9 @@ class AnswerListCreateAPIView(generics.CreateAPIView):
 
 
 class TaskListCreateAPIView(generics.CreateAPIView):
+    authentication_classes = [SessionAuthentication, JWTAuthentication]
+    permission_classes = [IsAuthenticated]
     serializer_class = TaskListSerializer
-    permission_classes = [IsTeacher]
 
     def create(self, request, *args, **kwargs):
         if not request.user.is_authenticated:

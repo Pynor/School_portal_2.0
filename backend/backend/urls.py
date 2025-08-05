@@ -6,8 +6,8 @@ from django.contrib import admin
 from drf_yasg.views import get_schema_view
 from drf_yasg import openapi
 
+from rest_framework_simplejwt.views import TokenObtainPairView, TokenRefreshView
 from rest_framework import permissions
-
 
 openapi_info = openapi.Info(
     title="School_Portal_2.0 API",
@@ -26,6 +26,9 @@ schema_view = get_schema_view(
 
 
 urlpatterns = [
+    path('api/token/refresh/', TokenRefreshView.as_view(), name='token_refresh'),
+    path('api/token/', TokenObtainPairView.as_view(), name='token_obtain_pair'),
+
     path('api/statistic_app/', include('statistic_app.urls')),
     path('api/user_app/', include('user_app.urls')),
     path('api/task_app/', include('task_app.urls')),
