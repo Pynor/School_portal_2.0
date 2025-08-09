@@ -8,6 +8,8 @@ from django.contrib.auth.hashers import make_password
 from django.db import transaction, IntegrityError
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import login
+from django.conf import settings
+
 
 from datetime import datetime, timedelta
 from typing_extensions import Any
@@ -33,7 +35,7 @@ class UserAPIService:
             raise AuthenticationFailed("Unauthenticated (not jwt token)")
 
         try:
-            payload = jwt.decode(token, "secret", algorithms=ALGORITHM)
+            payload = jwt.decode(token, settings.SECRET_KEY, algorithms=ALGORITHM)
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed("Unauthenticated")
 
@@ -187,7 +189,7 @@ class BaseLoginAPIService(UserAPIService):
 
     def generate_token(self, user) -> str:
         payload = self.get_payload(user)
-        return jwt.encode(payload, "secret", algorithm=ALGORITHM)
+        return jwt.encode(payload, settings.SECRET_KEY, algorithm=ALGORITHM)
 
     def create_auth_response(self, token: str) -> Response:
         response = Response({"jwt_token": token}, status=200)
@@ -271,7 +273,7 @@ class ChangePasswordAPIService:
             raise AuthenticationFailed("Unauthenticated (no token provided)")
 
         try:
-            payload = jwt.decode(token, "secret", algorithms=["HS256"])
+            payload = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
         except jwt.ExpiredSignatureError:
             raise AuthenticationFailed("Unauthenticated")
 
@@ -302,4 +304,4 @@ class ChangePasswordAPIService:
             "id": user.id,
             "iat": now
         }
-        return jwt.encode(payload, "secret", algorithm="HS256")
+        return jwt.encode(payload, settings.SECRET_KEY, algorithm="HS256")
