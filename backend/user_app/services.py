@@ -20,6 +20,33 @@ from .models import TeacherSecretKey, SchoolClass, Student, Teacher, User
 access_token_jwt_subject = "access"
 ALGORITHM = "HS256"
 
+class BaseJWTService:
+    ALGORITHM = "HS256"
+    ACCESS_TOKEN_LIFETIME = timedelta(minutes=60)
+    REFRESH_TOKEN_LIFETIME = timedelta(days=7)
+
+    @classmethod
+    def create_access_token(cls, user_id: int, is_staff: bool) -> str:
+        payload = {
+            "token_type": "access",
+            "exp": datetime.utcnow() + cls.ACCESS_TOKEN_LIFETIME,
+            "user_id": user_id,  # Единое имя поля
+            "is_staff": is_staff,
+            "iat": datetime.utcnow()
+        }
+        return jwt.encode(payload, settings.SECRET_KEY, algorithm=cls.ALGORITHM)
+
+    @classmethod
+    def verify_token(cls, token: str) -> dict:
+        try:
+            payload = jwt.decode(token, settings.SECRET_KEY, algorithms=[cls.ALGORITHM])
+            if "user_id" not in payload:  # Проверка обязательных полей
+                raise jwt.InvalidTokenError("Missing user_id in token")
+            return payload
+        except jwt.ExpiredSignatureError:
+            raise AuthenticationFailed("Token expired")
+        except jwt.InvalidTokenError as e:
+            raise AuthenticationFailed(f"Invalid token: {str(e)}")
 
 class UserAPIService:
 
@@ -29,23 +56,27 @@ class UserAPIService:
         self.request = request
 
     def get(self) -> Response:
-        token = self.request.COOKIES.get("jwt")
+        token = self.request.COOKIES.get("jwt") or \
+                self.request.headers.get("Authorization", "").split("Bearer ")[-1]
 
         if not token:
-            raise AuthenticationFailed("Unauthenticated (not jwt token)")
+            raise AuthenticationFailed("Token missing")
 
         try:
-            payload = jwt.decode(token, settings.SECRET_KEY, algorithms=ALGORITHM)
-        except jwt.ExpiredSignatureError:
-            raise AuthenticationFailed("Unauthenticated")
+            payload = BaseJWTService.verify_token(token)
+            user = get_object_or_404(User, id=payload["user_id"])  # Используем user_id
 
-        user = get_object_or_404(User, id=payload["id"])
+            if user.is_staff:
+                return Response(self.user_serializer(user).data)
 
-        if user.is_staff:
-            return Response(self.user_serializer(user).data, status=200)
+            student = get_object_or_404(Student, user=user)
+            return Response({
+                **self.user_serializer(user).data,
+                "student": self.student_serializer(student).data
+            })
 
-        student_serializer = self.student_serializer(get_object_or_404(Student, user=user))
-        return Response({**self.user_serializer(user).data, "student": student_serializer.data}, status=200)
+        except Exception as e:
+            raise AuthenticationFailed(str(e))
 
 
 class UserLogoutAPIService(UserAPIService):
@@ -158,26 +189,31 @@ class StudentsRegisterListAPIService:
         return Student.objects.bulk_create(students_data, batch_size=500)
 
 
-class BaseLoginAPIService(UserAPIService):
-    TOKEN_EXPIRE_MINUTES = 60
-
+class BaseLoginAPIService:
     def login(self) -> Response:
         try:
             user_data = self.get_user_and_password()
-
-            if not user_data or "user" not in user_data or "password" not in user_data:
-                raise AuthenticationFailed({"detail": "Недопустимый формат учетных данных"})
-
             user = user_data["user"]
 
-            if not user:
-                raise AuthenticationFailed("Пользователь не найден")
+            if not user or not user.check_password(user_data["password"]):
+                raise AuthenticationFailed("Invalid credentials")
 
-            if not user.check_password(user_data["password"]):
-                raise AuthenticationFailed("Неверный пароль")
+            access_token = BaseJWTService.create_access_token(
+                user_id=user.id,
+                is_staff=self.is_staff_user(user)
+            )
 
-            token = self.generate_token(user)
-            response = self.create_auth_response(token)
+            response = Response({
+                "access": access_token,
+                "user_id": user.id
+            }, status=200)
+
+            response.set_cookie(
+                key="jwt",
+                value=access_token,
+                httponly=True,
+                max_age=60 * 60  # 1 hour
+            )
 
             login(self.request, user)
             self.post_login(user)
@@ -265,36 +301,33 @@ class ChangePasswordAPIService:
         self.request = request
 
     def change_password(self):
-        token = self.request.headers.get('Authorization', '').split('Bearer ')[-1]
-        if not token:
-            token = self.request.COOKIES.get("jwt")
+        token = self.request.headers.get('Authorization', '').split('Bearer ')[-1] or \
+                self.request.COOKIES.get("jwt")
 
         if not token:
-            raise AuthenticationFailed("Unauthenticated (no token provided)")
+            raise AuthenticationFailed("Token missing")
 
         try:
-            payload = jwt.decode(token, settings.SECRET_KEY, algorithms=["HS256"])
-        except jwt.ExpiredSignatureError:
-            raise AuthenticationFailed("Unauthenticated")
+            payload = BaseJWTService.verify_token(token)
+            user = get_object_or_404(User, id=payload["user_id"])
 
-        user = User.objects.filter(id=payload["id"]).first()
-        if not user:
-            raise AuthenticationFailed("User not found")
+            data = self.request.data
+            if not user.check_password(data['old_password']):
+                raise ValidationError({"old_password": "Wrong password"})
 
-        data = self.request.data
-        if not all(k in data for k in ["old_password", "new_password"]):
-            raise ValidationError({"detail": "Both old_password and new_password are required"})
+            user.set_password(data['new_password'])
+            user.save()
 
-        if not user.check_password(data['old_password']):
-            raise ValidationError({"old_password": "Wrong password"})
+            new_token = BaseJWTService.create_access_token(user.id, user.is_staff)
+            response = Response({
+                "message": "Password changed successfully",
+                "access": new_token
+            })
+            response.set_cookie("jwt", new_token, httponly=True)
+            return response
 
-        user.set_password(data['new_password'])
-        user.save()
-
-        new_token = self._generate_token(user)
-        response = Response({"message": "Password changed successfully", "jwt_token": new_token}, status=200)
-        response.set_cookie(key="jwt", value=new_token, httponly=True)
-        return response
+        except Exception as e:
+            raise AuthenticationFailed(str(e))
 
     def _generate_token(self, user):
         now = datetime.utcnow()
