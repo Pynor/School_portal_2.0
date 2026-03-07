@@ -1,20 +1,50 @@
+/* Глобальные настройки */
+* {
+  box-sizing: border-box;
+}
+
+/* Контейнеры */
+.form-login-and-register,
+.form-tasks-and-answers,
+.profile {
+  max-width: 600px;
+  padding: 15px;
+  margin: 0 auto;
+}
+
+.form-check-answers {
+  max-width: 750px;
+  display: flex;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  width: 90%;
+  grid-template-columns: 30% 70%; /* резерв для грида */
+}
+
 .main-content {
   margin-left: 20px;
 }
 
-.container {
-  grid-template-columns: 30% 70%;
-  justify-content: space-between;
-  flex-direction: row;
-  display: flex;
-  width: 90%;
+.Sidebar {
+  width: 20%;
+  padding-left: 20px;
 }
 
-.form-signin .checkbox {
-  font-weight: 400;
+/* Кнопки */
+.btn-primary {
+  display: block;
+  width: 100%;
+  max-width: 300px;
+  margin: 5px auto;
+  box-sizing: border-box;
+  text-decoration: none;
 }
 
-
+/* Сообщения */
 .normal-message {
   color: rgba(224, 204, 16, 0.966);
   margin-bottom: 10px;
@@ -27,72 +57,30 @@
   text-align: center;
 }
 
-
-.form-login-and-register .form-control:focus {
-  z-index: 2;
-}
-
-.form-login-and-register .form-control {
-  box-sizing: border-box;
-  font-size: 16px;
-  padding: 10px;
-  height: auto;
-}
-
-.form-login-and-register {
-  max-width: 600px;
-  padding: 15px;
-  margin: auto;
-}
-
-
-.form-tasks-and-answers  {
-  max-width: 600px;
-  padding: 15px;
-  margin: auto;
-}
-
-.form-check-answers  {
-  max-width: 750px;
-  display: flex;
-}
-
-
-.Sidebar {
-  padding-left: 20px;
-  width: 20%;
-}
-
-.profile {
-  max-width: 600px;
-  padding: 15px;
-  margin: auto;
-}
-
 .message {
   position: fixed;
+  top: 20px;
   left: 50%;
   transform: translateX(-50%);
-  top: 20px;
   z-index: 1000;
+  max-width: 80%;
   padding: 12px 16px;
   margin: 10px 0;
   border-radius: 4px;
   font-size: 14px;
-  animation: fadeIn 0.3s ease-out;
-  max-width: 80%;
-  box-sizing: border-box;
   text-align: center;
+  box-sizing: border-box;
+  animation: fadeIn 0.3s ease-out;
 }
 
 @keyframes fadeIn {
-  from { 
-    opacity: 0; 
+  from {
+    opacity: 0;
     transform: translate(-50%, 10px);
   }
-  to { 
-    opacity: 1; 
-    transform: translate(-50%, 0); 
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
   }
 }
 
@@ -118,4 +106,58 @@
   background-color: #fff3cd;
   color: #856404;
   border: 1px solid #ffeeba;
+}
+
+/* Формы */
+.form-login-and-register .form-control {
+  height: auto;
+  padding: 10px;
+  font-size: 16px;
+  box-sizing: border-box;
+}
+
+.form-login-and-register .form-control:focus {
+  z-index: 2;
+}
+
+.form-signin .checkbox {
+  font-weight: 400;
+}
+
+/* Адаптация для мобильных устройств */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;
+    width: 100%;
+    grid-template-columns: 1fr;
+  }
+
+  .form-login-and-register,
+  .form-tasks-and-answers,
+  .profile {
+    max-width: 100%;
+    padding: 10px;
+  }
+
+  .btn-primary {
+    max-width: 300px;
+    width: 100% !important;
+    margin: 5px auto;
+  }
+
+  .Sidebar {
+    display: none;
+  }
+
+  .message {
+    width: 90%;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  h1,
+  h2 {
+    font-size: 1.5rem;
+  }
 }

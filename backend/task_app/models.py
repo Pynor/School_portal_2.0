@@ -22,7 +22,7 @@ class Task(models.Model):
     )
 
     video_file = models.FileField(upload_to="tasks_media/video/", null=True, blank=True, verbose_name="Video file",
-                                  validators=[FileExtensionValidator(allowed_extensions=["mp4", "MPG", "mkv", "mov"])])
+                                  validators=[FileExtensionValidator(allowed_extensions=["mp4", "MPG", "mkv", "mov", "avi"])])
 
     photo_file = models.ImageField(upload_to="tasks_media/images/", null=True, blank=True, verbose_name="Photo file")
 

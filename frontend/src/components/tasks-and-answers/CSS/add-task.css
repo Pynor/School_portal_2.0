@@ -257,3 +257,44 @@
     max-width: 1200px;
     margin: 0 auto;
 }
+
+
+@media (max-width: 768px) {
+  .form-row {
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .file-upload-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .file-upload-group {
+    width: 100%;
+  }
+
+  .file-input-wrapper {
+    width: 100%;
+  }
+
+  .file-input-label {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .tasks-tabs {
+    justify-content: center;
+  }
+
+  .tab-button {
+    flex: 1 1 auto;
+    min-width: 80px;
+  }
+
+  .form-input,
+  .form-select,
+  .form-textarea {
+    width: 100%;
+  }
+}

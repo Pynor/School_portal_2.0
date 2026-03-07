@@ -151,7 +151,7 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
 
 
     // ### Working with server/Работа с сервером ###
-    try {
+        try {
       // Send request/Отправка запроса:
       const postResponse = await fetch(`${BASE_URL}/task_app/v1/api-task-list-create/`, {
         method: 'POST',
@@ -176,7 +176,35 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
         }
       } else {
         const errorData = await postResponse.json();
-        const errorMessage = errorData.title ? errorData.title.join(', ') : 'Неизвестная ошибка';
+        let errorMessage = 'Неизвестная ошибка';
+
+        // Проверяем различные поля, которые может вернуть DRF
+        if (errorData.title) {
+          errorMessage = Array.isArray(errorData.title) ? errorData.title.join(', ') : errorData.title;
+        } else if (errorData.detail) {
+          errorMessage = errorData.detail;
+        } else if (errorData.non_field_errors) {
+          errorMessage = Array.isArray(errorData.non_field_errors) ? errorData.non_field_errors.join(', ') : errorData.non_field_errors;
+        } else if (errorData.message) {
+          errorMessage = errorData.message;
+        } else if (typeof errorData === 'object') {
+          // Собираем все ошибки из всех полей
+          const messages: string[] = [];
+          Object.entries(errorData).forEach(([field, errors]) => {
+            if (Array.isArray(errors)) {
+              messages.push(`${field}: ${errors.join(', ')}`);
+            } else if (typeof errors === 'string') {
+              messages.push(`${field}: ${errors}`);
+            }
+          });
+          if (messages.length) {
+            errorMessage = messages.join('; ');
+          }
+        }
+
+        // Для отладки можно вывести в консоль
+        console.error('Ошибка создания задачи:', errorData);
+
         showMessage({
           content: `Произошла ошибка при создании задачи: ${errorMessage}`,
           type: 'error',
