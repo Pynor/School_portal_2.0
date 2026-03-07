@@ -286,7 +286,7 @@ class StudentLoginAPIService(BaseLoginAPIService):
         school_class = data["school_class"].strip()
         first_name = data["first_name"].strip()
         last_name = data["last_name"].strip()
-        password = data["password"].lower()
+        password = data["password"]
 
         username = f"{first_name}{last_name}{school_class}".lower()
 
