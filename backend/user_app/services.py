@@ -253,6 +253,9 @@ class BaseLoginAPIService:
 
 
 class TeacherLoginAPIService(BaseLoginAPIService):
+    def __init__(self, request):
+        self.request = request
+
     def get_user_and_password(self) -> dict[str, Any]:
         data = self.request.data
         username = data.get("username")
@@ -270,6 +273,9 @@ class TeacherLoginAPIService(BaseLoginAPIService):
 
 
 class StudentLoginAPIService(BaseLoginAPIService):
+    def __init__(self, request):
+        self.request = request
+
     def get_user_and_password(self) -> dict[str, Any]:
         required_fields = ["first_name", "last_name", "school_class", "password"]
         data = self.request.data

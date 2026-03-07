@@ -21,9 +21,7 @@ class TeacherLoginAPIView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request) -> Response:
-        user = TeacherLoginAPIService(student_serializer=StudentSerializer,
-                                      user_serializer=UserSerializer,
-                                      request=request)
+        user = TeacherLoginAPIService(request=request)
         response = user.login()
         return response
 
@@ -32,9 +30,7 @@ class StudentLoginAPIView(APIView):
     permission_classes = [AllowAny]
 
     def post(self, request) -> Response:
-        user = StudentLoginAPIService(student_serializer=StudentSerializer,
-                                      user_serializer=UserSerializer,
-                                      request=request)
+        user = StudentLoginAPIService(request=request)
         response = user.login()
         return response
 
