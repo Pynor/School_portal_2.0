@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, useEffect, useRef, useState } from 'react';
+import React, { SyntheticEvent, useState } from 'react';
 import { Navigate } from "react-router-dom";
 
 import { useMessageHandler, getCookie } from '../../../functions';
@@ -13,7 +13,6 @@ const RegisterTeacher = () => {
     const [redirect, setRedirect] = useState(false);
     const [loading, setLoading] = useState(false);
     const csrftoken = getCookie('csrftoken');
-    const [error, setError] = useState('');
 
     // ### Assignment registration variables/Назначение переменных регистрации ###
     const [first_name, setFirstName] = useState('');
@@ -24,7 +23,6 @@ const RegisterTeacher = () => {
 
     // ### Logging upon successful registration/Вход в систему после успешной регистрации ###
     const login = async () => {
-        // Send request/Отправка запроса:
         const postResponse = await fetch(`${BASE_URL}/user_app/v1/api-teacher-login/`, {
             method: 'POST',
             headers: {
@@ -35,15 +33,26 @@ const RegisterTeacher = () => {
             body: JSON.stringify({ password, username })
         });
 
-        // Response processing/Обработка ответа:
         if (postResponse.ok) {
             setRedirect(true);
-            setTimeout(() => {
-                window.location.reload();
-            }, 500);
+            setTimeout(() => window.location.reload(), 500);
         } else {
             const data = await postResponse.json();
-            setError(data.username ? data.username[0] : data.detail || 'Ошибка входа');
+            let errorMessage = 'Ошибка входа';
+
+            if (data.detail) errorMessage = data.detail;
+            else if (data.non_field_errors)
+                errorMessage = Array.isArray(data.non_field_errors) ? data.non_field_errors.join(', ') : data.non_field_errors;
+            else if (data.username)
+                errorMessage = Array.isArray(data.username) ? data.username.join(', ') : data.username;
+            else if (typeof data === 'object') {
+                const messages = Object.entries(data).map(([field, errors]) =>
+                    Array.isArray(errors) ? `${field}: ${errors.join(', ')}` : `${field}: ${errors}`
+                );
+                if (messages.length) errorMessage = messages.join('; ');
+            }
+
+            showMessage({ content: errorMessage, type: 'error', duration: 5000 });
         }
     };
 
@@ -62,12 +71,7 @@ const RegisterTeacher = () => {
                 },
                 credentials: 'include',
                 body: JSON.stringify({
-                    user: {
-                        password,
-                        username,
-                        last_name,
-                        first_name
-                    },
+                    user: { password, username, last_name, first_name },
                     secret_key
                 })
             });
@@ -75,53 +79,50 @@ const RegisterTeacher = () => {
             setLoading(false);
 
             if (postResponse.ok) {
-                // Showing a success message/Показываем сообщение об успехе
                 showMessage({
                     content: 'Вы успешно зарегистрировались. Выполняется вход...',
                     type: 'success',
                     duration: 3000
                 });
-
-                setTimeout(async () => {
-                    await login();
-                }, 3000);
-
+                setTimeout(login, 3000);
             } else {
                 const data = await postResponse.json();
-                showMessage({
-                    content: data.username ? data.username[0] : data.detail || 'Ошибка регистрации',
-                    type: 'error',
-                    duration: 5000
-                });
+                let errorMessage = 'Ошибка регистрации';
 
+                if (data.detail) errorMessage = data.detail;
+                else if (data.non_field_errors)
+                    errorMessage = Array.isArray(data.non_field_errors) ? data.non_field_errors.join(', ') : data.non_field_errors;
+                else if (data.username)
+                    errorMessage = Array.isArray(data.username) ? data.username.join(', ') : data.username;
+                else if (data.secret_key)
+                    errorMessage = Array.isArray(data.secret_key) ? data.secret_key.join(', ') : data.secret_key;
+                else if (typeof data === 'object') {
+                    const messages = Object.entries(data).map(([field, errors]) =>
+                        Array.isArray(errors) ? `${field}: ${errors.join(', ')}` : `${field}: ${errors}`
+                    );
+                    if (messages.length) errorMessage = messages.join('; ');
+                }
+
+                console.error('Ошибка регистрации учителя:', data);
+                showMessage({ content: errorMessage, type: 'error', duration: 5000 });
             }
-        } catch (err) {
+        } catch {
             setLoading(false);
-            showMessage({
-                content: 'Ошибка сети при регистрации',
-                type: 'error',
-                duration: 5000
-            });
+            showMessage({ content: 'Ошибка сети при регистрации', type: 'error', duration: 5000 });
         }
     };
 
-
-    // ### Rendering HTMLElement/Отрисовка HTMLElement ###
-    if (redirect) {
-        return <Navigate to="/" />;
-    }
+    if (redirect) return <Navigate to="/" />;
 
     return (
         <div className="form-login-and-register">
             <div className="form-container">
                 <MessageComponent />
-                {/* Form of sending/Форма отправки */}
                 <form onSubmit={register}>
                     <h1 className="h1">Регистрация</h1>
-                    {error && <h3 className="error-message">{error}</h3>}
                     <div className="form-group">
                         <input
-                        onChange={e => setFirstName(e.target.value)}
+                            onChange={e => setFirstName(e.target.value)}
                             style={{ width: '100%' }}
                             className="form-control"
                             value={first_name}
@@ -133,7 +134,7 @@ const RegisterTeacher = () => {
                     </div>
                     <div className="form-group">
                         <input
-                        onChange={e => setLastName(e.target.value)}
+                            onChange={e => setLastName(e.target.value)}
                             style={{ width: '100%' }}
                             className="form-control"
                             placeholder="Фамилия"
@@ -180,7 +181,6 @@ const RegisterTeacher = () => {
                         />
                     </div>
 
-                    {/* Send button/Кнопка отправки */}
                     <button className="btn-primary" type="submit" disabled={loading}>
                         {loading ? 'Загрузка...' : 'Зарегистрироваться'}
                     </button>

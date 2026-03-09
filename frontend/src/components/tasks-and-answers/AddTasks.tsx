@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { TaskListForAddTasks, UserData, Task } from '../../types';
+import { TaskListForAddTasks, UserData, EmptyTask } from '../../types';
 import { useMessageHandler, getCookie } from '../../functions';
 import { BASE_URL, SUBJECTS, CLASSES } from '../../constants';
 import './CSS/add-task.css';
@@ -11,17 +11,8 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
   const messageRef = useRef<HTMLDivElement | null>(null);
   const csrftoken = getCookie('csrftoken');
 
-  const emptyTask: Omit<Task, 'sequence_number'> = {
-    additional_condition: 'None',
-    answer_to_the_task: '',
-    link_to_article: '',
-    description: '',
-    title: '',
-    id: 0,
-  };
-
   const initialFormData: TaskListForAddTasks = {
-    tasks: [{ sequence_number: 1, ...emptyTask }],
+    tasks: [{ sequence_number: 1, ...EmptyTask }],
     time_to_tasks: '',
     subject_id: '',
     count_task: 1,
@@ -40,7 +31,7 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
       ...prevFormData,
       tasks: Array.from({ length: prevFormData.count_task }, (_, i) => ({
         sequence_number: i + 1,
-        ...emptyTask,
+        ...EmptyTask,
       })),
     }));
   }, [formData.count_task]);
@@ -90,7 +81,7 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
   // Adding a new task to the task array/Добавление новой задачи в массив задач:
   const addTask = () => {
     setFormData((prevFormData) => {
-      const newTask = { sequence_number: prevFormData.count_task + 1, ...emptyTask };
+      const newTask = { sequence_number: prevFormData.count_task + 1, ...EmptyTask };
       return {
         ...prevFormData,
         count_task: prevFormData.count_task + 1,
@@ -99,7 +90,6 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
     });
     setActiveTab(formData.count_task);
   };
-
 
   // ### Generation data for POST request/Формирование данных для POST запроса ###
   const addTasks = async (e: React.FormEvent) => {
@@ -149,9 +139,8 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
       });
     });
 
-
     // ### Working with server/Работа с сервером ###
-        try {
+    try {
       // Send request/Отправка запроса:
       const postResponse = await fetch(`${BASE_URL}/task_app/v1/api-task-list-create/`, {
         method: 'POST',
@@ -227,7 +216,6 @@ const AddTasks: React.FC<{ userData: UserData }> = ({ userData }) => {
       }
     }
   };
-
 
   // ### Rendering HTMLElement/Отрисовка HTMLElement ###
   return (

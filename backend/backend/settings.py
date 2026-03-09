@@ -55,7 +55,7 @@ MIDDLEWARE = [
 ]
 
 
-CSRF_TRUSTED_ORIGINS = ['http://localhost:3000']
+CSRF_TRUSTED_ORIGINS = ['http://localhost:3001']
 
 CORS_ALLOW_CREDENTIALS = True
 

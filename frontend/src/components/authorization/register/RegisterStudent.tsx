@@ -14,12 +14,12 @@ const RegisterStudents = (props: { userData: UserData }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const csrftoken = getCookie('csrftoken');
 
-  const [isIndividualClassInput, setIsIndividualClassInput] = useState(false);
   const [useCommonClass, setUseCommonClass] = useState(true);
   const [studentsInput, setStudentsInput] = useState('');
   const [isBulkInput, setIsBulkInput] = useState(false);
   const [schoolClass, setSchoolClass] = useState('');
   const [numStudents, setNumStudents] = useState(0);
+  const [isIndividualClassInput] = useState(false);
 
 
   // ### Effects/Эффекты ###
@@ -135,11 +135,35 @@ const RegisterStudents = (props: { userData: UserData }) => {
         setStudentsInput('');
         setNumStudents(0);
       } else {
-        const responseData = await postResponse.json();
-        const errorMsg = responseData.error ||
-          (responseData.detail ? responseData.detail : 'Неизвестная ошибка');
+        const errorData = await postResponse.json();
+        let errorMessage = 'Неизвестная ошибка';
+
+        if (errorData.error) {
+          errorMessage = errorData.error;
+        } else if (errorData.detail) {
+          errorMessage = errorData.detail;
+        } else if (errorData.non_field_errors) {
+          errorMessage = Array.isArray(errorData.non_field_errors) ? errorData.non_field_errors.join(', ') : errorData.non_field_errors;
+        } else if (errorData.message) {
+          errorMessage = errorData.message;
+        } else if (typeof errorData === 'object') {
+          const messages: string[] = [];
+          Object.entries(errorData).forEach(([field, errors]) => {
+            if (Array.isArray(errors)) {
+              messages.push(`${field}: ${errors.join(', ')}`);
+            } else if (typeof errors === 'string') {
+              messages.push(`${field}: ${errors}`);
+            }
+          });
+          if (messages.length) {
+            errorMessage = messages.join('; ');
+          }
+        }
+
+        console.error('Ошибка регистрации учеников:', errorData);
+
         showMessage({
-          content: `Ошибка регистрации: ${errorMsg}`,
+          content: `Ошибка регистрации: ${errorMessage}`,
           type: 'error',
           duration: 5000
         });

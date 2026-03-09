@@ -12,6 +12,15 @@ export type UserData = {
   id: number;
 };
 
+export const EmptyTask: Omit<Task, 'sequence_number'> = {
+    additional_condition: 'None',
+    answer_to_the_task: '',
+    link_to_article: '',
+    description: '',
+    title: '',
+    id: 0,
+ };
+
 export interface ChangePasswordForm {
   old_password: string;
   new_password: string;

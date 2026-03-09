@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, useEffect, useRef, useState } from 'react';
+import React, { SyntheticEvent, useRef, useState } from 'react';
 import { Navigate } from "react-router-dom";
 
 import { BASE_URL, CLASSES } from '../../../constants';
@@ -6,7 +6,6 @@ import { useMessageHandler, getCookie } from '../../../functions';
 
 import '../CSS/form-signing.css';
 import './../../../App.css';
-
 
 const LoginStudent = () => {
     // ### Assigning variables/Назначение переменных ###
@@ -26,7 +25,6 @@ const LoginStudent = () => {
         e.preventDefault();
         clearMessage();
 
-        // Send request/Отправка запроса:
         const postResponse = await fetch(`${BASE_URL}/user_app/v1/api-student-login/`, {
             method: 'POST',
             headers: {
@@ -42,68 +40,74 @@ const LoginStudent = () => {
             })
         });
 
-        // Response processing/Обработка ответа:
         if (postResponse.ok) {
             setRedirect(true);
-            setTimeout(() => {
-                window.location.reload();
-            }, 500);
+            setTimeout(() => window.location.reload(), 500);
         } else {
             const data = await postResponse.json();
-            if (data && data.username) {
-                showMessage({
-                    content: data.username[0],
-                    type: 'error',
-                    duration: 4000
-                });
-            } else {
-                showMessage({
-                    content: data.detail,
-                    type: 'error',
-                    duration: 4000
-                });
+            let errorMessage = 'Неизвестная ошибка';
+
+            if (data.detail) {
+                errorMessage = data.detail;
+            } else if (data.non_field_errors) {
+                errorMessage = Array.isArray(data.non_field_errors) ? data.non_field_errors.join(', ') : data.non_field_errors;
+            } else if (data.username) {
+                errorMessage = Array.isArray(data.username) ? data.username.join(', ') : data.username;
+            } else if (typeof data === 'object') {
+                const messages = Object.entries(data).map(([field, errors]) =>
+                    Array.isArray(errors) ? `${field}: ${errors.join(', ')}` : `${field}: ${errors}`
+                );
+                if (messages.length) errorMessage = messages.join('; ');
             }
 
+            showMessage({ content: errorMessage, type: 'error', duration: 4000 });
+            messageRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
-    }
+    };
 
-
-    // ### Rendering HTMLElement/Отрисовка HTMLElement ###
-    if (redirect) {
-        return <Navigate to="/" />;
-    }
+    if (redirect) return <Navigate to="/" />;
 
     return (
         <div className="form-login-and-register">
             <div className="form-container">
-                {/* Displaying message/Отображение сообщения */}
                 <div ref={messageRef}>
                     <MessageComponent />
                 </div>
 
-                {/* ### Filling forms/Формы для заполнения ### */}
                 <form onSubmit={login}>
                     <h1 className="h1">Авторизация</h1>
-                    {/* Displaying message/Отображение сообщения */}
 
-                    {/* Input fields/Поля ввода */}
                     <div className="form-group">
-                        <input type="text" className="form-control" id="first_name" placeholder="Имя" required
+                        <input
+                            type="text"
+                            className="form-control"
+                            id="first_name"
+                            placeholder="Имя"
+                            required
                             onChange={e => setFirstName(e.target.value)}
                             style={{ width: '100%' }}
                         />
                     </div>
                     <div className="form-group">
-                        <input type="text" className="form-control" id="last_name" placeholder="Фамилия" required
+                        <input
+                            type="text"
+                            className="form-control"
+                            id="last_name"
+                            placeholder="Фамилия"
+                            required
                             onChange={e => setLastName(e.target.value)}
                             style={{ width: '100%' }}
                         />
                     </div>
                     <div className="form-group">
-                        <select className="form-control" id="school_class" name="school_class" required
+                        <select
+                            className="form-control"
+                            id="school_class"
+                            name="school_class"
+                            required
                             onChange={e => setSchoolClass(e.target.value)}
-                            style={{ width: '100%' }}>
-
+                            style={{ width: '100%' }}
+                        >
                             <option value="">Выберите свой класс</option>
                             {CLASSES.map((option) => (
                                 <option key={option} value={option}>
@@ -113,13 +117,17 @@ const LoginStudent = () => {
                         </select>
                     </div>
                     <div className="form-group">
-                        <input type="password" className="form-control" id="password" placeholder="Пароль" required
+                        <input
+                            type="password"
+                            className="form-control"
+                            id="password"
+                            placeholder="Пароль"
+                            required
                             onChange={e => setPassword(e.target.value)}
                             style={{ width: '100%' }}
                         />
                     </div>
 
-                    {/* Send button/Кнопка отправки */}
                     <button className="btn-primary" type="submit">Авторизоваться</button>
                 </form>
             </div>

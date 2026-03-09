@@ -1,4 +1,4 @@
-import React, { SyntheticEvent, useEffect, useRef, useState } from 'react';
+import React, { SyntheticEvent, useRef, useState } from 'react';
 import { Navigate } from "react-router-dom";
 
 import { useMessageHandler, getCookie } from '../../../functions';
@@ -6,7 +6,6 @@ import { BASE_URL } from '../../../constants';
 
 import '../CSS/form-signing.css';
 import './../../../App.css';
-
 
 const LoginTeacher = () => {
     // ### Assigning variables/Назначение переменных ###
@@ -17,15 +16,13 @@ const LoginTeacher = () => {
 
     // ### Assignment login variables/Назначение переменных входа ###
     const [password, setPassword] = useState('');
-    const [username, setUername] = useState('');
-
+    const [username, setUsername] = useState('');
 
     // ### Working with server/Работа с сервером ###
     const login = async (e: SyntheticEvent) => {
         e.preventDefault();
         clearMessage();
 
-        // Send request/Отправка запроса:
         const postResponse = await fetch(`${BASE_URL}/user_app/v1/api-teacher-login/`, {
             method: 'POST',
             headers: {
@@ -33,75 +30,80 @@ const LoginTeacher = () => {
                 'X-CSRFToken': csrftoken
             },
             credentials: 'include',
-            body: JSON.stringify({
-                password,
-                username
-            })
+            body: JSON.stringify({ password, username })
         });
 
-        // Response processing/Обработка ответа:
         if (postResponse.ok) {
             setRedirect(true);
-
-            setTimeout(() => {
-                window.location.reload();
-            }, 500);
-
+            setTimeout(() => window.location.reload(), 500);
         } else {
             const data = await postResponse.json();
-            if (data && data.username) {
-                showMessage({
-                    content: data.username[0],
-                    type: 'error',
-                    duration: 4000
-                });
-            } else {
-                showMessage({
-                    content: data.detail,
-                    type: 'error',
-                    duration: 4000
-                });
+            let errorMessage = 'Неизвестная ошибка';
+
+            if (data.detail) {
+                errorMessage = data.detail;
+            } else if (data.non_field_errors) {
+                errorMessage = Array.isArray(data.non_field_errors)
+                    ? data.non_field_errors.join(', ')
+                    : data.non_field_errors;
+            } else if (data.username) {
+                errorMessage = Array.isArray(data.username)
+                    ? data.username.join(', ')
+                    : data.username;
+            } else if (data.password) {
+                errorMessage = Array.isArray(data.password)
+                    ? data.password.join(', ')
+                    : data.password;
+            } else if (typeof data === 'object') {
+                const messages = Object.entries(data).map(([field, errors]) =>
+                    Array.isArray(errors) ? `${field}: ${errors.join(', ')}` : `${field}: ${errors}`
+                );
+                if (messages.length) errorMessage = messages.join('; ');
             }
 
+            showMessage({ content: errorMessage, type: 'error', duration: 4000 });
+            messageRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
-    }
+    };
 
-    // ### Rendering HTMLElement/Отрисовка HTMLElement ###
-    if (redirect) {
-        return <Navigate to="/" />;
-    }
+    if (redirect) return <Navigate to="/" />;
 
     return (
         <div className="form-login-and-register">
             <div className="form-container">
-                {/* Displaying message/Отображение сообщения */}
                 <div ref={messageRef}>
                     <MessageComponent />
                 </div>
-                
-                {/* ### Filling forms/Формы для заполнения ### */}
+
                 <form onSubmit={login}>
                     <h1 className="h1">Авторизация</h1>
-                    {/* Input fields/Поля ввода */}
                     <div className="form-group">
-                        <input type="text" className="form-control" id="username" placeholder="Имя пользователя" required
-                            onChange={e => setUername(e.target.value)}
+                        <input
+                            type="text"
+                            className="form-control"
+                            id="username"
+                            placeholder="Имя пользователя"
+                            required
+                            onChange={e => setUsername(e.target.value)}
                             style={{ width: '100%' }}
                         />
                     </div>
                     <div className="form-group">
-                        <input type="password" className="form-control" id="password" placeholder="Пароль" required
+                        <input
+                            type="password"
+                            className="form-control"
+                            id="password"
+                            placeholder="Пароль"
+                            required
                             onChange={e => setPassword(e.target.value)}
                             style={{ width: '100%' }}
                         />
                     </div>
-
-                    {/* Send button/Кнопка отправки */}
                     <button className="btn-primary" type="submit">Авторизоваться</button>
                 </form>
             </div>
         </div>
     );
-}
+};
 
 export default LoginTeacher;
